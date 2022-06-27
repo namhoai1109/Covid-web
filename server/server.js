@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./database/database');
-const userRouter = require('./routes/user.route');
+const authRouter = require('./routes/auth.route');
 const { isLoggedIn, verifyUser, redirectUser } = require('./middleware/auth');
 
 // Initialize app
@@ -12,7 +12,7 @@ connectDB();
 
 // Middleware
 app.use(express.json());
-app.use('/users', userRouter);
+app.use('/auth', authRouter);
 app.use(isLoggedIn);
 
 // Routes

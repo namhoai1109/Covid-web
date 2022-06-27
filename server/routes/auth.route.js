@@ -23,11 +23,11 @@ router.post('/login', async(req, res) => {
     try {
         const user = await User.findOne({username: req.body.username});
         if(!user){
-            return res.status(400).send('Invalid username or password');
+            return res.status(400).send({ message: 'Invalid username or password' });
         }
         const isMatch = await bcrypt.compare(req.body.password, user.password);
         if(!isMatch){
-            return res.status(400).send('Invalid username or password');
+            return res.status(400).send({ message: 'Invalid username or password' });
         }
 
         const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
