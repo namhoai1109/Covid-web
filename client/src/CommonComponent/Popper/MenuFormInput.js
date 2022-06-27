@@ -1,0 +1,95 @@
+import TippyHeadless from '@tippyjs/react/headless';
+import Wrapper, { MenuItem } from '../Popper';
+import { PlusIcon } from '../icons';
+import { FormInput } from '../Popper';
+
+import classNames from 'classnames/bind';
+import styles from './Wrapper.module.scss';
+import { useEffect, useState } from 'react';
+
+const cx = classNames.bind(styles);
+
+let initDataInput = (num) => {
+    let data = {};
+    for (let i = 0; i < num; i++) {
+        data[`input${i}`] = '';
+    }
+
+    return data;
+};
+
+function MenuFormInput({ menu, children }) {
+    let initInputVal = initDataInput(menu.length);
+
+    let [inputVals, setInputVals] = useState(initInputVal);
+
+    useEffect(() => {
+        setInputVals(initDataInput(menu.length));
+    }, [menu]);
+
+    let handleOnClick = () => {
+        console.log(inputVals); // call api
+        setInputVals(initInputVal);
+    };
+
+    let handleHide = () => {
+        setInputVals(initInputVal);
+    };
+
+    let handleChange = (e, index) => {
+        let inputval = e.target.value;
+        setInputVals({
+            ...inputVals,
+            [`input${index}`]: inputval,
+        });
+    };
+
+    let renderItem = (attrs) => (
+        <div tabIndex="-1" {...attrs}>
+            <Wrapper>
+                <button onClick={handleOnClick} className={cx('submit-btn')}>
+                    <PlusIcon />
+                </button>
+                <div className={cx('flex-center')}>
+                    <div>
+                        {menu.map((title, index) => (
+                            <MenuItem key={index} data={title} className={cx('title')} />
+                        ))}
+                    </div>
+                    <div>
+                        {menu.map((title, index) => {
+                            return (
+                                <MenuItem
+                                    key={index}
+                                    data={
+                                        <FormInput
+                                            inputVal={inputVals[`input${index}`]}
+                                            onChange={(e) => handleChange(e, index)}
+                                        />
+                                    }
+                                />
+                            );
+                        })}
+                    </div>
+                </div>
+            </Wrapper>
+        </div>
+    );
+
+    return (
+        <div>
+            <TippyHeadless
+                interactive
+                offset={[0, 10]}
+                placement="bottom-end"
+                render={renderItem}
+                onHide={handleHide}
+                trigger="click"
+            >
+                {children}
+            </TippyHeadless>
+        </div>
+    );
+}
+
+export default MenuFormInput;
