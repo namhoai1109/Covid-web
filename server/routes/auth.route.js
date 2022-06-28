@@ -23,17 +23,18 @@ router.post('/login', async(req, res) => {
     try {
         const user = await User.findOne({username: req.body.username});
         if(!user){
-            return res.status(400).send({ message: 'Invalid username or password' });
+            return res.status(401).send({ message: 'Invalid username or password' });
         }
-        const isMatch = await bcrypt.compare(req.body.password, user.password);
-        if(!isMatch){
-            return res.status(400).send({ message: 'Invalid username or password' });
+        const isPasswordMatch = await bcrypt.compare(req.body.password, user.password);
+        if(!isPasswordMatch){
+            return res.status(401).send({ message: 'Invalid username or password' });
         }
 
+        // Assign a new token to the user
         const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
-        res.header('auth-token', token).send(token);
+        res.status(200).send({_id: user._id, token: token});
     } catch(err){
-        res.status(400).send(err);
+        res.status(400).send(err)
     }
 })
 

@@ -1,11 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 
-
-
-
-
-
 const isLoggedIn = function (req, res, next) {
     const token = req.header("auth-token");
     if (!token) {
@@ -48,7 +43,5 @@ const redirectUser = async function (req, res, next) {
         res.status(400).send(err);
     }
 }
-
-
 
 module.exports = { isLoggedIn, verifyUser, redirectUser };

@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const connectDB = require('./database/database');
 const authRouter = require('./routes/auth.route');
@@ -11,6 +12,7 @@ const app = express();
 connectDB();
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use('/auth', authRouter);
 app.use(isLoggedIn);
