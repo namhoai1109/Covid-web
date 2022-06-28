@@ -32,7 +32,7 @@ router.post('/login', async(req, res) => {
 
         // Assign a new token to the user
         const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
-        res.status(200).send({_id: user._id, token: token});
+        res.status(200).send({_id: user._id, role: user.role, token: token});
     } catch(err){
         res.status(400).send(err)
     }
