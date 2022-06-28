@@ -1,40 +1,41 @@
 const router = require('express').Router();
-const User = require('../model/User');
+const Account = require('../model/Account');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { verifyUser } = require('../middleware/auth');
 
-router.post('/register', async (req, res) => {
+router.post('/register', verifyUser('admin', 'doctor'), async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = new User({
-        name: req.body.name,
-        role: req.body.role,
+    const account = new Account({
         username: req.body.username,
-        password: hashedPassword
+        password: hashedPassword,
+        role: req.body.role,
+        status: req.body.status
     })
     try {
-        const savedUser = await user.save();
-        res.send(savedUser);
+        const savedAccount = await account.save();
+        res.send(savedAccount);
     } catch(err){
-        res.status(400).send(err);
+        res.status(400).send(err.message);
     }
 })
 
 router.post('/login', async(req, res) => {
     try {
-        const user = await User.findOne({username: req.body.username});
-        if(!user){
-            return res.status(401).send({ message: 'Invalid username or password' });
+        const account = await Account.findOne({ username: req.body.username });
+        if (!account) {
+            return res.status(401).send({ message: "Invalid username or password"});
         }
-        const isPasswordMatch = await bcrypt.compare(req.body.password, user.password);
-        if(!isPasswordMatch){
-            return res.status(401).send({ message: 'Invalid username or password' });
+        const isMatch = await bcrypt.compare(req.body.password, account.password);
+        if (!isMatch) {
+            return res.status(401).send({ message: "Invalid username or password"});
         }
 
-        // Assign a new token to the user
-        const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
-        res.status(200).send({_id: user._id, role: user.role, token: token});
-    } catch(err){
-        res.status(400).send(err)
+        // Create a token
+        const token = jwt.sign({ _id: account._id }, process.env.TOKEN_SECRET);
+        res.send({ token: token});
+    } catch (err) {
+        res.status(400).send(err);
     }
 })
 
