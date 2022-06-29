@@ -3,10 +3,10 @@ import styles from './Wrapper.module.scss';
 
 const cx = classNames.bind(styles);
 
-function FormInput({ inputVal = '', onChange }) {
+function FormInput({ inputVal = '', onChange, type = "text" }) {
     return (
         <div className={cx('form-input')}>
-            <input value={inputVal} onChange={onChange} className={cx('input')} />
+            <input type={type}  value={inputVal} onChange={onChange} className={cx('input')} />
         </div>
     );
 }

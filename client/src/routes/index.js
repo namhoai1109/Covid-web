@@ -8,10 +8,10 @@ import Login from '~/Login';
 import configs from '~/config';
 
 export const mainRoutes = [
-    {
-        path: configs.mainRoutes.login,
-        element: Login,
-    },
+    // {
+    //     path: configs.mainRoutes.login,
+    //     element: Login,
+    // },
     {
         path: configs.mainRoutes.admin + configs.subRoute,
         element: Admin,
