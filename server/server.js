@@ -7,10 +7,11 @@ const authRouter = require('./routes/auth.route');
 const { isLoggedIn, verifyUser, redirectUser } = require('./middleware/auth');
 const Account = require('./model/Account');
 
+
 // Initialize app
 const app = express();
+app.use(cors());
 
-// Connect to database
 connectDB();
 
 // Middleware
@@ -19,6 +20,13 @@ app.use(express.json());
 
 // Mount routers
 app.use('/auth', authRouter);
+
+// CORS
+app.all('*', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+})
 
 // Routes
 app.get('/', (req, res) => {

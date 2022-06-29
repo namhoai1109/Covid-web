@@ -22,9 +22,11 @@ router.post('/register', verifyUser('admin', 'doctor'), async (req, res) => {
 
 router.post('/login', async(req, res) => {
     try {
+
         const account = await Account.findOne({ username: req.body.username });
         if (!account) {
             return res.status(401).send({ message: "Invalid username or password"});
+
         }
         const isMatch = await bcrypt.compare(req.body.password, account.password);
         if (!isMatch) {
@@ -35,6 +37,7 @@ router.post('/login', async(req, res) => {
         const token = jwt.sign({ _id: account._id }, process.env.TOKEN_SECRET);
         res.send({ token: token});
     } catch (err) {
+
         res.status(400).send(err);
     }
 })

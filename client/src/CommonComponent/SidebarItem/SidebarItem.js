@@ -5,12 +5,17 @@ import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-function SidebarItem({ title, icon, path = '', large }) {
+function SidebarItem({ title, icon, path = '', onClick = () => [], large }) {
+    let Comp = 'div';
+    if (path !== '') {
+        Comp = Link;
+    }
+
     return (
         <div className={cx('wrapper')}>
-            <Link to={path} className={cx('sidebar-item')}>
+            <Comp to={path} onClick={onClick} className={cx('sidebar-item')}>
                 <div className={cx('icon', 'flex-center')}>{icon}</div>
-            </Link>
+            </Comp>
             <div
                 className={cx('sub-title', {
                     large: large,
