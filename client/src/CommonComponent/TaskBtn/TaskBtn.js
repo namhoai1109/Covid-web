@@ -5,7 +5,7 @@ import { forwardRef } from 'react';
 
 const cx = classNames.bind(styles);
 
-let TaskBtn = forwardRef(({ to, icon, title, disabled }, ref) => {
+let TaskBtn = forwardRef(({ to, icon, title, disabled, onClick }, ref) => {
     let Comp = 'div';
     if (to) Comp = Link;
 
@@ -16,6 +16,7 @@ let TaskBtn = forwardRef(({ to, icon, title, disabled }, ref) => {
             className={cx('btn', {
                 disabled: disabled,
             })}
+            onClick={onClick}
         >
             {title}
             {icon && <span className={cx('icon')}>{icon}</span>}

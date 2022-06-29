@@ -22,6 +22,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async(req, res) => {
     try {
         const user = await User.findOne({username: req.body.username});
+        console.log(req.body);
         if(!user){
             return res.status(400).send({ message: 'Invalid username or password' });
         }
@@ -31,7 +32,7 @@ router.post('/login', async(req, res) => {
         }
 
         const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
-        res.header('auth-token', token).send(token);
+        res.status(200).send({_id: user._id, role: user.role, token: token});
     } catch(err){
         res.status(400).send(err);
     }
