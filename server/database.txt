@@ -8,6 +8,12 @@ Account {
     account_status: enum('active', 'inactive')
 }
 
+Log {
+    _id: ObjectID,
+    time: Date,
+    account_id: reference Account(_id);
+}
+
 Admin {
     _id: ObjectID,
     account_id: reference Account(_id),
@@ -28,6 +34,7 @@ Doctor {
     neccesities: [{
         neccesity_id: reference Neccesity(_id)
     }]
+    history: String
 }
 
 Patient {
@@ -35,7 +42,7 @@ Patient {
     account_id: reference Account(_id),
     status: enum('F0', 'F1', 'F2', 'F3'),
     name: String,
-    CMND: String,
+    id_number: String,
     birth: String,
     address: String,
     current_facility: reference Facility(_id),
@@ -62,6 +69,14 @@ Facility {
     current_patients_number: Integer
 }
 
+Neccesity {
+    _id: ObjectID,
+    name: String,
+    price: Float,
+    quantity_unit: enum('...'),
+    image: String (image hosting url)
+}
+
 NeccesityCombo {
     _id: ObjectID,
     name: String,
@@ -71,13 +86,7 @@ NeccesityCombo {
     }]
 }
 
-Neccesity {
-    _id: ObjectID,
-    name: String,
-    price: Float,
-    quantity_unit: enum('...'),
-    image: binary
-}
+
 
 // Un-implemented
 1. NeccesityCombo:
