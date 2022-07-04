@@ -28,7 +28,7 @@ exports.login = async (req, res) => {
     await log.save();
 
     // Assign token
-    const token = jwt.sign({ _id: account._id }, process.env.TOKEN_SECRET);
+    const token = jwt.sign({ _id: account.username }, process.env.TOKEN_SECRET);
     res.send({ token: token });
   } catch (err) {
     res.status(400).send(err);

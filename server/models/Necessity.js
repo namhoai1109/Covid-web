@@ -1,26 +1,26 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const necessitySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        unique: true,
+  name: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: (v) => v > 0,
+      message: (props) => `${props.value} is not a valid capacity`,
     },
-    price: {
-        type: Number,
-        required: true,
-        unique: true,
-    },
-    quantity_unit: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    images: {
-        type: [String],
-        required: true,
-        unique: true,
-    },
-})
+  },
+  quantity_unit: {
+    type: String,
+    required: true,
+  },
+  images: {
+    type: [String],
+    required: true,
+  },
+});
 
-module.exports = mongoose.model('Necessity', necessitySchema)
+module.exports = mongoose.model("Necessity", necessitySchema);

@@ -9,7 +9,7 @@ exports.registerAccount = async (req, res) => {
 	const account = new Account({
 		username: req.body.username,
 		password: hashedPassword,
-		role: req.body.role,
+		role: 'doctor',
 		status: req.body.status
 	})
 
