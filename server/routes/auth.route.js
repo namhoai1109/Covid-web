@@ -24,6 +24,7 @@ router.post('/login', async(req, res) => {
     try {
 
         const account = await Account.findOne({ username: req.body.username });
+        console.log(account)
         if (!account) {
             return res.status(401).send({ message: "Invalid username or password"});
 
@@ -35,7 +36,7 @@ router.post('/login', async(req, res) => {
 
         // Create a token
         const token = jwt.sign({ _id: account._id }, process.env.TOKEN_SECRET);
-        res.send({ token: token});
+        res.send({ _id: account._id,role: account.role, token: token });
     } catch (err) {
 
         res.status(400).send(err);

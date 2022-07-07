@@ -4,48 +4,76 @@ import { FormInput } from '~/CommonComponent/Popper';
 import styles from './Login.module.scss';
 import { postAPI } from '~/APIservices/postAPI';
 import { useNavigate } from 'react-router-dom';
+import { LockIcon, UserIcon } from '~/CommonComponent/icons';
 
 const cx = classNames.bind(styles);
 
 const fetchAPI = async (username, password) => {
-  try {
-    const data = await postAPI({
-    username: username,
-    password: password
-    });
+    try {
+      const Token = await postAPI({
+      username: username,
+      password: password
+      });
 
-    localStorage.setItem('Token', data.token);
-    localStorage.setItem('Role', data.role);
-    localStorage.setItem('ID', data._id);
-    return data.role;
-  } catch (error) {
-      console.error(error);
+      if (typeof Token === 'string') {
+        throw Token;
+      } else {
+          localStorage.setItem('Token', JSON.stringify(Token));
+          return Token;
+      }     
+    } catch (error) {
+        return error;
+    }
   }
-}
 
 function Login() { 
-    let navigate = useNavigate() 
+    let navigate = useNavigate();
     let [ ID, setID ] = useState('');
     let [ password, setPassword ] = useState('');
+    let [ error, setError ] = useState('');
 
     useEffect(() => {
-      let role = localStorage.getItem('Role')
-        if (role === 'admin' || role === 'doctor' || role === 'patient') {
-            navigate('/' + role, { replace: true });
-        }
+        let Token = JSON.parse(localStorage.getItem('Token'))
+        if (Token !== null)
+            navigate('/' + Token.role, { replace: true });
     }, [])
 
     let handleClick = async () => {
-        const role = await fetchAPI(ID, password);
-        navigate('/' + role, { replace: true });
-        console.log(role);
+        try {
+            const Token = await fetchAPI(ID, password);
+            if (typeof Token === 'string') {
+                throw Token;
+            } else {
+                navigate('/' + Token.role, { replace: true });
+            }
+        } catch (error) {
+            setError(error);
+        }
     }
 
-    return <div className={cx('wrapper')}>
-        <div className={cx('form')}>
-            <label>enter ID: <FormInput inputVal={ID} onChange={e => setID(e.target.value)} /> </label>
-            <label>enter password: <FormInput inputVal={password} onChange={e => setPassword(e.target.value)} type="password" /> </label>
-            <button onClick={handleClick}>Sign In</button>
+    return <div className={cx('wrapper', 'bg', 'flex-center')}>
+        <div className={cx('ball1', 'bg-ball')}></div>
+        <div className={cx('oval1')}></div>
+        <div className={cx('wrap-form')}>
+
+            <div className={cx('white-ball-cover')}>
+                <div className={cx('white-ball')}></div>
+            </div>
+            <div className={cx('small-ball')}></div>
+
+            <div className={cx('ball', 'bg-ball')}></div>
+            <div className={cx('oval')}></div>
+
+            <div className={cx('form', 'flex-center', 'glassmorphism')}>
+                <label> 
+                    <span className={cx('flex-center')}> <UserIcon /></span> 
+                    <FormInput onFocus={() => {setError('')}} inputVal={ID} onChange={e => setID(e.target.value)} placeholder="username"/></label>
+                <label>
+                    <span className={cx('flex-center')}> <LockIcon /> </span>
+                     <FormInput onFocus={() => {setError('')}} inputVal={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="password"/> </label>
+                <span className={cx('error-message')}>{error}</span>
+                <button className={cx('btn')} onClick={handleClick}>Sign In</button>
+            </div>
         </div>
     </div>;
 }

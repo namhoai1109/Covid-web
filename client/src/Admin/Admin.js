@@ -8,12 +8,14 @@ import { useEffect } from 'react';
 
 function Admin() {
     let navigate = useNavigate();
-
+    
     useEffect(() => {
-        if (localStorage.getItem('Role') !== 'admin') {
+        let Token = JSON.parse(localStorage.getItem('Token'))
+        if (Token === null || Token.role !== 'admin') {
             navigate(-1, { replace: true });
         }
     }, [])
+
 
     return (
         <Layout Header={Header} Sidebar={SideBar}>

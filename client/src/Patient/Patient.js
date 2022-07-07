@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Layout from '~/Layout';
 import Header from './Header';
 import SideBar from './SideBar';
@@ -9,7 +9,8 @@ function Patient() {
     let navigate = useNavigate();
 
     useEffect(() => {
-        if (localStorage.getItem('Role') !== 'patient') {
+        let Token = JSON.parse(localStorage.getItem('Token'))
+        if (Token === null || Token.role !== 'patient') {
             navigate(-1, { replace: true });
         }
     }, [])

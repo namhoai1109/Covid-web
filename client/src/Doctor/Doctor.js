@@ -8,7 +8,8 @@ function Doctor() {
     let navigate = useNavigate();
 
     useEffect(() => {
-        if (localStorage.getItem('Role') !== 'doctor') {
+        let Token = JSON.parse(localStorage.getItem('Token'))
+        if (Token === null || Token.role !== 'doctor') {
             navigate(-1, { replace: true });
         }
     }, [])

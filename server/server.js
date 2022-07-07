@@ -19,14 +19,14 @@ app.use(cors());
 app.use(express.json());
 
 // Mount routers
-app.use('/auth', authRouter);
+app.use('/api/auth', authRouter);
 
-// CORS
-app.all('*', (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
-})
+// // CORS
+// app.all('*', (req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//     next();
+// })
 
 // Routes
 app.get('/', (req, res) => {

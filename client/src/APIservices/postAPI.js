@@ -6,5 +6,5 @@ export const postAPI = async (data) => {
         return res;
     } catch (error) {
         return error;
-    }
+    } 
 }

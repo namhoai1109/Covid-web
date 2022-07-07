@@ -4,7 +4,7 @@ import styles from './Wrapper.module.scss';
 const cx = classNames.bind(styles);
 
 function Wrapper({ children }) {
-    return <div className={cx('wrapper')}>{children}</div>;
+    return <div className={cx('wrapper', 'glassmorphism')}>{children}</div>;
 }
 
 Wrapper.propTypes = {

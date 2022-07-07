@@ -5,10 +5,20 @@ import listItem from './listItem';
 
 import classNames from 'classnames/bind';
 import styles from './SideBar.module.scss';
+import { useNavigate } from 'react-router-dom';
+import { resetDataCore } from '~/redux/dataCoreSlice';
 
 const cx = classNames.bind(styles);
 
 function SideBar() {
+    let navigate = useNavigate()
+
+    let handleSignOut = () => {
+        localStorage.removeItem('Token');
+        console.log('sign out');
+        navigate('/', { replace: true });
+    }
+
     return (
         <SidebarLayout>
             <div className={cx('wrapper')}>
@@ -20,7 +30,7 @@ function SideBar() {
                         <SidebarItem large key={index} title={item.title} icon={item.icon} path={item.path} />
                     ))}
                 </div>
-                <SidebarItem title={'Sign out'} icon={<SignOutIcon width="3rem" height="3rem" />} path="/" />
+                <SidebarItem title={'Sign out'} icon={<SignOutIcon width="3rem" height="3rem" />} onClick={handleSignOut}/>
             </div>
         </SidebarLayout>
     );

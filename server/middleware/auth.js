@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const User = require("../model/User");
 const Account = require("../model/Account");
 
 const isLoggedIn = function (req, res, next) {

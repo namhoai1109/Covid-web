@@ -60,6 +60,7 @@ function MenuFormInput({ menu, children }) {
                         {menu.map((title, index) => {
                             return (
                                 <MenuItem
+                                    nohover
                                     key={index}
                                     data={
                                         <FormInput

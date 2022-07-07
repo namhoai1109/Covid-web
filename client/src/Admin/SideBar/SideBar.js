@@ -5,15 +5,15 @@ import configs from '~/config';
 import classNames from 'classnames/bind';
 import styles from './SideBar.module.scss';
 import { useNavigate } from 'react-router-dom';
+import { resetDataCore } from '~/redux/dataCoreSlice';
 
 const cx = classNames.bind(styles);
 
 function SideBar() {
     let navigate = useNavigate()
+
     let handleSignOut = () => {
         localStorage.removeItem('Token');
-        localStorage.removeItem('Role');
-        localStorage.removeItem('ID');
         console.log('sign out');
         navigate('/', { replace: true });
     }

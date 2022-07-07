@@ -5,7 +5,6 @@ import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu } from '~/CommonComponent/Popper';
-import { useLocation } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -27,7 +26,6 @@ let getFilterSortMenu = (menu) => {
 };
 
 function Header() {
-    // let location = useLocation();
 
     return (
         <HeaderLayout>

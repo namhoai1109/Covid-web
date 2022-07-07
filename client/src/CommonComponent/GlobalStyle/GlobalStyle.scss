@@ -1,11 +1,13 @@
 @import 'normalize.css';
 
 :root {
-    --primary: #fe2c55;
+    --primary: #4C8E9D;
+    --green1: #41707A;
     --font-familly: 'ProximaNova', sans-serif;
     --max-width: 1200px;
     --text-color: #303030;
     --width-sidebar: 80px;
+    --border-radius: 20px;
 }
 
 html {
@@ -65,10 +67,33 @@ a {
 .glassmorphism {
     background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 10px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.bg {
+    background: radial-gradient(82.32% 82.32% at 50% 17.68%, #B4E4D3 0%, rgba(235, 233, 198, 0.6) 100%);
+}
+
+.bg-ball {
+    background: radial-gradient(27.83% 27.45% at 31.64% 40.85%, 
+                rgba(103, 187, 199, 0.232) 0%, 
+                rgba(38, 136, 191, 0.51746) 100%); 
+    opacity: 0.8;
+    filter: blur(1px);
+}
+
+.row {
+    display: flex;
+    width: 100%;
+    padding: 0 -4px;
+}
+
+.col2-4 {
+    width: 20%;
+    margin: 0px 4px;
 }
 
 //font
