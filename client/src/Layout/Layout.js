@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import React from 'react';
 import styles from './Layout.module.scss';
 
 const cx = classNames.bind(styles);
@@ -15,7 +16,7 @@ function Layout({ Header, Sidebar, children }) {
                     <div className={cx('ball2', 'bg-ball')}></div>
                     <div className={cx('oval')}></div>
                     <div className={cx('oval2')}></div>
-                    {children}
+                        {children}
                 </div>
             </div>
         </div>

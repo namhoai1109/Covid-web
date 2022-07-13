@@ -18,6 +18,17 @@ let initDataInput = (num) => {
     return data;
 };
 
+function makePass(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
+
 function MenuFormInput({ menu, onClick = () => {}, children }) {
     let initInputVal = initDataInput(menu.length);
 
@@ -45,6 +56,14 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
         });
     };
 
+    let handleRandPass = (index) => {
+        let randPass = makePass(6);
+        setInputVals({
+            ...inputVals,
+            [`input${index}`]: randPass,
+        });
+    }
+
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>
             <Wrapper>
@@ -65,6 +84,8 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
                                     key={index}
                                     data={
                                         <FormInput
+                                            passGen={title === "Password:"}
+                                            onClick={e => handleRandPass(index)}
                                             inputVal={inputVals[`input${index}`]}
                                             onChange={(e) => handleChange(e, index)}
                                         />

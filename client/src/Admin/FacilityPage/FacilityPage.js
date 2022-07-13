@@ -15,7 +15,7 @@ function FacilityPage() {
     let dispatch = useDispatch();
 
     return <div className={cx('wrapper')}>
-    <div className={cx('row', 'list-item')}>
+    <div className={cx('row', 'list-item', 'z1')}>
         <div className={cx('col2-4', 'item')}>Name</div>
         <div className={cx('col2-4', 'item')}>Max No. Patient</div>
         <div className={cx('col2-4', 'item')}>No. Patient</div>

@@ -12,7 +12,7 @@ function ManagerPage() {
     let dispatch = useDispatch();
 
     return <div className={cx('wrapper')}>
-        <div className={cx('row', 'list-item')}>
+        <div className={cx('row', 'list-item', 'z1')}>
             <div className={cx('col2-4', 'item')}>ID</div>
             <div className={cx('col2-4', 'item')}>Name</div>
             <div className={cx('col2-4', 'item')}>Year of Birth</div>

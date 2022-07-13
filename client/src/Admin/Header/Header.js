@@ -31,7 +31,7 @@ let getFilterSortMenu = (menu) => {
     return [filterItem, sortItem];
 };
 
-const formInputDoctor = ['ID: ', 'Name: ', 'Year of Birth: '];
+const formInputDoctor = ['ID: ', 'Name: ', 'Year of Birth: ', 'Password:'];
 const formInputFacility = ['Name: ', 'Max No. Patient: '];
 
 function Header() {
@@ -47,9 +47,10 @@ function Header() {
 
     let handleClick = (inputVals) => {
         if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
+            delete inputVals.input3; //tmp
             dispatch(addManager(inputVals));
         } else {
-            inputVals.noPatient = 0;
+            inputVals.noPatient = 0; //tmp
             dispatch(addFacility(inputVals));
         }
     }
