@@ -18,7 +18,18 @@ let initDataInput = (num) => {
     return data;
 };
 
-function MenuFormInput({ menu, children }) {
+function makePass(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
+
+function MenuFormInput({ menu, onClick = () => {}, children }) {
     let initInputVal = initDataInput(menu.length);
 
     let [inputVals, setInputVals] = useState(initInputVal);
@@ -28,7 +39,8 @@ function MenuFormInput({ menu, children }) {
     }, [menu]);
 
     let handleOnClick = () => {
-        console.log(inputVals); // call api
+        //call api
+        onClick(inputVals);
         setInputVals(initInputVal);
     };
 
@@ -43,6 +55,14 @@ function MenuFormInput({ menu, children }) {
             [`input${index}`]: inputval,
         });
     };
+
+    let handleRandPass = (index) => {
+        let randPass = makePass(6);
+        setInputVals({
+            ...inputVals,
+            [`input${index}`]: randPass,
+        });
+    }
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>
@@ -64,6 +84,8 @@ function MenuFormInput({ menu, children }) {
                                     key={index}
                                     data={
                                         <FormInput
+                                            passGen={title === "Password:"}
+                                            onClick={e => handleRandPass(index)}
                                             inputVal={inputVals[`input${index}`]}
                                             onChange={(e) => handleChange(e, index)}
                                         />

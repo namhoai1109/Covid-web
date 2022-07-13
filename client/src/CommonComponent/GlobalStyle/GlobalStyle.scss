@@ -91,6 +91,10 @@ a {
     padding: 0 -4px;
 }
 
+.z1 {
+    z-index: 1;
+}
+
 .col2-4 {
     width: 20%;
     margin: 0px 4px;
@@ -118,3 +122,19 @@ a {
     src: url('/asset/fonts/sofiapro-bold.woff');
     font-weight: 700;
 }
+
+//scrollbar
+html *::-webkit-scrollbar {
+    border-radius: 0;
+    width: 8px;
+  }
+  
+  html *::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+  
+  html *::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+  }
