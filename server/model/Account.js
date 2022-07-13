@@ -5,15 +5,16 @@ const accountSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
+        min: 9, //CMND
+        max: 11, //CCCD
         validate: {
-            validator: v => /^(\d{9}|\d{11})$/.test(v),  // only digits
+            validator: v => /^\d+$/.test(v),  // only digits
             message: props => `${props.value} is not a valid id number`
         },
         default: '000000000'
     },
     password: {
         type: String,
-        min: 6,
         required: true,
     },
     role: {

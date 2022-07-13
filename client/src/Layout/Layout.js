@@ -7,9 +7,9 @@ function Layout({ Header, Sidebar, children }) {
     return (
         <div className={cx('wrapper')}>
             <Header />
-            <div className={cx('container')}>
+            <div className={cx('container', 'bg')}>
                 <Sidebar />
-                <div className={cx('content','flex-center', 'bg')}>
+                <div className={cx('content','flex-center')}>
                     <div className={cx('ball', 'bg-ball')}></div>
                     <div className={cx('ball1', 'bg-ball')}></div>
                     <div className={cx('ball2', 'bg-ball')}></div>

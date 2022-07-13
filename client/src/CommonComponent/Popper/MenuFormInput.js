@@ -18,7 +18,7 @@ let initDataInput = (num) => {
     return data;
 };
 
-function MenuFormInput({ menu, children }) {
+function MenuFormInput({ menu, onClick = () => {}, children }) {
     let initInputVal = initDataInput(menu.length);
 
     let [inputVals, setInputVals] = useState(initInputVal);
@@ -28,7 +28,8 @@ function MenuFormInput({ menu, children }) {
     }, [menu]);
 
     let handleOnClick = () => {
-        console.log(inputVals); // call api
+        //call api
+        onClick(inputVals);
         setInputVals(initInputVal);
     };
 
