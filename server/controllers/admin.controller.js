@@ -10,7 +10,7 @@ exports.registerAccount = async (req, res) => {
 		username: req.body.username,
 		password: hashedPassword,
 		role: 'doctor',
-		status: req.body.status
+		status: 'active',
 	})
 
   const doctor = new Doctor({

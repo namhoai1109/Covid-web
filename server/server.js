@@ -30,11 +30,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/admin", authorizeUser("admin"), adminRouter);
 app.use("/api/doctor", authorizeUser("doctor"), doctorRouter);
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
 // Initialize admin account on first setup
 const initAdmin = async () => {
   try {
