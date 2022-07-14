@@ -6,7 +6,6 @@ import listItem from './listItem';
 import classNames from 'classnames/bind';
 import styles from './SideBar.module.scss';
 import { useNavigate } from 'react-router-dom';
-import { resetDataCore } from '~/redux/dataCoreSlice';
 
 const cx = classNames.bind(styles);
 

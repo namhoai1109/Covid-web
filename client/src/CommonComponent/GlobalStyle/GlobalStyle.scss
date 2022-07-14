@@ -8,6 +8,7 @@
     --text-color: #303030;
     --width-sidebar: 80px;
     --border-radius: 20px;
+    --link-color: #c44650;
 }
 
 html {
@@ -61,7 +62,6 @@ input,
 
 a {
     text-decoration: none;
-    color: inherit;
 }
 
 .glassmorphism {
@@ -98,6 +98,21 @@ a {
 .col2-4 {
     width: 20%;
     margin: 0px 4px;
+}
+
+.col4 {
+    width: 33.33333333333%;
+    margin: 0 4px;
+}
+
+.col3 {
+    width: 25%;
+    margin: 0 4px;
+}
+
+.col12 {
+    width: 100%;
+    margin: 0 4px;
 }
 
 //font
@@ -138,3 +153,16 @@ html *::-webkit-scrollbar {
     border-radius: 0;
     background-color: rgba(0, 0, 0, 0);
   }
+
+//input type number
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

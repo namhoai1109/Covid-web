@@ -11,6 +11,7 @@ const cx = classNames.bind(styles);
 
 function SideBar() {
     let navigate = useNavigate()
+    let id = JSON.parse(localStorage.getItem('Token')).id
 
     let handleSignOut = () => {
         localStorage.removeItem('Token');
@@ -23,7 +24,7 @@ function SideBar() {
             <div className={cx('wrapper')}>
                 <div>
                     <div className={cx('avatar')}>
-                        <AvatarItem id="20126045" icon={<Avatar width="4.5rem" height="4rem" />} />
+                        <AvatarItem id={id} icon={<Avatar width="4.5rem" height="4rem" />} />
                     </div>
                     <SidebarItem
                         title={'Manager'}

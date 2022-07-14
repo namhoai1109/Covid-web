@@ -18,7 +18,6 @@ function Admin() {
         }
     }, [])
 
-
     return (
         <Provider store={store}>
             <Layout Header={Header} Sidebar={SideBar}>

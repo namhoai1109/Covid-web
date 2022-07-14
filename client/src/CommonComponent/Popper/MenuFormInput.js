@@ -9,10 +9,10 @@ import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-let initDataInput = (num) => {
+let initDataInput = (menu) => {
     let data = {};
-    for (let i = 0; i < num; i++) {
-        data[`input${i}`] = '';
+    for (let i = 0; i < menu.length; i++) {
+        data[menu[i]] = '';
     }
 
     return data;
@@ -30,8 +30,8 @@ function makePass(length) {
 }
 
 function MenuFormInput({ menu, onClick = () => {}, children }) {
-    let initInputVal = initDataInput(menu.length);
-
+    let initInputVal = initDataInput(menu);
+    console.log(initInputVal);
     let [inputVals, setInputVals] = useState(initInputVal);
 
     useEffect(() => {
@@ -39,7 +39,6 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
     }, [menu]);
 
     let handleOnClick = () => {
-        //call api
         onClick(inputVals);
         setInputVals(initInputVal);
     };
@@ -48,19 +47,19 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
         setInputVals(initInputVal);
     };
 
-    let handleChange = (e, index) => {
+    let handleChange = (e, title) => {
         let inputval = e.target.value;
         setInputVals({
             ...inputVals,
-            [`input${index}`]: inputval,
+            [title]: inputval,
         });
     };
 
-    let handleRandPass = (index) => {
+    let handleRandPass = (title) => {
         let randPass = makePass(6);
         setInputVals({
             ...inputVals,
-            [`input${index}`]: randPass,
+            [title]: randPass,
         });
     }
 
@@ -84,10 +83,10 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
                                     key={index}
                                     data={
                                         <FormInput
-                                            passGen={title === "Password:"}
-                                            onClick={e => handleRandPass(index)}
-                                            inputVal={inputVals[`input${index}`]}
-                                            onChange={(e) => handleChange(e, index)}
+                                            passGen={title === "password"}
+                                            onClick={e => handleRandPass(title)}
+                                            inputVal={inputVals[title]}
+                                            onChange={(e) => handleChange(e, title)}
                                         />
                                     }
                                 />

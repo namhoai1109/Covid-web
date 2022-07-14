@@ -14,7 +14,7 @@ import { addFacility } from '../redux/listFacilitySlice';
 
 const cx = classNames.bind(styles);
 
-const menuManager = ['ID', 'Name', 'Year of Birth'];
+const menuManager = ['Username'];
 const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
 
 let getFilterSortMenu = (menu) => {
@@ -31,8 +31,8 @@ let getFilterSortMenu = (menu) => {
     return [filterItem, sortItem];
 };
 
-const formInputDoctor = ['ID: ', 'Name: ', 'Year of Birth: ', 'Password:'];
-const formInputFacility = ['Name: ', 'Max No. Patient: '];
+const formInputDoctor = ['username', 'password'];
+const formInputFacility = ['name', 'max no. patient'];
 
 function Header() {
     let location = useLocation();
@@ -47,7 +47,7 @@ function Header() {
 
     let handleClick = (inputVals) => {
         if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
-            delete inputVals.input3; //tmp
+            inputVals.status = 'active';
             dispatch(addManager(inputVals));
         } else {
             inputVals.noPatient = 0; //tmp

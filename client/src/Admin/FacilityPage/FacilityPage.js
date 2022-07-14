@@ -6,8 +6,6 @@ import ListItem from "~/CommonComponent/ListItem";
 import { removeFacility } from "../redux/listFacilitySlice";
 
 const cx = classNames.bind(styles);
-const test = ['20126045', 'Vu Hoai Nam', '2000'];
-
 
 function FacilityPage() {
     let deleteState = useSelector(state => state.delete)
