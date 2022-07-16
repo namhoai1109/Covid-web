@@ -1,0 +1,188 @@
+API Management List
+
+I.Auth routes
+number: 1
+description: This route is for login
+route: http://localhost:3000/api/auth/login
+method: POST
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+  },
+  password: {
+    type: String
+    minlength: 6,
+  }
+}
+returns: {
+  token: String,
+  username: Number (username) (cmnd or cccd),
+  role: String
+}
+
+II.Admin routes
+number: 1
+description: Register new doctor
+route: http://localhost:3000/api/admin/register
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+    required: true
+  },
+  password: {
+    type: String
+    minlength: 6,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: false
+  }
+}
+returns: {
+  message: String
+}
+
+number: 2
+description: Get list of doctors
+route: http://localhost:3000/api/admin/doctors
+method: GET
+returns: [
+  {
+    _id: String,
+    account: {
+      _id: String,
+      username: String,
+      role: String,
+      status: String,
+    },
+    id_number: String,
+    name: String,
+    patients: [
+      String
+    ]
+  }
+]
+
+III. Doctor routes
+number: 1
+description: Get all patients information of a specific doctor
+route: http://localhost:3000/api/doctor/patients
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    account: {
+      _id: String,
+      username: String,
+      role: String,
+      status: String,
+    },
+    id_number: String,
+    name: String,
+    DOB: String,
+    address: String,
+    status: String,
+    close_contact_list: []
+    current_facility: String,
+  }
+]
+
+number: 2
+description: Register new patient to a specific doctor
+route: http://localhost:3000/api/doctor/patients
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+    required: true
+  },
+  password: {
+    type: String
+    minlength: 6,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  DOB: {
+    type: Date,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: enum('F1', 'F2', 'F3')
+    required: true
+  }
+}
+returns: {
+  message: String
+}
+
+number: 3
+description: Update patient information of a specific doctor
+route: http://localhost:3000/api/doctor/patients/update/id=:id
+params: CMND or CCCD
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  status: {
+    type: enum('F1', 'F2', 'F3')
+    required: true
+  },
+  current_facility: {
+    type: String (ID),
+    required: true
+  }
+  close_contact_list: [
+    {
+      type: String (ID),
+      required: true
+    }
+  ]
+  ]
+}
+
+number: 4
+description: Delete a patient of a specific doctor
+route: http://localhost:3000/api/doctor/patients/delete/id=:id
+params: CMND or CCCD
+method: DELETE
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}
+
+
+

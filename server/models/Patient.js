@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const patientSchema = new mongoose.Schema({
-  account_id: {
+  account: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Account",
     required: true,
@@ -12,26 +12,35 @@ const patientSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (v) => /^(\d{9}|\d{11})$/.test(v), //only digits
-      message: (props) => `${props.value} is not a valid id number`,
+      message: (props) => ({
+        message: `${props.value} is not a valid id number`,
+      }),
     },
   },
   name: {
     type: String,
     required: true,
-    maxlength: 100,
+    validate: {
+      validator: (v) => /^[a-zA-Z ]+$/.test(v),
+      message: (props) => ({ message: `${props.value} is not a valid name` }),
+    },
+    min: 1,
+    max: 50,
   },
   // Format: YYYY-MM-DD
   DOB: {
     type: Date,
     required: true,
     validate: {
-      validator: (v) => v.getFullYear() > 1900,
-      message: (props) => `${props.value} is not a valid date`,
-    }
+      validator: (v) =>
+        v.getFullYear() > 1900 && v.getFullYear() <= new Date().getFullYear(),
+      message: (props) => ({ message: `${props.value} is not a valid date` }),
+    },
   },
   address: {
     type: String,
     required: true,
+    min: 1,
     maxlength: 100,
   },
   status: {

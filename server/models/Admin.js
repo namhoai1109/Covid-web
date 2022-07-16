@@ -1,18 +1,10 @@
 const mongoose = require("mongoose");
 
 const adminSchema = new mongoose.Schema({
-  account_id: {
+  account: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Account",
-    required: true
-  },
-  doctors: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "Doctor",
-  },
-  facilities: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "Facility",
+    required: true,
   },
 });
 
