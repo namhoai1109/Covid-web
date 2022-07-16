@@ -4,7 +4,9 @@ import Patient from '~/Patient';
 import ManagerPage from '~/Admin/ManagerPage';
 import FacilityPage from '~/Admin/FacilityPage';
 import Login from '~/Login';
-
+import CovidPatient from '~/Doctor/CovidPatient';
+import { InputForm, ListPatient } from '~/Doctor/CovidPatient';
+import EssentialItem from '~/Doctor/EssentialItem';
 import configs from '~/config';
 
 export const mainRoutes = [
@@ -34,5 +36,24 @@ export const adminRoutes = [
     {
         path: configs.adminRoutes.facilityManagement,
         element: FacilityPage,
+    },
+];
+
+export const doctorRoutes = [
+    {
+        path: configs.doctorRoutes.covidPatient,
+        element: CovidPatient,
+    },
+    {
+        path: configs.doctorRoutes.essentialItem,
+        element: EssentialItem,
+    },
+    {
+        path: configs.doctorRoutes.newPatient,
+        element: InputForm,
+    },
+    {
+        path: configs.doctorRoutes.listPatient,
+        element: ListPatient,
     },
 ];

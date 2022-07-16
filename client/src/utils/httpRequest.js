@@ -16,3 +16,16 @@ export const post = async (url, data) => {
         return error.response.data.message;
     }
 }
+
+export const get = async (url, token) => {
+    try {
+        let res = await request.get(url, {
+            headers: { 
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+}

@@ -6,8 +6,6 @@ import ListItem from "~/CommonComponent/ListItem";
 import { removeFacility } from "../redux/listFacilitySlice";
 
 const cx = classNames.bind(styles);
-const test = ['20126045', 'Vu Hoai Nam', '2000'];
-
 
 function FacilityPage() {
     let deleteState = useSelector(state => state.delete)
@@ -15,7 +13,7 @@ function FacilityPage() {
     let dispatch = useDispatch();
 
     return <div className={cx('wrapper')}>
-    <div className={cx('row', 'list-item')}>
+    <div className={cx('row', 'list-item', 'z1')}>
         <div className={cx('col2-4', 'item')}>Name</div>
         <div className={cx('col2-4', 'item')}>Max No. Patient</div>
         <div className={cx('col2-4', 'item')}>No. Patient</div>

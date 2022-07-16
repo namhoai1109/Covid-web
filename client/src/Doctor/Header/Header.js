@@ -5,11 +5,12 @@ import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu } from '~/CommonComponent/Popper';
+import { patientFields } from '../staticVar';
+import configs from '~/config';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
-
-const menuManager = ['ID', 'Name', 'Year of Birth'];
-const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
 
 let getFilterSortMenu = (menu) => {
     let filterItem = menu.map((title) => ({
@@ -25,21 +26,74 @@ let getFilterSortMenu = (menu) => {
     return [filterItem, sortItem];
 };
 
+let checkRoute = (location) => {
+    switch (location) {
+        case configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient:
+            return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:
+            return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage:
+            return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.paymentManagement:
+                return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.statistics:
+                    return true;
+        default:
+            return false
+    }
+}
+
 function Header() {
+    let location = useLocation()
+    let navigate = useNavigate()
+    let [showHeader, setShowHeader] = useState();
+    useEffect(() => {
+        if (checkRoute(location.pathname)) {
+            setShowHeader(true);
+        } else {
+            setShowHeader(false);
+        }
+    }, [location.pathname])
+
+    let getDataField = (location) => {
+        let addLink = ''
+        switch (location) {
+            case configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient:
+                let [filterItem, sortItem] = getFilterSortMenu(patientFields);
+                addLink = configs.mainRoutes.doctor + configs.doctorRoutes.newPatient;
+                return {filterItem, sortItem, addLink};
+            case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:
+                let [filterItemEssential, sortItemEssential] = getFilterSortMenu(patientFields);
+                addLink = ''
+                return {filterItemEssential, sortItemEssential, addLink};
+            default:
+                return ({})
+        }
+    }
+
+    let handleBack = () => {
+        navigate(-1, {replace: true})
+    }
+
+    let {filterItem, sortItem, addLink} = getDataField(location.pathname);
+    
 
     return (
         <HeaderLayout>
-            <TaskBtn title="Add" icon={<PlusIcon />} />
-            <div className={cx('list_btn')}>
-                <TaskBtn title="Delete" />
-                <Menu menu={[]}>
-                    <TaskBtn title="Filter" />
-                </Menu>
-                <Menu menu={[]}>
-                    <TaskBtn title="Sort" />
-                </Menu>
-                <SearchInput stateDynamique={true} icon={<SearchIcon />} />
-            </div>
+            {!showHeader && <TaskBtn title="Back" to={addLink || ''} onClick={handleBack} />}
+            {showHeader && <>
+                <TaskBtn title="Add" to={addLink || ''} onClick={() => setShowHeader(false)} icon={<PlusIcon />} />
+                <div className={cx('list_btn')}>
+                    <TaskBtn title="Delete" />
+                    <Menu menu={filterItem || []}>
+                        <TaskBtn title="Filter" />
+                    </Menu>
+                    <Menu menu={sortItem || []}>
+                        <TaskBtn title="Sort" />
+                    </Menu>
+                    <SearchInput stateDynamique={true} icon={<SearchIcon />} />
+                </div>
+            </>}
         </HeaderLayout>
     );
 }
