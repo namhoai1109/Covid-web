@@ -5,10 +5,11 @@ import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu } from '~/CommonComponent/Popper';
-import { patientFields } from '../staticVar';
+import { patientFields, necessityFields } from '../staticVar';
 import configs from '~/config';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { config } from '@fortawesome/fontawesome-svg-core';
 
 const cx = classNames.bind(styles);
 
@@ -57,15 +58,17 @@ function Header() {
 
     let getDataField = (location) => {
         let addLink = ''
+        let filterItem, sortItem
         switch (location) {
             case configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient:
-                let [filterItem, sortItem] = getFilterSortMenu(patientFields);
+                [filterItem, sortItem] = getFilterSortMenu(patientFields);
                 addLink = configs.mainRoutes.doctor + configs.doctorRoutes.newPatient;
                 return {filterItem, sortItem, addLink};
+
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:
-                let [filterItemEssential, sortItemEssential] = getFilterSortMenu(patientFields);
-                addLink = ''
-                return {filterItemEssential, sortItemEssential, addLink};
+                [filterItem, sortItem] = getFilterSortMenu(necessityFields);
+                addLink = configs.mainRoutes.doctor + configs.doctorRoutes.newNecessity;
+                return {filterItem, sortItem, addLink};
             default:
                 return ({})
         }

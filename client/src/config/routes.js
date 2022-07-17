@@ -20,6 +20,7 @@ export const doctorRoutes = {
     paymentManagement: '/paymentmanagement',
     newPatient: '/newpatient',
     listPatient: '/listpatient',
+    newNecessity: '/newnecessity',
 };
 
 export const patientRoutes = {
