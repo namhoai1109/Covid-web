@@ -8,15 +8,17 @@
         width: var(--width-sidebar);
         display: flex;
         justify-content: center;
+        margin: 0 8px;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all ease-in-out 0.3s;
 
         .icon {
             width: 58px;
             height: 54px;
-            border-radius: 10px;
-            transition: all ease-in-out 0.3s;
         }
 
-        &:hover .icon {
+        &:hover {
             background-color: var(--green1);
         }
 
@@ -48,9 +50,20 @@
     }
 
     //avatar item
-    .avatar {
-        padding: 10px;
-        border-radius: 50%;
-        background-color: rgb(255, 255, 255);
+    .wrap-avatar {
+        width: var(--width-sidebar);
+        display: flex;
+        justify-content: center;
+        margin: 0 8px;
+        .avatar {
+            padding: 10px;
+            border-radius: 50%;
+            background-color: rgb(255, 255, 255);
+        }
+
+        &:hover ~ .sub-title {
+            transform: translate(5%, -50%);
+            opacity: 1;
+        }
     }
 }
