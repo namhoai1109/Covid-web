@@ -7,10 +7,14 @@ import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu, MenuFormInput } from '~/CommonComponent/Popper';
 import { useLocation } from 'react-router-dom';
 import configs from '~/config';
+import { useDispatch, useSelector } from 'react-redux';
+import { setDelete } from '../redux/deleteSlice';
+import { addManager } from '../redux/listManagerSlice';
+import { addFacility } from '../redux/listFacilitySlice';
 
 const cx = classNames.bind(styles);
 
-const menuManager = ['ID', 'Name', 'Year of Birth'];
+const menuManager = ['Username'];
 const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
 
 let getFilterSortMenu = (menu) => {
@@ -27,11 +31,13 @@ let getFilterSortMenu = (menu) => {
     return [filterItem, sortItem];
 };
 
-const formInputDoctor = ['ID: ', 'Name: ', 'Year of Birth: '];
-const formInputFacility = ['Name: ', 'Max No. Patient: '];
+const formInputDoctor = ['username', 'password'];
+const formInputFacility = ['name', 'max no. patient'];
 
 function Header() {
     let location = useLocation();
+    let dispatch = useDispatch();
+    let deleteState = useSelector(state => state.delete.isShow)
 
     let [filterItem, sortItem] = getFilterSortMenu(
         location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
@@ -39,9 +45,20 @@ function Header() {
             : menuFacility,
     );
 
+    let handleClick = (inputVals) => {
+        if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
+            inputVals.status = 'active';
+            dispatch(addManager(inputVals));
+        } else {
+            inputVals.noPatient = 0; //tmp
+            dispatch(addFacility(inputVals));
+        }
+    }
+
     return (
         <HeaderLayout>
             <MenuFormInput
+                onClick={handleClick}
                 menu={
                     location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
                         ? formInputDoctor
@@ -51,7 +68,7 @@ function Header() {
                 <TaskBtn title="Add" icon={<PlusIcon />} />
             </MenuFormInput>
             <div className={cx('list_btn')}>
-                <TaskBtn title="Delete" />
+                <TaskBtn title="Delete" onClick={() => {dispatch(setDelete(!deleteState))}} />
                 <Menu menu={filterItem}>
                     <TaskBtn title="Filter" />
                 </Menu>

@@ -6,4 +6,5 @@ router.post("/register", controller.registerAccount);
 router.get("/doctors", controller.getAll);
 // router.get("/admin", controller.getAdminInfo);
 
+
 module.exports = router;

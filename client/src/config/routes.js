@@ -18,6 +18,8 @@ export const doctorRoutes = {
     essentialPackage: '/essentialpackage',
     statistics: '/statistics',
     paymentManagement: '/paymentmanagement',
+    newPatient: '/newpatient',
+    listPatient: '/listpatient',
 };
 
 export const patientRoutes = {
