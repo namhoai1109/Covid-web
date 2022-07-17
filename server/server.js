@@ -23,7 +23,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
-app.use('/images', express.static('images'));
+app.use("/images", express.static("images"));
 
 // Mount routers
 app.use("/api/auth", authRouter);
@@ -36,15 +36,19 @@ const initAdmin = async () => {
     const account = await Account.find();
     if (account.length === 0) {
       try {
-        // Create admin count
+        // Create admin acount
         const password = "admin";
         const hashedPassword = await bcrypt.hash(password, 10);
-        const adminAccount = new Account({ password: hashedPassword });
+        const adminAccount = new Account({
+          username: "000000000",
+          password: hashedPassword,
+          role: "admin",
+        });
         await adminAccount.save();
 
         // Create admin
         const admin = new Admin({
-          account_id: adminAccount._id,
+          account: adminAccount._id,
         });
         await admin.save();
       } catch (err) {
