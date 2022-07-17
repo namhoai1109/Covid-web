@@ -2,9 +2,8 @@ const router = require("express").Router();
 const controller = require("../controllers/doctor.controller");
 
 // Patients related
-router.put("/patients/update/id=:id", controller.updatePatient);
-router.delete("/patients/delete/id=:id", controller.deletePatient);
-// router.put("/patients/account/id=:id", controller.editAccount);
+router.put("/patients/id=:id", controller.updatePatient);
+router.delete("/patients/id=:id", controller.deletePatient);
 router.post("/patients", controller.registerAccount);
 router.get("/patients", controller.getAllPatients);
 

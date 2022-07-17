@@ -39,9 +39,7 @@ exports.registerAccount = async (req, res) => {
     await account.save();
     await patient.save();
 
-    res
-      .status(200)
-      .send({ message: "Patient account created and save successfully" });
+    res.status(200).send({ message: "Patient account created and save successfully" });
   } catch (err) {
     res.status(400).send(err.message);
   }
@@ -77,9 +75,7 @@ exports.getAllPatients = async (req, res) => {
 exports.updatePatient = async (req, res) => {
   // Get the patients list of current doctor
   try {
-    const currentDoctor = await Doctor.findOne({
-      username: req.idNumber,
-    }).populate("patients", "id_number");
+    const currentDoctor = await Doctor.findOne({ username: req.idNumber, }).populate("patients", "id_number");
     if (!currentDoctor) {
       return res.status(400).send({ message: "Requesting username not found" });
     }
@@ -90,9 +86,7 @@ exports.updatePatient = async (req, res) => {
       return res.status(400).send({ message: "Patient not found" });
     }
 
-    const is_exist = currentDoctor.patients.find(
-      (p) => p.id_number === patient.id_number
-    );
+    const is_exist = currentDoctor.patients.find(p => p.id_number === patient.id_number);
     if (!is_exist) {
       return res
         .status(400)
@@ -112,8 +106,6 @@ exports.updatePatient = async (req, res) => {
     // Update contact list status
     const contactListID = patient.close_contact_list;
     const contactList = await Patient.find().where("_id").in(contactListID);
-    console.log(contactList);
-
     contactList.forEach(async (patient) => {
       if (patient.status !== "F0") {
         const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
@@ -131,13 +123,13 @@ exports.updatePatient = async (req, res) => {
     });
     res.status(200).send({ message: "Patient updated successfully" });
   } catch (err) {
-    res.status(500).send({ message: "Something went wrong" });
+    res.status(400).send({ message: "Something went wrong" });
   }
 };
 
-const deletePatient = async (req, res) => {
+exports.deletePatient = async (req, res) => {
   try {
-    const doctor = await Doctor.findOne({ username: req.idNumber });
+    const doctor = await Doctor.findOne({ username: req.idNumber }).populate("patients", "id_number");
     if (!doctor) {
       return res.status(400).send("Doctor not found");
     }
@@ -147,56 +139,43 @@ const deletePatient = async (req, res) => {
       return res.status(400).send("Patient not found");
     }
 
-    const is_exist = doctor.patients.find(
-      (p) => p.id_number === patient.id_number
-    );
+    const is_exist = doctor.patients.find(p => p.id_number === patient.id_number);
     if (!is_exist) {
       return res
         .status(400)
         .send({ message: "Patient not found in the management list" });
     }
 
+    // Delete the patient account
+    const account = await Account.findOne({ _id: patient.account });
+    if (!account) {
+      return res.status(400).send({ message: "Patient account not found to perform deletion" });
+    }
+    await account.remove();
+
+    // Delete the patient from database and from doctor's managed list
+    const trashID = patient._id;
     doctor.patients.pull(patient._id);
     await doctor.save();
     await patient.remove();
+    clearContactListTrashID(trashID);
+
     res.status(200).send({ message: "Patient deleted successfully" });
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send({ message: err.message });
   }
 }
 
-// Disable or enable a patient account
-// exports.editAccount = async (req, res) => {
-//   Account.findOneAndUpdate({ username: req.params.id }, req.body, {
-//     UseFindAndModify: false,
-//   })
-//     .then((data) => {
-//       if (!data) {
-//         res.status(404).send("Patient cccount not found");
-//       } else {
-//         res.status(200).send("Account updated successfully");
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(400).send({ message: err });
-//     });
-// };
-
-// TODO: Update status and contaced list
-// exports.editStatus = async (req, res) => {
-//   try {
-//     const patient = await Patient.findOne({ id_number: req.params.id });
-//     if (!patient) {
-//       res.status(404).send("Patient not found");
-//     } else {
-//       patient.status = req.body.status;
-//       await patient.save();
-//       res.status(200).send("Patient status updated successfully");
-//     }
-//   } catch (err) {
-//     res.status(400).send({message: err });
-//   }
-// };
+// Additional function for clearing up trashID in every patient's contact list after deletion a patient
+const clearContactListTrashID = async (trashID) => {
+  const patients = await Patient.find();
+  patients.forEach(async (patient) => {
+    if (patient.close_contact_list.includes(trashID)) {
+      patient.close_contact_list.pull(trashID);
+      await patient.save();
+    }
+  });
+}
 
 // *Necessities related
 exports.registerNecessity = async (req, res) => {
@@ -208,14 +187,7 @@ exports.registerNecessity = async (req, res) => {
   });
 
   try {
-    const doctor = await Doctor.findOne({ username: req.idNumber });
-    if (!doctor) {
-      return res.status(400).send("Doctor not found");
-    }
-
-    doctor.necessities.push(necessity._id);
     await necessity.save();
-    await doctor.save();
     res.status(200).send({ message: "Necessity registered successfully" });
   } catch (err) {
     res.status(400).send(err.message);
@@ -240,40 +212,26 @@ exports.updateNecessity = async (req, res) => {
 
 exports.getAllNecessities = async (req, res) => {
   try {
-    const doctor = await Doctor.findOne({ username: req.idNumber });
-    if (!doctor) {
-      return res.status(400).send("Doctor not found");
-    }
-    const necessitiesID = doctor.necessities;
-    const necessity = await Necessity.find().where("_id").in(necessitiesID);
-    res.status(200).send(necessity);
+    const necessities = await Necessity.find()
+    res.status(200).send(necessities);
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send({ message: err.message });
   }
 };
 
 exports.deleteNecessity = async (req, res) => {
-  // Delete the necessity
-  Necessity.findOneAndDelete({ _id: req.params.id })
-    .then((data) => {
-      if (!data) {
-        res.status(404).send("Necessity not found");
-      } else {
-        res.status(200).send("Necessity deleted successfully");
-      }
-    })
-    .catch((err) => {
-      res.status(400).send({ message: err });
-    });
-
-  // Delete the necessity id from doctor's managed list
   try {
-    const doctor = await Doctor.findOne({ username: req.idNumber });
-    if (!doctor) {
-      return res.status(400).send("Doctor not found");
-    }
-    doctor.necessities.pull(req.params.id);
-    await doctor.save();
+    Necessity.findOneAndDelete({ _id: req.params.id })
+      .then((data) => {
+        if (!data) {
+          res.status(404).send("Necessity not found");
+        } else {
+          res.status(200).send("Necessity deleted successfully");
+        }
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err });
+      });
   } catch (err) {
     res.status(400).send(err.message);
   }

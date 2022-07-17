@@ -144,7 +144,7 @@ returns: {
 
 number: 3
 description: Update patient information of a specific doctor
-route: http://localhost:3000/api/doctor/patients/update/id=:id
+route: http://localhost:3000/api/doctor/patients/id=:id
 params: CMND or CCCD
 method: PUT
 headers: {
@@ -172,7 +172,7 @@ body: {
 
 number: 4
 description: Delete a patient of a specific doctor
-route: http://localhost:3000/api/doctor/patients/delete/id=:id
+route: http://localhost:3000/api/doctor/patients/id=:id
 params: CMND or CCCD
 method: DELETE
 headers: {
@@ -183,6 +183,17 @@ headers: {
 returns: {
   message: String
 }
+
+number: 5
+description: Register a new necessity
+route: http://localhost:3000/api/doctor/necessities
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+
 
 
 
