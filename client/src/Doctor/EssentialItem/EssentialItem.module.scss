@@ -1,5 +1,44 @@
 .wrapper {
-    display: flex;
     width: 80%;
     height: 90%;
+
+    .wrap-list {
+        padding: 0 10px;
+
+        .item {
+            padding: 0 5px;
+        }
+    }
+
+    //input form
+    .field-input {
+        width: 400px;
+        justify-content: space-between;
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+
+    .list-img {
+        justify-content: left;
+        overflow-x: overlay;
+        .img {
+            width: 150px;
+        }
+
+        .input-file {
+            width: 150px;
+            height: 150px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-left: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+
+            &::-webkit-file-upload-button,
+            &::-webkit-textfield-decoration-container {
+                visibility: hidden;
+            }
+        }
+    }
 }
+

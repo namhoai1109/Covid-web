@@ -53,8 +53,7 @@ body {
 }
 
 button,
-input,
-[tabindex] {
+input {
     outline: none;
     border: none;
     background-color: transparent;
@@ -87,8 +86,8 @@ a {
 
 .row {
     display: flex;
+    flex-wrap: wrap;
     width: 100%;
-    padding: 0 -4px;
 }
 
 .z1 {
@@ -97,22 +96,22 @@ a {
 
 .col2-4 {
     width: 20%;
-    margin: 0px 4px;
 }
 
 .col4 {
     width: 33.33333333333%;
-    margin: 0 4px;
 }
 
 .col3 {
     width: 25%;
-    margin: 0 4px;
+}
+
+.col2 {
+    width: 16.6666666666666%;
 }
 
 .col12 {
     width: 100%;
-    margin: 0 4px;
 }
 
 //font

@@ -10,7 +10,7 @@ function SearchInput({ stateDynamique, icon }) {
 
     let handleBlur = () => {
         if (stateDynamique) {
-            if (searchVal == '') {
+            if (searchVal === '') {
                 setSkrink(true);
             }
         }
@@ -21,7 +21,7 @@ function SearchInput({ stateDynamique, icon }) {
             setSkrink(!skrink);
         }
 
-        if (searchVal != '') {
+        if (searchVal !== '') {
             console.log(searchVal); //call api
             setSkrink(false);
         }
