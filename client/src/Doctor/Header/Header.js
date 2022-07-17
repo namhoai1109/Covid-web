@@ -9,7 +9,8 @@ import { patientFields, necessityFields } from '../staticVar';
 import configs from '~/config';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { config } from '@fortawesome/fontawesome-svg-core';
+import { useDispatch, useSelector } from 'react-redux';
+import { setDelete } from '../redux/deleteStateSlice';
 
 const cx = classNames.bind(styles);
 
@@ -36,17 +37,20 @@ let checkRoute = (location) => {
         case configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage:
             return true;
         case configs.mainRoutes.doctor + configs.doctorRoutes.paymentManagement:
-                return true;
+            return true;
         case configs.mainRoutes.doctor + configs.doctorRoutes.statistics:
-                    return true;
+            return true;
         default:
-            return false
+            return false;
     }
-}
+};
 
 function Header() {
-    let location = useLocation()
-    let navigate = useNavigate()
+    let location = useLocation();
+    let navigate = useNavigate();
+    let dispatch = useDispatch();
+    let deleteState = useSelector((state) => state.deleteState);
+
     let [showHeader, setShowHeader] = useState();
     useEffect(() => {
         if (checkRoute(location.pathname)) {
@@ -54,49 +58,54 @@ function Header() {
         } else {
             setShowHeader(false);
         }
-    }, [location.pathname])
+    }, [location.pathname]);
 
     let getDataField = (location) => {
-        let addLink = ''
-        let filterItem, sortItem
+        let addLink = '';
+        let filterItem, sortItem;
         switch (location) {
             case configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient:
                 [filterItem, sortItem] = getFilterSortMenu(patientFields);
                 addLink = configs.mainRoutes.doctor + configs.doctorRoutes.newPatient;
-                return {filterItem, sortItem, addLink};
+                return { filterItem, sortItem, addLink };
 
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:
                 [filterItem, sortItem] = getFilterSortMenu(necessityFields);
                 addLink = configs.mainRoutes.doctor + configs.doctorRoutes.newNecessity;
-                return {filterItem, sortItem, addLink};
+                return { filterItem, sortItem, addLink };
             default:
-                return ({})
+                return {};
         }
-    }
+    };
 
     let handleBack = () => {
-        navigate(-1, {replace: true})
-    }
+        navigate(-1, { replace: true });
+    };
 
-    let {filterItem, sortItem, addLink} = getDataField(location.pathname);
-    
+    let { filterItem, sortItem, addLink } = getDataField(location.pathname);
 
     return (
         <HeaderLayout>
             {!showHeader && <TaskBtn title="Back" to={addLink || ''} onClick={handleBack} />}
-            {showHeader && <>
-                <TaskBtn title="Add" to={addLink || ''} onClick={() => setShowHeader(false)} icon={<PlusIcon />} />
-                <div className={cx('list_btn')}>
-                    <TaskBtn title="Delete" />
-                    <Menu menu={filterItem || []}>
-                        <TaskBtn title="Filter" />
-                    </Menu>
-                    <Menu menu={sortItem || []}>
-                        <TaskBtn title="Sort" />
-                    </Menu>
-                    <SearchInput stateDynamique={true} icon={<SearchIcon />} />
-                </div>
-            </>}
+            {showHeader && (
+                <>
+                    <TaskBtn title="Add" to={addLink || ''} onClick={() => setShowHeader(false)} icon={<PlusIcon />} />
+                    <div className={cx('list_btn')}>
+                        <TaskBtn
+                            title="Delete"
+                            active={deleteState.state}
+                            onClick={() => dispatch(setDelete(!deleteState.state))}
+                        />
+                        <Menu menu={filterItem || []}>
+                            <TaskBtn title="Filter" />
+                        </Menu>
+                        <Menu menu={sortItem || []}>
+                            <TaskBtn title="Sort" />
+                        </Menu>
+                        <SearchInput stateDynamique={true} icon={<SearchIcon />} />
+                    </div>
+                </>
+            )}
         </HeaderLayout>
     );
 }

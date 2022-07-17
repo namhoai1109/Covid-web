@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 
 function SideBar() {
     let navigate = useNavigate()
-    let id = JSON.parse(localStorage.getItem('Token')).id
+    let id = JSON.parse(localStorage.getItem('Token')).username
 
     let handleSignOut = () => {
         localStorage.removeItem('Token');

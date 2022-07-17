@@ -22,12 +22,17 @@
         transition: all ease-in-out 0.2s;
     }
 
+    &.active {
+        color: var(--primary);
+        font-weight: 800;
+    }
+
     &.disabled:hover {
         background-color: transparent;
         cursor: auto;
     }
 
-    &:hover{
+    &:hover {
         cursor: pointer;
 
         &::before {

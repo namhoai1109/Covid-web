@@ -11,27 +11,33 @@ const cx = classNames.bind(styles);
 
 let initDataInput = (menu) => {
     let data = {};
+    let nMenu = makeLowerCase(menu);
     for (let i = 0; i < menu.length; i++) {
-        data[menu[i]] = '';
+        data[nMenu[i]] = '';
     }
-
     return data;
 };
 
+let makeLowerCase = (menu) => {
+    let nArr = [];
+    for (let i = 0; i < menu.length; i++) {
+        nArr.push(menu[i].toLowerCase());
+    }
+    return nArr;
+};
+
 function makePass(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * 
- charactersLength));
-   }
-   return result;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
 
 function MenuFormInput({ menu, onClick = () => {}, children }) {
     let initInputVal = initDataInput(menu);
-    console.log(initInputVal);
     let [inputVals, setInputVals] = useState(initInputVal);
 
     useEffect(() => {
@@ -61,7 +67,7 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
             ...inputVals,
             [title]: randPass,
         });
-    }
+    };
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>
@@ -71,20 +77,20 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
                 </button>
                 <div className={cx('flex-center')}>
                     <div>
-                        {menu.map((title, index) => (
+                        {makeLowerCase(menu).map((title, index) => (
                             <MenuItem key={index} data={title} className={cx('title')} />
                         ))}
                     </div>
                     <div>
-                        {menu.map((title, index) => {
+                        {makeLowerCase(menu).map((title, index) => {
                             return (
                                 <MenuItem
                                     nohover
                                     key={index}
                                     data={
                                         <FormInput
-                                            passGen={title === "password"}
-                                            onClick={e => handleRandPass(title)}
+                                            passGen={title === 'password'}
+                                            onClick={(e) => handleRandPass(title)}
                                             inputVal={inputVals[title]}
                                             onChange={(e) => handleChange(e, title)}
                                         />
