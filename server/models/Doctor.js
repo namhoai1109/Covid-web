@@ -12,9 +12,7 @@ const doctorSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (v) => /^(\d{9}|\d{11})$/.test(v), //only digits
-      message: (props) => ({
-        message: `${props.value} is not a valid id number`,
-      }),
+      message: (props) => ({ message: `${props.value} is not a valid id number` }),
     },
   },
   name: {

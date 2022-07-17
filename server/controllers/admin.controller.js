@@ -5,22 +5,22 @@ const bcrypt = require("bcryptjs");
 
 // Register doctors
 exports.registerAccount = async (req, res) => {
-  const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  const account = new Account({
-    username: req.body.username,
-    password: hashedPassword,
-    role: "doctor",
-  });
-
-  const doctor = new Doctor({
-    account: account._id,
-    id_number: req.body.username,
-    name: req.body.name,
-  });
-
   try {
-    await account.save();
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const account = new Account({
+      username: req.body.username,
+      password: hashedPassword,
+      role: "doctor",
+    });
+
+    const doctor = new Doctor({
+      account: account._id,
+      id_number: req.body.username,
+      name: req.body.name,
+    });
+
     await doctor.save();
+    await account.save();
     res.status(200).send({ message: "Account created successfully" });
   } catch (err) {
     res.status(400).send({ message: err.message });
@@ -36,7 +36,7 @@ exports.getAll = async (req, res) => {
     );
     res.send(doctors);
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).send({ message: err });
   }
 };
 

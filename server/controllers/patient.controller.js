@@ -1,10 +1,8 @@
 const Account = require("../models/Account");
 const Patient = require("../models/Patient");
 const Doctor = require("../models/Doctor");
-const Necessity = require("../models/Necessity");
 const bcrypt = require("bcryptjs");
 
-// *Patients related
 // Register a new patient
 exports.registerAccount = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -176,63 +174,3 @@ const clearContactListTrashID = async (trashID) => {
     }
   });
 }
-
-// *Necessities related
-exports.registerNecessity = async (req, res) => {
-  const necessity = new Necessity({
-    name: req.body.name,
-    price: req.body.price,
-    quantity_unit: req.body.quantity_unit,
-    images: req.body.images,
-  });
-
-  try {
-    await necessity.save();
-    res.status(200).send({ message: "Necessity registered successfully" });
-  } catch (err) {
-    res.status(400).send(err.message);
-  }
-};
-
-exports.updateNecessity = async (req, res) => {
-  Necessity.findOneAndUpdate({ _id: req.params.id }, req.body, {
-    UseFindAndModify: false,
-  })
-    .then((data) => {
-      if (!data) {
-        res.status(404).send("Necessity not found");
-      } else {
-        res.status(200).send("Necessity updated successfully");
-      }
-    })
-    .catch((err) => {
-      res.status(400).send({ message: err });
-    });
-};
-
-exports.getAllNecessities = async (req, res) => {
-  try {
-    const necessities = await Necessity.find()
-    res.status(200).send(necessities);
-  } catch (err) {
-    res.status(400).send({ message: err.message });
-  }
-};
-
-exports.deleteNecessity = async (req, res) => {
-  try {
-    Necessity.findOneAndDelete({ _id: req.params.id })
-      .then((data) => {
-        if (!data) {
-          res.status(404).send("Necessity not found");
-        } else {
-          res.status(200).send("Necessity deleted successfully");
-        }
-      })
-      .catch((err) => {
-        res.status(400).send({ message: err });
-      });
-  } catch (err) {
-    res.status(400).send(err.message);
-  }
-};

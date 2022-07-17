@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const necessitySchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -17,10 +17,9 @@ const necessitySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  images: {
-    type: [String],
-    required: true,
-  },
+  images: [{
+    type: String,
+  }]
 });
 
-module.exports = mongoose.model("Necessity", necessitySchema);
+module.exports = mongoose.model("Product", productSchema);

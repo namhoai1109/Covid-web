@@ -1,16 +1,18 @@
 const router = require("express").Router();
-const controller = require("../controllers/doctor.controller");
+const patientController = require("../controllers/patient.controller");
+const productController = require("../controllers/product.controller");
+const { uploadFile } = require('../middlewares/multer');
 
 // Patients related
-router.put("/patients/id=:id", controller.updatePatient);
-router.delete("/patients/id=:id", controller.deletePatient);
-router.post("/patients", controller.registerAccount);
-router.get("/patients", controller.getAllPatients);
+router.get("/patients", patientController.getAllPatients);
+router.post("/patients", patientController.registerAccount);
+router.put("/patients/id=:id", patientController.updatePatient);
+router.delete("/patients/id=:id", patientController.deletePatient);
 
 // Necessities related
-router.get("/necessities", controller.getAllNecessities);
-router.post("/necessities", controller.registerNecessity);
-router.put("/necessities/id=:id", controller.updateNecessity);
-router.delete("/necessities/id=:id", controller.deleteNecessity);
+router.get("/products", productController.getAllProducts);
+router.post("/products", uploadFile('images', 'array', 5), productController.registerProduct);
+router.put("/products/id=:id", uploadFile('images', 'array', 5), productController.updateProduct);
+router.delete("/products/id=:id", productController.deleteProduct);
 
 module.exports = router;
