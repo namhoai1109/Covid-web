@@ -19,7 +19,7 @@ export const doctorRoutes = {
     statistics: '/statistics',
     paymentManagement: '/paymentmanagement',
     newPatient: '/newpatient',
-    listPatient: '/listpatient',
+    infoPatient: '/infopatient',
     newNecessity: '/newnecessity',
 };
 

@@ -3,15 +3,19 @@ import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './CovidPatient.module.scss';
 import { patientFields } from '../staticVar';
 import { getAPI } from '~/APIservices/getAPI';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addPatient, clearList, deletePatient } from '../redux/listPatientSlice';
+import { addPatient, clearList, deletePatient, addCurrentPatient } from '../redux/listPatientSlice';
 import ListItem from '~/CommonComponent/ListItem';
+import { deleteAPI } from '~/APIservices/deleteAPI';
+import { useNavigate } from 'react-router-dom';
+import configs from '~/config';
 
 const cx = classNames.bind(styles);
 
 function CovidPatient() {
     let dispatch = useDispatch();
+    let navigate = useNavigate();
 
     let getListPatient = async () => {
         try {
@@ -27,28 +31,41 @@ function CovidPatient() {
         }
     };
 
-    let handleDeletePatient = (index) => {
-        dispatch(deletePatient(index));
+    let fetchDeletePatient = async (id) => {
+        try {
+            let res = await deleteAPI('/doctor/patients/id=' + id);
+            console.log(res);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
-    let formatList = (list) => {
-        let newList = list.map((item) => {
-            return {
-                id: item.id_number,
-                name: item.name,
-                YoB: item.DOB.split('-')[0],
-                status: item.status,
-                facility: '',
-            };
+    let handleDeletePatient = (index, id) => {
+        fetchDeletePatient(id).then(() => {
+            getListPatient();
         });
-        return newList;
     };
+
+    let handleInfoPatient = (patient) => {
+        navigate(configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient + configs.doctorRoutes.infoPatient);
+        dispatch(addCurrentPatient(patient));
+    };
+
+    let formatItem = useCallback((item) => {
+        return {
+            id: item.id_number,
+            name: item.name,
+            YoB: item.DOB.split('-')[0],
+            status: item.status,
+            facility: '',
+        };
+    });
 
     useEffect(() => {
         getListPatient();
     }, []);
 
-    let listPatient = useSelector((state) => state.listPatient);
+    let listPatient = useSelector((state) => state.listPatient.list);
     let deleteState = useSelector((state) => state.deleteState);
 
     return (
@@ -63,14 +80,23 @@ function CovidPatient() {
                 })}
             </div>
             <WrapContent>
-                {formatList(listPatient).map((patient, index) => {
+                {listPatient.map((patient, index) => {
+                    let nPatient = formatItem(patient);
+                    let idDelete = patient._id;
                     return (
-                        <ListItem
+                        <div
+                            onClick={deleteState.state ? () => {} : () => handleInfoPatient(patient)}
                             key={index}
-                            infos={patient}
-                            showDelete={deleteState.state}
-                            clickDelete={() => handleDeletePatient(index)}
-                        />
+                            className={cx('wrap-list-item', {
+                                disabled: deleteState.state,
+                            })}
+                        >
+                            <ListItem
+                                infos={nPatient}
+                                showDelete={deleteState.state}
+                                clickDelete={() => handleDeletePatient(index, idDelete)}
+                            />
+                        </div>
                     );
                 })}
             </WrapContent>

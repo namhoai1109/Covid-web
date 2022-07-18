@@ -6,11 +6,11 @@ import { inputField1, inputField2, Status, dataAddress } from '../staticVar';
 import { useCallback, useState } from 'react';
 import SelectOption from '~/CommonComponent/SelectOption';
 import { PlusIcon } from '~/CommonComponent/icons';
-import { Link } from 'react-router-dom';
-import configs from '~/config';
-import { useDispatch } from 'react-redux';
-import { addPatient } from '../redux/listPatientSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { postAPI } from '~/APIservices/postAPI';
+import { reset, deleteItem } from '../redux/currentCloseContactList';
+import ListItem from '~/CommonComponent/ListItem';
+import ListPatient from './ListPatient';
 
 const cx = classNames.bind(styles);
 
@@ -46,10 +46,22 @@ function InputForm() {
         return result;
     });
 
+    let formatItem = useCallback((item) => {
+        return {
+            id: item.id_number,
+            name: item.name,
+            YoB: item.DOB.split('-')[0],
+            status: item.status,
+            facility: '',
+        };
+    });
+
     let initValue = initDataInput(inputField1);
     let initValueSelect = initDataSelect(inputField2);
     let [inputField, setInputField] = useState(initValue);
     let [selectValue, setSelectValue] = useState(initValueSelect);
+    let [showList, setShowList] = useState(false);
+    let contactList = useSelector((state) => state.currentCloseContactList.list);
     let dispatch = useDispatch();
     // console.log(inputField);
     // console.log(selectValue);
@@ -81,6 +93,7 @@ function InputForm() {
     });
 
     let handleSubmit = () => {
+        let contact_list = contactList.map((item) => item._id);
         let dataSubmit = {
             username: inputField.ID_number,
             name: inputField.Name,
@@ -91,88 +104,109 @@ function InputForm() {
             status: inputField.Status || '',
             //current_facility: selectValue.Facility,
             password: inputField.Password,
+            close_contact_list: contact_list,
         };
 
         // dispatch(addPatient(dataSubmit));
         registerPatient(dataSubmit);
         setInputField(initValue);
         setSelectValue(initValueSelect);
+        dispatch(reset());
+    };
+
+    let handleDeleteContact = (index) => {
+        dispatch(deleteItem(index));
     };
 
     return (
         <div className={cx('wrapper')}>
-            <WrapContent>
-                <div onClick={handleSubmit} className={cx('submit-btn', 'flex-center')}>
-                    <PlusIcon width="2.5rem" height="2.5rem" />
-                </div>
-                <div className={cx('row', 'field-input')}>
-                    {inputField1.map((title, index) => {
-                        let formatedTitle = removeSpace(title);
-                        let randPass = title === 'Password';
-                        let type = formatedTitle === 'Name' || formatedTitle === 'Password' ? 'text' : 'number';
-                        return (
-                            <label key={index} className={cx('col3', 'flex-center')}>
-                                <span className={cx('label')}>{title}</span>
-                                <FormInput
-                                    passGen={randPass}
-                                    type={type}
-                                    inputVal={inputField[formatedTitle]}
-                                    onChange={(e) => handleChange(e, formatedTitle)}
-                                    onClick={randPass ? () => handleRandPass(title) : () => {}}
-                                />
-                            </label>
-                        );
-                    })}
-                </div>
-
-                <div className={cx('row', 'field-input')}>
-                    {inputField2.map((title, index) => {
-                        let key = title.split('/')[0];
-                        return (
-                            <div key={index} className={cx('col3', 'flex-center')}>
-                                <span className={cx('label')}>{title}</span>
-                                <SelectOption
-                                    options={dataAddress[key]}
-                                    value={selectValue[key]}
-                                    onChange={(value) => setSelectValue({ ...selectValue, [key]: value })}
-                                />
-                            </div>
-                        );
-                    })}
-                </div>
-
-                <div className={cx('row', 'field-input')}>
-                    <div className={cx('col2-4', 'flex-center')}>
-                        <span className={cx('label')}>Status</span>
-                        {Status.map((title, index) => {
+            {showList ? (
+                <ListPatient onBack={() => setShowList(!showList)} />
+            ) : (
+                <WrapContent>
+                    <div onClick={handleSubmit} className={cx('submit-btn', 'flex-center')}>
+                        <PlusIcon width="2.5rem" height="2.5rem" />
+                    </div>
+                    <div className={cx('space')}></div>
+                    <div className={cx('row', 'field-input')}>
+                        {inputField1.map((title, index) => {
+                            let formatedTitle = removeSpace(title);
+                            let randPass = title === 'Password';
+                            let type = formatedTitle === 'Name' || formatedTitle === 'Password' ? 'text' : 'number';
                             return (
-                                <label key={index} className={cx('radio')}>
-                                    <input
-                                        type="radio"
-                                        name="state"
-                                        checked={inputField.Status === title}
-                                        value={title}
-                                        onChange={(e) => setInputField({ ...inputField, Status: e.target.value })}
+                                <label key={index} className={cx('col3', 'flex-center')}>
+                                    <span className={cx('label')}>{title}</span>
+                                    <FormInput
+                                        passGen={randPass}
+                                        type={type}
+                                        inputVal={inputField[formatedTitle]}
+                                        onChange={(e) => handleChange(e, formatedTitle)}
+                                        onClick={randPass ? () => handleRandPass(title) : () => {}}
                                     />
-                                    <span className={cx('title-radio')}>{title}</span>
                                 </label>
                             );
                         })}
                     </div>
-                </div>
 
-                <div className={cx('row', 'field-input')}>
-                    <div className={cx('col3', 'flex-center')}>
-                        <span className={cx('label', 'close-contact-label')}>Close contact list</span>
-                        <Link
-                            to={configs.mainRoutes.doctor + configs.doctorRoutes.listPatient}
-                            className={cx('btn', 'flex-center')}
-                        >
-                            <PlusIcon width="2rem" height="2rem" />
-                        </Link>
+                    <div className={cx('row', 'field-input')}>
+                        {inputField2.map((title, index) => {
+                            let key = title.split('/')[0];
+                            return (
+                                <div key={index} className={cx('col3', 'flex-center')}>
+                                    <span className={cx('label')}>{title}</span>
+                                    <SelectOption
+                                        options={dataAddress[key]}
+                                        value={selectValue[key]}
+                                        onChange={(value) => setSelectValue({ ...selectValue, [key]: value })}
+                                    />
+                                </div>
+                            );
+                        })}
                     </div>
-                </div>
-            </WrapContent>
+
+                    <div className={cx('row', 'field-input')}>
+                        <div className={cx('col2-4', 'flex-center')}>
+                            <span className={cx('label')}>Status</span>
+                            {Status.map((title, index) => {
+                                return (
+                                    <label key={index} className={cx('radio')}>
+                                        <input
+                                            type="radio"
+                                            name="state"
+                                            checked={inputField.Status === title}
+                                            value={title}
+                                            onChange={(e) => setInputField({ ...inputField, Status: e.target.value })}
+                                        />
+                                        <span className={cx('title-radio')}>{title}</span>
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className={cx('row', 'field-input')}>
+                        <div className={cx('col2', 'flex-center')}>
+                            <span className={cx('label', 'close-contact-label')}>Close contact list</span>
+                            <div onClick={() => setShowList(!showList)} className={cx('btn', 'flex-center')}>
+                                <PlusIcon width="2rem" height="2rem" />
+                            </div>
+                        </div>
+                        <div className={cx('contact-list')}>
+                            {contactList.map((patient, index) => {
+                                let item = formatItem(patient);
+                                return (
+                                    <ListItem
+                                        key={index}
+                                        infos={item}
+                                        showDelete
+                                        clickDelete={() => handleDeleteContact(index)}
+                                    />
+                                );
+                            })}
+                        </div>
+                    </div>
+                </WrapContent>
+            )}
         </div>
     );
 }
