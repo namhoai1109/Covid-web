@@ -66,7 +66,8 @@ function Header() {
         switch (location) {
             case configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient:
                 [filterItem, sortItem] = getFilterSortMenu(patientFields);
-                addLink = configs.mainRoutes.doctor + configs.doctorRoutes.newPatient;
+                addLink =
+                    configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient + configs.doctorRoutes.newPatient;
                 return { filterItem, sortItem, addLink };
 
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:

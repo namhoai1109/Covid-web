@@ -1,3 +1,13 @@
+@mixin hoverListItem {
+    margin: 0 30px;
+    transition: all 0.15s ease-in-out;
+    border-radius: 50px;
+    &:hover {
+        cursor: pointer;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    }
+}
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -15,6 +25,19 @@
             font-weight: 700;
         }
     }
+
+    .wrap-list-item {
+        @include hoverListItem;
+        &.disabled:hover {
+            box-shadow: none;
+            cursor: default;
+        }
+    }
+
+    .space {
+        width: 100%;
+        height: 10px;
+    }
 }
 
 //input form
@@ -24,7 +47,9 @@
     right: 0;
     margin: 8px;
     color: var(--primary);
-    padding: 2px;
+    font-size: 2.5rem;
+    width: 40px;
+    height: 40px;
     border-radius: 50px;
     border: 2px solid transparent;
 
@@ -61,11 +86,19 @@
             color: var(--primary);
             border: 2px solid var(--primary);
         }
+
+        &.disabled {
+            pointer-events: none;
+        }
     }
 
     .close-contact-label {
         color: var(--primary);
         font-size: 22px;
+    }
+
+    .contact-list {
+        width: 100%;
     }
 
     .btn {
@@ -78,5 +111,29 @@
             background-color: var(--primary);
             color: white;
         }
+
+        &.disabled {
+            pointer-events: none;
+        }
+    }
+}
+
+//list patient
+.wrap-list {
+    width: 100%;
+    height: 100%;
+
+    .wrap-item-patient {
+        @include hoverListItem;
+    }
+}
+
+//info patient
+.field-info {
+    margin-left: 20px;
+
+    .label {
+        color: var(--green1);
+        font-size: 18px;
     }
 }
