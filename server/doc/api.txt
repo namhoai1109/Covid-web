@@ -22,7 +22,7 @@ returns: {
 }
 
 II.Admin routes
-number: 1
+number: 2
 description: Register new doctor
 route: http://localhost:5000/api/admin/register
 method: POST
@@ -51,7 +51,7 @@ returns: {
   message: String
 }
 
-number: 2
+number: 3
 description: Get list of doctors
 route: http://localhost:5000/api/admin/doctors
 method: GET
@@ -73,7 +73,7 @@ returns: [
 ]
 
 III. Doctor routes
-number: 1
+number: 4
 description: Get all patients information of a specific doctor
 route: http://localhost:5000/api/doctor/patients
 method: GET
@@ -101,7 +101,7 @@ returns: [
   }
 ]
 
-number: 2
+number: 5
 description: Register new patient to a specific doctor
 route: http://localhost:5000/api/doctor/patients
 method: POST
@@ -142,10 +142,10 @@ returns: {
   message: String
 }
 
-number: 3
+number: 6
 description: Update patient information of a specific doctor
 route: http://localhost:5000/api/doctor/patients/id=:id
-params: CMND or CCCD
+params: _id of database
 method: PUT
 headers: {
   Bearer authorization: {
@@ -163,17 +163,16 @@ body: {
   }
   close_contact_list: [
     {
-      type: String (ID),
+      type: String (_id (database id))
       required: true
     }
   ]
-  ]
 }
 
-number: 4
+number: 7
 description: Delete a patient of a specific doctor
 route: http://localhost:5000/api/doctor/patients/id=:id
-params: CMND or CCCD
+params: _id of database
 method: DELETE
 headers: {
   Bearer authorization: {
@@ -184,7 +183,7 @@ returns: {
   message: String
 }
 
-number: 5
+number: 8
 description: Register a new product
 form: enctype="multipart/form-data"
 // Create a new formData() and append data to it
@@ -202,7 +201,7 @@ returns: {
   message: String
 }
 
-number: 6
+number: 9
 description: Get list of products of a specific doctor
 route: http://localhost:5000/api/doctor/products
 method: GET
@@ -223,7 +222,7 @@ returns: [
   }
 ]
 
-number: 7
+number: 10
 description: Delete a product
 route: http://localhost:5000/api/doctor/products/id=:id
 form: enctype="multipart/form-data"
@@ -238,7 +237,7 @@ returns: {
   message: String
 }
 
-number: 8
+number: 11
 description: Update a product
 route: http://localhost:5000/api/doctor/products/id=:id
 params: Database ID of product

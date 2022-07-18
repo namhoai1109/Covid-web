@@ -24,7 +24,7 @@ exports.registerProduct = async (req, res) => {
     await product.save();
     res.status(200).send({ message: "Product registered successfully" });
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send({ message: err.message });
   }
 };
 
@@ -33,7 +33,7 @@ exports.updateProduct = async (req, res) => {
     console.log(req.body);
     const product = await Product.findById(req.params.id);
     if (!product) {
-      return res.status(404).send({ message: "Product not found" });
+      return res.status(404).send({ message: "Product not found in the database" });
     }
     // Update text fields
     product.name = req.body.name ? req.body.name : product.name;
