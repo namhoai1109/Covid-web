@@ -134,7 +134,7 @@ body: {
     required: true
   },
   status: {
-    type: enum('F1', 'F2', 'F3')
+    type: enum('F0', 'F1', 'F2', 'F3')
     required: true
   }
 }
