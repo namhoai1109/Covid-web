@@ -136,7 +136,12 @@ body: {
   status: {
     type: enum('F1', 'F2', 'F3')
     required: true
-  }
+  },
+  close_contact_list: [
+    {
+      type: String (_id)
+    }
+  ]
 }
 returns: {
   message: String
@@ -163,8 +168,7 @@ body: {
   }
   close_contact_list: [
     {
-      type: String (_id (database id))
-      required: true
+      type: String (_id)
     }
   ]
 }
