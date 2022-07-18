@@ -30,16 +30,16 @@ exports.registerAccount = async (req, res) => {
       doctor.patients.push(patient._id);
       await doctor.save();
     } else {
-      return res.status(400).send({ message: "Doctor not found" });
+      return res.status(400).send({ message: "Doctor not found in the database" });
     }
 
     // Save patient account
-    await account.save();
     await patient.save();
+    await account.save();
 
     res.status(200).send({ message: "Patient account created and save successfully" });
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send({ message: err.message });
   }
 };
 
@@ -49,7 +49,7 @@ exports.getAllPatients = async (req, res) => {
     // Get the doctor by id number
     const doctor = await Doctor.findOne({ username: req.idNumber });
     if (!doctor) {
-      return res.status(400).send("Doctor not found");
+      return res.status(400).send({ message: "Doctor not found in the database" });
     }
 
     // Get the patients by doctor's managed list
@@ -65,40 +65,29 @@ exports.getAllPatients = async (req, res) => {
       );
     res.status(200).send(patients);
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send({ message: err.message });
   }
 };
 
-// Update patient's information (not include covid status)
+// Update patient's information
 exports.updatePatient = async (req, res) => {
-  // Get the patients list of current doctor
   try {
-    const currentDoctor = await Doctor.findOne({ username: req.idNumber, }).populate("patients", "id_number");
-    if (!currentDoctor) {
-      return res.status(400).send({ message: "Requesting username not found" });
+    // Check if the patient is in the doctor's list
+    const isBelong = await isBelongToDoctor(req.idNumber, req.params.id);
+    if (!isBelong.result) {
+      return res.status(400).send({ message: isBelong.message });
     }
-
-    // Get the patient by id_number params
-    const patient = await Patient.findOne({ id_number: req.params.id });
-    if (!patient) {
-      return res.status(400).send({ message: "Patient not found" });
-    }
-
-    const is_exist = currentDoctor.patients.find(p => p.id_number === patient.id_number);
-    if (!is_exist) {
-      return res
-        .status(400)
-        .send({ message: "Patient not found in the management list" });
-    }
+    patient = isBelong.patient;
+    doctor = isBelong.doctor;
 
     const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
     const newStatusNumber = Number(req.body.status?.[1]); //0, 1, 2, 3
     const step = newStatusNumber - statusNumber;
 
-    // Update patient's information
+    // Update patient's text information
     patient.status = req.body.status ? req.body.status : patient.status;
-    patient.close_contact_list = req.body.closeContactList ? req.body.closeContactList : patient.close_contact_list;
-    patient.current_facility = req.body.currentFacility ? req.body.currentFacility : patient.current_facility;
+    patient.close_contact_list = req.body.close_contact_list ? req.body.close_contact_list : patient.close_contact_list;
+    patient.current_facility = req.body.current_facility ? req.body.current_facility : patient.current_facility;
     await patient.save();
 
     // Update contact list status
@@ -107,7 +96,6 @@ exports.updatePatient = async (req, res) => {
     contactList.forEach(async (patient) => {
       if (patient.status !== "F0") {
         const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
-        console.log(statusNumber);
         let newStatusNumber = statusNumber + step;
         if (newStatusNumber < 0) {
           newStatusNumber = 0;
@@ -121,28 +109,19 @@ exports.updatePatient = async (req, res) => {
     });
     res.status(200).send({ message: "Patient updated successfully" });
   } catch (err) {
-    res.status(400).send({ message: "Something went wrong" });
+    res.status(400).send({ message: err.message });
   }
 };
 
 exports.deletePatient = async (req, res) => {
   try {
-    const doctor = await Doctor.findOne({ username: req.idNumber }).populate("patients", "id_number");
-    if (!doctor) {
-      return res.status(400).send("Doctor not found");
+    // Check if the patient is in the doctor's list
+    const isBelong = await isBelongToDoctor(req.idNumber, req.params.id);
+    if (!isBelong.result) {
+      return res.status(400).send({ message: isBelong.message });
     }
-
-    const patient = await Patient.findOne({ id_number: req.params.id });
-    if (!patient) {
-      return res.status(400).send("Patient not found");
-    }
-
-    const is_exist = doctor.patients.find(p => p.id_number === patient.id_number);
-    if (!is_exist) {
-      return res
-        .status(400)
-        .send({ message: "Patient not found in the management list" });
-    }
+    patient = isBelong.patient;
+    doctor = isBelong.doctor;
 
     // Delete the patient account
     const account = await Account.findOne({ _id: patient.account });
@@ -156,7 +135,7 @@ exports.deletePatient = async (req, res) => {
     doctor.patients.pull(patient._id);
     await doctor.save();
     await patient.remove();
-    clearContactListTrashID(trashID);
+    await clearContactListTrashID(trashID);
 
     res.status(200).send({ message: "Patient deleted successfully" });
   } catch (err) {
@@ -164,7 +143,42 @@ exports.deletePatient = async (req, res) => {
   }
 }
 
-// Additional function for clearing up trashID in every patient's contact list after deletion a patient
+// Helper function to check if the patient is in the doctor's list
+const isBelongToDoctor = async (doctorID, patientID) => {
+  const currentDoctor = await Doctor.findOne({ username: doctorID }).populate("patients", "id_number");
+  if (!currentDoctor) {
+    return {
+      result: false,
+      message: "Requesting doctor not found in the database",
+    }
+  }
+
+  const patient = await Patient.findOne({ _id: patientID });
+  if (!patient) {
+    return {
+      result: false,
+      message: "Patient not found in the database",
+    }
+  }
+
+  const is_exist = currentDoctor.patients.find(p => p.id_number === patient.id_number);
+  if (!is_exist) {
+    return {
+      result: false,
+      message: "Patient not belong to doctor",
+    }
+  }
+
+  return {
+    result: true,
+    message: "",
+    patient: patient,
+    doctor: currentDoctor,
+  }
+}
+
+
+// Helper function for clearing up trashID in every patient's contact list after deletion a patient
 const clearContactListTrashID = async (trashID) => {
   const patients = await Patient.find();
   patients.forEach(async (patient) => {

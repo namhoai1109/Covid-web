@@ -19,7 +19,7 @@ const fileFilter = (req, file, cb) => {
 
 // fieldName is the name of the field in the form
 // options is the type of file upload: single, array
-// if options is array, count 
+// if options is array, count is required
 const uploadFile = (fieldName, options, count) => {
   if (!fieldName && !options) {
     throw new Error("Missing required arguments");
