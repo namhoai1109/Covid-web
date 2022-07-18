@@ -3,6 +3,8 @@
     flex-direction: column;
     width: 80%;
     height: 90%;
+    position: relative;
+
     .list-item {
         margin-bottom: 10px;
 
@@ -16,6 +18,22 @@
 }
 
 //input form
+.submit-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 8px;
+    color: var(--primary);
+    padding: 2px;
+    border-radius: 50px;
+    border: 2px solid transparent;
+
+    &:hover {
+        cursor: pointer;
+        border-color: var(--primary);
+    }
+}
+
 .field-input {
     margin-top: 30px;
 
