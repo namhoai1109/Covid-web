@@ -5,7 +5,7 @@ import { forwardRef } from 'react';
 
 const cx = classNames.bind(styles);
 
-let TaskBtn = forwardRef(({ to, icon, title, disabled, onClick }, ref) => {
+let TaskBtn = forwardRef(({ to, icon, title, disabled, active, onClick }, ref) => {
     let Comp = 'div';
     if (to) Comp = Link;
 
@@ -15,6 +15,7 @@ let TaskBtn = forwardRef(({ to, icon, title, disabled, onClick }, ref) => {
             to={to}
             className={cx('btn', {
                 disabled: disabled,
+                active: active,
             })}
             onClick={onClick}
         >

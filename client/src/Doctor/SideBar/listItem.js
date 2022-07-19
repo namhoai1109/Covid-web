@@ -8,12 +8,12 @@ let listItem = [
         icon: <MaskIcon width="5rem" height="5rem" />,
     },
     {
-        title: 'Essential Item',
+        title: 'Necessity',
         path: configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem,
         icon: <MaskIcon width="5rem" height="5rem" />,
     },
     {
-        title: 'Essential Package',
+        title: 'Necessity Package',
         path: configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage,
         icon: <MaskIcon width="5rem" height="5rem" />,
     },

@@ -1,11 +1,15 @@
 @import 'normalize.css';
 
 :root {
-    --primary: #fe2c55;
+    --primary: #4c8e9d;
+    --green1: #41707a;
+    --green2: #2b5058;
     --font-familly: 'ProximaNova', sans-serif;
     --max-width: 1200px;
     --text-color: #303030;
     --width-sidebar: 80px;
+    --border-radius: 20px;
+    --link-color: #c44650;
 }
 
 html {
@@ -43,6 +47,21 @@ body {
     padding: 0;
 }
 
+//navlink
+.active {
+    position: relative;
+    transform: translateX(6px);
+    &::before {
+        position: absolute;
+        content: '';
+        left: -4px;
+        height: 100%;
+        width: 6px;
+        border-radius: 50px;
+        background-color: var(--green2);
+    }
+}
+
 .flex-center {
     display: flex;
     justify-content: center;
@@ -50,8 +69,7 @@ body {
 }
 
 button,
-input,
-[tabindex] {
+input {
     outline: none;
     border: none;
     background-color: transparent;
@@ -59,16 +77,59 @@ input,
 
 a {
     text-decoration: none;
-    color: inherit;
 }
 
 .glassmorphism {
     background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 10px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.bg {
+    background: radial-gradient(82.32% 82.32% at 50% 17.68%, #b4e4d3 0%, rgba(235, 233, 198, 0.6) 100%);
+}
+
+.bg-ball {
+    background: radial-gradient(
+        27.83% 27.45% at 31.64% 40.85%,
+        rgba(103, 187, 199, 0.232) 0%,
+        rgba(38, 136, 191, 0.51746) 100%
+    );
+    opacity: 0.8;
+    filter: blur(1px);
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.z1 {
+    z-index: 1;
+}
+
+.col2-4 {
+    width: 20%;
+}
+
+.col4 {
+    width: 33.33333333333%;
+}
+
+.col3 {
+    width: 25%;
+}
+
+.col2 {
+    width: 16.6666666666666%;
+}
+
+.col12 {
+    width: 100%;
 }
 
 //font
@@ -92,4 +153,33 @@ a {
     font-family: 'SofiaPro';
     src: url('/asset/fonts/sofiapro-bold.woff');
     font-weight: 700;
+}
+
+//scrollbar
+html *::-webkit-scrollbar {
+    border-radius: 0;
+    width: 8px;
+}
+
+html *::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+html *::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+//input type number
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+    -moz-appearance: textfield;
 }

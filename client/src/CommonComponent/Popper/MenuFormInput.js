@@ -9,18 +9,35 @@ import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-let initDataInput = (num) => {
+let initDataInput = (menu) => {
     let data = {};
-    for (let i = 0; i < num; i++) {
-        data[`input${i}`] = '';
+    let nMenu = makeLowerCase(menu);
+    for (let i = 0; i < menu.length; i++) {
+        data[nMenu[i]] = '';
     }
-
     return data;
 };
 
-function MenuFormInput({ menu, children }) {
-    let initInputVal = initDataInput(menu.length);
+let makeLowerCase = (menu) => {
+    let nArr = [];
+    for (let i = 0; i < menu.length; i++) {
+        nArr.push(menu[i].toLowerCase());
+    }
+    return nArr;
+};
 
+function makePass(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+function MenuFormInput({ menu, onClick = () => {}, children }) {
+    let initInputVal = initDataInput(menu);
     let [inputVals, setInputVals] = useState(initInputVal);
 
     useEffect(() => {
@@ -28,7 +45,7 @@ function MenuFormInput({ menu, children }) {
     }, [menu]);
 
     let handleOnClick = () => {
-        console.log(inputVals); // call api
+        onClick(inputVals);
         setInputVals(initInputVal);
     };
 
@@ -36,11 +53,19 @@ function MenuFormInput({ menu, children }) {
         setInputVals(initInputVal);
     };
 
-    let handleChange = (e, index) => {
+    let handleChange = (e, title) => {
         let inputval = e.target.value;
         setInputVals({
             ...inputVals,
-            [`input${index}`]: inputval,
+            [title]: inputval,
+        });
+    };
+
+    let handleRandPass = (title) => {
+        let randPass = makePass(6);
+        setInputVals({
+            ...inputVals,
+            [title]: randPass,
         });
     };
 
@@ -52,19 +77,22 @@ function MenuFormInput({ menu, children }) {
                 </button>
                 <div className={cx('flex-center')}>
                     <div>
-                        {menu.map((title, index) => (
+                        {makeLowerCase(menu).map((title, index) => (
                             <MenuItem key={index} data={title} className={cx('title')} />
                         ))}
                     </div>
                     <div>
-                        {menu.map((title, index) => {
+                        {makeLowerCase(menu).map((title, index) => {
                             return (
                                 <MenuItem
+                                    nohover
                                     key={index}
                                     data={
                                         <FormInput
-                                            inputVal={inputVals[`input${index}`]}
-                                            onChange={(e) => handleChange(e, index)}
+                                            passGen={title === 'password'}
+                                            onClick={(e) => handleRandPass(title)}
+                                            inputVal={inputVals[title]}
+                                            onChange={(e) => handleChange(e, title)}
                                         />
                                     }
                                 />

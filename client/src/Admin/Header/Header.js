@@ -7,10 +7,15 @@ import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu, MenuFormInput } from '~/CommonComponent/Popper';
 import { useLocation } from 'react-router-dom';
 import configs from '~/config';
+import { useDispatch, useSelector } from 'react-redux';
+import { setDelete } from '../redux/deleteSlice';
+import { addManager } from '../redux/listManagerSlice';
+import { addFacility } from '../redux/listFacilitySlice';
+import { postAPI } from '~/APIservices/postAPI';
 
 const cx = classNames.bind(styles);
 
-const menuManager = ['ID', 'Name', 'Year of Birth'];
+const menuManager = ['ID', 'Username'];
 const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
 
 let getFilterSortMenu = (menu) => {
@@ -27,11 +32,23 @@ let getFilterSortMenu = (menu) => {
     return [filterItem, sortItem];
 };
 
-const formInputDoctor = ['ID: ', 'Name: ', 'Year of Birth: '];
-const formInputFacility = ['Name: ', 'Max No. Patient: '];
+let registerManager = async (data) => {
+    try {
+        let token = JSON.parse(localStorage.getItem('Token')).token;
+        let res = await postAPI('admin/register', data, token);
+        console.log(res);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const formInputDoctor = ['ID', 'Username', 'Password'];
+const formInputFacility = ['Name', 'Max no. patient'];
 
 function Header() {
     let location = useLocation();
+    let dispatch = useDispatch();
+    let deleteState = useSelector((state) => state.delete.isShow);
 
     let [filterItem, sortItem] = getFilterSortMenu(
         location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
@@ -39,9 +56,25 @@ function Header() {
             : menuFacility,
     );
 
+    let handleClick = async (inputVals) => {
+        if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
+            await registerManager({
+                username: inputVals.id,
+                password: inputVals.password,
+                name: inputVals.username,
+            });
+            inputVals.status = 'active';
+            dispatch(addManager(inputVals));
+        } else {
+            inputVals.noPatient = 0; //tmp
+            dispatch(addFacility(inputVals));
+        }
+    };
+
     return (
         <HeaderLayout>
             <MenuFormInput
+                onClick={handleClick}
                 menu={
                     location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
                         ? formInputDoctor
@@ -51,7 +84,13 @@ function Header() {
                 <TaskBtn title="Add" icon={<PlusIcon />} />
             </MenuFormInput>
             <div className={cx('list_btn')}>
-                <TaskBtn title="Delete" />
+                <TaskBtn
+                    title="Delete"
+                    active={deleteState}
+                    onClick={() => {
+                        dispatch(setDelete(!deleteState));
+                    }}
+                />
                 <Menu menu={filterItem}>
                     <TaskBtn title="Filter" />
                 </Menu>

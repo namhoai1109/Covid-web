@@ -6,7 +6,7 @@ const cx = classNames.bind(styles);
 function AvatarItem({ id, icon }) {
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('sidebar-item')}>
+            <div className={cx('wrap-avatar')}>
                 <div className={cx('avatar')}>{icon}</div>
             </div>
             <div className={cx('sub-title')}>{id}</div>

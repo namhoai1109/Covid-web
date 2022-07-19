@@ -10,10 +10,10 @@ const cx = classNames.bind(styles);
 
 function SideBar() {
     let navigate = useNavigate()
+    let id = JSON.parse(localStorage.getItem('Token')).username
+
     let handleSignOut = () => {
         localStorage.removeItem('Token');
-        localStorage.removeItem('Role');
-        localStorage.removeItem('ID');
         console.log('sign out');
         navigate('/', { replace: true });
     }
@@ -23,7 +23,7 @@ function SideBar() {
             <div className={cx('wrapper')}>
                 <div>
                     <div className={cx('avatar')}>
-                        <AvatarItem id="20126045" icon={<Avatar width="4.5rem" height="4rem" />} />
+                        <AvatarItem id={id} icon={<Avatar width="4.5rem" height="4rem" />} />
                     </div>
                     <SidebarItem
                         title={'Manager'}

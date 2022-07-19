@@ -8,16 +8,17 @@
         width: var(--width-sidebar);
         display: flex;
         justify-content: center;
+        margin: 0 8px;
+        border-radius: 10px;
+        transition: all ease-in-out 0.3s;
 
         .icon {
             width: 58px;
             height: 54px;
-            border-radius: 10px;
-            transition: all ease-in-out 0.3s;
         }
 
-        &:hover .icon {
-            background-color: #777777;
+        &:hover {
+            background-color: var(--green1);
         }
 
         &:hover ~ .sub-title {
@@ -28,7 +29,7 @@
 
     .sub-title {
         position: absolute;
-        width: 110px;
+        width: 120px;
         z-index: -10;
         opacity: 0;
         top: 50%;
@@ -38,7 +39,8 @@
         text-align: center;
         font-size: 1.8rem;
         border-radius: 10px;
-        background-color: rgb(214, 214, 214);
+        background-color: var(--green1);
+        color: white;
         transition: all ease-in-out 0.3s;
 
         &.large {
@@ -47,9 +49,20 @@
     }
 
     //avatar item
-    .avatar {
-        padding: 10px;
-        border-radius: 50%;
-        background-color: rgb(255, 255, 255);
+    .wrap-avatar {
+        width: var(--width-sidebar);
+        display: flex;
+        justify-content: center;
+        margin: 0 8px;
+        .avatar {
+            padding: 10px;
+            border-radius: 50%;
+            background-color: rgb(255, 255, 255);
+        }
+
+        &:hover ~ .sub-title {
+            transform: translate(5%, -50%);
+            opacity: 1;
+        }
     }
 }

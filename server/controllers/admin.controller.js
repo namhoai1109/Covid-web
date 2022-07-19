@@ -1,7 +1,7 @@
-const Account = require('../models/Account');
-const Doctor = require('../models/Doctor');
-const Admin = require('../models/Admin');
-const bcrypt = require('bcryptjs');
+const Account = require("../models/Account");
+const Doctor = require("../models/Doctor");
+const Admin = require("../models/Admin");
+const bcrypt = require("bcryptjs");
 
 // Register doctors
 exports.registerAccount = async(req, res) => {

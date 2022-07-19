@@ -18,6 +18,9 @@ export const doctorRoutes = {
     essentialPackage: '/essentialpackage',
     statistics: '/statistics',
     paymentManagement: '/paymentmanagement',
+    newPatient: '/newpatient',
+    infoPatient: '/infopatient',
+    newNecessity: '/newnecessity',
 };
 
 export const patientRoutes = {

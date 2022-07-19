@@ -3,8 +3,6 @@ const express = require("express");
 const connectDB = require("./database/database");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
-const fs = require("fs");
-const https = require("https");
 // Import routes
 const authRouter = require("./routes/auth.route");
 const adminRouter = require("./routes/admin.route");
@@ -16,7 +14,6 @@ const { authorizeUser } = require("./middlewares/auth");
 const Account = require("./models/Account");
 const Admin = require("./models/Admin");
 
-
 // Initialize app
 const app = express();
 app.use(cors());
@@ -26,6 +23,8 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
+app.use("/images", express.static("images"));
 
 // Mount routers
 app.use("/api/auth", authRouter);

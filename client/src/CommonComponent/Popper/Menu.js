@@ -18,6 +18,7 @@ function Menu({ menu, children }) {
                     let isParent = !!item.child;
                     return (
                         <MenuItem
+                            nohover={typeof(item.data) !== 'string'}
                             key={index}
                             data={item.data}
                             onClick={() => {
