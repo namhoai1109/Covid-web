@@ -1,0 +1,292 @@
+API Management List
+
+I.Auth routes
+number: 1
+description: This route is for login
+route: http://localhost:5000/api/auth/login
+method: POST
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+  },
+  password: {
+    type: String
+    minlength: 6,
+  }
+}
+returns: {
+  token: String,
+  username: Number (username) (cmnd or cccd),
+  role: String
+}
+
+II.Admin routes
+number: 2
+description: Register new doctor
+route: http://localhost:5000/api/admin/register
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+    required: true
+  },
+  password: {
+    type: String
+    minlength: 6,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: false
+  }
+}
+returns: {
+  message: String
+}
+
+number: 3
+description: Get list of doctors
+route: http://localhost:5000/api/admin/doctors
+method: GET
+returns: [
+  {
+    _id: String,
+    account: {
+      _id: String,
+      username: String,
+      role: String,
+      status: String,
+    },
+    id_number: String,
+    name: String,
+    patients: [
+      String
+    ]
+  }
+]
+
+number: 4
+description: Change status of account (active/inactive)
+route: localhost:5000/api/admin/doctors/id=:id/changestatus
+eg: localhost:5000/api/admin/doctors/id=62d5710ffe25ed38b535bf53/changestatus
+method: PUT
+body:
+{
+  "status": "inactive" || "active"
+}
+return 
+{
+  message: String
+}
+
+number: 5
+description: Delete account
+route: localhost:5000/api/admin/doctors/id=:id/delete
+eg: localhost:5000/api/admin/doctors/id=62d624944ba3d2fc45b2e894/delete
+method: DELETE
+
+return{
+  message: String
+}
+
+
+III. Doctor routes
+number: 4
+description: Get all patients information of a specific doctor
+route: http://localhost:5000/api/doctor/patients
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    account: {
+      _id: String,
+      username: String,
+      role: String,
+      status: String,
+    },
+    id_number: String,
+    name: String,
+    DOB: String,
+    address: String,
+    status: String,
+    close_contact_list: []
+    current_facility: String,
+  }
+]
+
+number: 5
+description: Register new patient to a specific doctor
+route: http://localhost:5000/api/doctor/patients
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+    required: true
+  },
+  password: {
+    type: String
+    minlength: 6,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  DOB: {
+    type: Date,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: enum('F0', 'F1', 'F2', 'F3')
+    required: true
+  },
+  close_contact_list: [
+    {
+      type: String (_id)
+    }
+  ]
+}
+returns: {
+  message: String
+}
+
+number: 6
+description: Update patient information of a specific doctor
+route: http://localhost:5000/api/doctor/patients/id=:id
+params: _id of database
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  status: {
+    type: enum('F1', 'F2', 'F3')
+    required: true
+  },
+  current_facility: {
+    type: String (ID),
+    required: true
+  }
+  close_contact_list: [
+    {
+      type: String (_id)
+    }
+  ]
+}
+
+number: 7
+description: Delete a patient of a specific doctor
+route: http://localhost:5000/api/doctor/patients/id=:id
+params: _id of database
+method: DELETE
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}
+
+number: 8
+description: Register a new product
+form: enctype="multipart/form-data"
+// Create a new formData() and append data to it
+// Make sure to append each file in the files array to the formData() with field name is 'images'
+route: http://localhost:5000/api/doctor/products
+method: POST
+headers: {
+  Content-Type: 'multipart/form-data',
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: formData() // the formData() created above
+returns: {
+  message: String
+}
+
+number: 9
+description: Get list of products of a specific doctor
+route: http://localhost:5000/api/doctor/products
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    name: String,
+    price: Number,
+    quantity_unit: String,
+    images: [
+      String
+    ]
+  }
+]
+
+number: 10
+description: Delete a product
+route: http://localhost:5000/api/doctor/products/id=:id
+form: enctype="multipart/form-data"
+params: Database ID of product
+method: DELETE
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}
+
+number: 11
+description: Update a product
+route: http://localhost:5000/api/doctor/products/id=:id
+params: Database ID of product
+// Create a formData() and append fields to it
+// If delete a image, append the field 'deletions' and value is the want-to-delete image's path
+// If add a image, append the field 'images' and value is the image file
+// Tom gon: Muon xoa image nao, append 'deletions' va value la path cua image do
+// Muon them 1 image moi nao, append 'images' va value la file image do
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: formData() // the formData() created above
+returns: {
+  message: String
+}
+
+
+
+
+
