@@ -24,16 +24,20 @@ function InputForm() {
         return data;
     });
 
-    let initDataSelect = useCallback((menu) => {
+    let initDataSelect = useCallback((menu, dataInit) => {
         let data = {};
         for (let i = 0; i < menu.length; i++) {
-            data[menu[i].split('/')[0]] = `-- make your choice --`;
+            data[menu[i].split('/')[0]] = dataInit;
         }
         return data;
     });
 
     let removeSpace = useCallback((title) => {
         return title.replaceAll(' ', '_');
+    });
+
+    let returnSpace = useCallback((title) => {
+        return title.replaceAll('_', ' ');
     });
 
     let makePass = useCallback((length) => {
@@ -57,10 +61,17 @@ function InputForm() {
     });
 
     let initValue = initDataInput(inputField1);
-    let initValueSelect = initDataSelect(inputField2);
+    initValue.Status = '';
     let [inputField, setInputField] = useState(initValue);
+    let [validateString, setValidateString] = useState(initValue);
+
+    let initValueSelect = initDataSelect(inputField2, '-- make your choice --');
     let [selectValue, setSelectValue] = useState(initValueSelect);
+    let initSelectValidate = initDataSelect(inputField2, '');
+    let [validateSelect, setValidateSelect] = useState(initSelectValidate);
+
     let [showList, setShowList] = useState(false);
+
     let contactList = useSelector((state) => state.currentCloseContactList.list);
     let dispatch = useDispatch();
     // console.log(inputField);
@@ -74,48 +85,119 @@ function InputForm() {
         });
     };
 
-    let handleRandPass = (title) => {
+    let handleRandPass = (formatedTitle) => {
         let randPass = makePass(6);
         setInputField({
             ...inputField,
-            [title]: randPass,
+            [formatedTitle]: randPass,
         });
+        setValidateString({ ...validateString, [formatedTitle]: '' });
     };
 
     let registerPatient = useCallback(async (data) => {
         try {
             let token = JSON.parse(localStorage.getItem('Token')).token;
-            let res = postAPI('/doctor/patients', data, token);
+            let res = await postAPI('/doctor/patients', data, token);
             console.log(res);
+
+            if (res.message === 'Patient account created and save successfully') {
+                setInputField(initValue);
+                setSelectValue(initValueSelect);
+                dispatch(reset());
+            }
+
+            if (!res.message && res.includes('id_number')) {
+                console.log(res);
+                setValidateString({ ...validateString, ID_number: 'ID number is already exist' });
+            } else if (!res.message && res.includes('name')) {
+                setValidateString({ ...validateString, Name: 'This name is invalid' });
+            }
         } catch (err) {
             console.log(err);
         }
     });
 
+    let validateForm = (inputField, selectValue) => {
+        let validateStr = {};
+        let isOke = true;
+
+        Object.keys(inputField).forEach((key) => {
+            if (inputField[key] === '') {
+                validateStr[key] = returnSpace(key) + ' is required';
+                isOke = false;
+            }
+        });
+
+        Object.keys(selectValue).forEach((key) => {
+            if (selectValue[key] === '-- make your choice --') {
+                validateSelect[key] = key + ' is required';
+                isOke = false;
+            }
+        });
+
+        if (inputField.ID_number !== '') {
+            let idlen = inputField.ID_number.length;
+            if (idlen !== 9 && idlen !== 11) {
+                validateStr.ID_number = 'ID number must be 9 or 11 digits';
+                isOke = false;
+            }
+        }
+
+        if (inputField.Year_of_birth !== '') {
+            let year = Number(inputField.Year_of_birth);
+            let now = new Date();
+            let yearNow = now.getFullYear();
+            if (year > yearNow) {
+                validateStr.Year_of_birth = 'Year of birth must be less or equal than ' + yearNow;
+                isOke = false;
+            } else if (yearNow - year > 100) {
+                validateStr.Year_of_birth = 'Year of birth is invalid';
+                isOke = false;
+            }
+        }
+
+        if (!isOke) {
+            setValidateString({ ...validateString, ...validateStr });
+            return isOke;
+        } else {
+            return isOke;
+        }
+    };
+
     let handleSubmit = () => {
         let contact_list = contactList.map((item) => item._id);
-        let dataSubmit = {
-            username: inputField.ID_number,
-            name: inputField.Name,
-            DOB: inputField.Year_of_birth,
-            address: `${selectValue.Province} ${
-                selectValue.District === '-- make your choice --' ? '' : selectValue.District
-            } ${selectValue.Ward === '-- make your choice --' ? '' : selectValue.Ward}`.trim(),
-            status: inputField.Status || '',
-            //current_facility: selectValue.Facility,
-            password: inputField.Password,
-            close_contact_list: contact_list,
-        };
+        let readySubmit = validateForm(inputField, selectValue);
 
-        // dispatch(addPatient(dataSubmit));
-        registerPatient(dataSubmit);
-        setInputField(initValue);
-        setSelectValue(initValueSelect);
-        dispatch(reset());
+        if (readySubmit) {
+            let dataSubmit = {
+                username: inputField.ID_number,
+                name: inputField.Name,
+                DOB: inputField.Year_of_birth,
+                address: `${selectValue.Province} ${
+                    selectValue.District === '-- make your choice --' ? '' : selectValue.District
+                } ${selectValue.Ward === '-- make your choice --' ? '' : selectValue.Ward}`.trim(),
+                status: inputField.Status || '',
+                //current_facility: selectValue.Facility,
+                password: inputField.Password,
+                close_contact_list: contact_list,
+            };
+
+            registerPatient(dataSubmit);
+        }
     };
 
     let handleDeleteContact = (index) => {
         dispatch(deleteItem(index));
+    };
+
+    let handleChangeSelect = (value, key) => {
+        setSelectValue({ ...selectValue, [key]: value });
+        setValidateSelect({ ...validateSelect, [key]: '' });
+    };
+
+    let handleChangeStatus = (e) => {
+        setInputField({ ...inputField, Status: e.target.value });
+        setValidateString({ ...validateString, Status: '' });
     };
 
     return (
@@ -134,16 +216,24 @@ function InputForm() {
                             let randPass = title === 'Password';
                             let type = formatedTitle === 'Name' || formatedTitle === 'Password' ? 'text' : 'number';
                             return (
-                                <label key={index} className={cx('col3', 'flex-center')}>
-                                    <span className={cx('label')}>{title}</span>
-                                    <FormInput
-                                        passGen={randPass}
-                                        type={type}
-                                        inputVal={inputField[formatedTitle]}
-                                        onChange={(e) => handleChange(e, formatedTitle)}
-                                        onClick={randPass ? () => handleRandPass(title) : () => {}}
-                                    />
-                                </label>
+                                <div key={index} className={cx('col3')}>
+                                    <label className={cx('flex-center')}>
+                                        <span className={cx('label')}>{title}</span>
+                                        <FormInput
+                                            passGen={randPass}
+                                            type={type}
+                                            inputVal={inputField[formatedTitle]}
+                                            onChange={(e) => handleChange(e, formatedTitle)}
+                                            onClick={randPass ? () => handleRandPass(formatedTitle) : () => {}}
+                                            onFocus={() =>
+                                                setValidateString({ ...validateString, [formatedTitle]: '' })
+                                            }
+                                        />
+                                    </label>
+                                    <span className={cx('flex-center', 'attention')}>
+                                        {validateString[formatedTitle]}
+                                    </span>
+                                </div>
                             );
                         })}
                     </div>
@@ -152,13 +242,16 @@ function InputForm() {
                         {inputField2.map((title, index) => {
                             let key = title.split('/')[0];
                             return (
-                                <div key={index} className={cx('col3', 'flex-center')}>
-                                    <span className={cx('label')}>{title}</span>
-                                    <SelectOption
-                                        options={dataAddress[key]}
-                                        value={selectValue[key]}
-                                        onChange={(value) => setSelectValue({ ...selectValue, [key]: value })}
-                                    />
+                                <div key={index} className={cx('col3')}>
+                                    <div className={cx('flex-center')}>
+                                        <span className={cx('label')}>{title}</span>
+                                        <SelectOption
+                                            options={dataAddress[key]}
+                                            value={selectValue[key]}
+                                            onChange={(value) => handleChangeSelect(value, key)}
+                                        />
+                                    </div>
+                                    <span className={cx('flex-center', 'attention')}>{validateSelect[key]}</span>
                                 </div>
                             );
                         })}
@@ -175,13 +268,14 @@ function InputForm() {
                                             name="state"
                                             checked={inputField.Status === title}
                                             value={title}
-                                            onChange={(e) => setInputField({ ...inputField, Status: e.target.value })}
+                                            onChange={handleChangeStatus}
                                         />
                                         <span className={cx('title-radio')}>{title}</span>
                                     </label>
                                 );
                             })}
                         </div>
+                        <span className={cx('flex-center', 'attention')}>{validateString['Status']}</span>
                     </div>
 
                     <div className={cx('row', 'field-input')}>
