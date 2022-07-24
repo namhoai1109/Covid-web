@@ -82,7 +82,7 @@ function InfoPatient() {
                     {updateMode && (
                         <div className={cx('row')}>
                             <div className={cx('col12', 'field-info', 'flex-center')}>
-                                <span className={cx('label')}>Now you can update information</span>
+                                <span className={cx('label')}>Now you can update the information</span>
                             </div>
                         </div>
                     )}

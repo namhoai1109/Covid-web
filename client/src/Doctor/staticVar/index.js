@@ -1,6 +1,6 @@
 export const patientFields = ['ID', 'Name', 'YoB', 'Status', 'Facility'];
 export const necessityFields = ['Name', 'Price', 'Quantity unit'];
-export const typeNecessity = ['Drug', 'Supply', 'Other'];
+export const typeNecessity = ['Drug', 'Supply', 'Food', 'Dietary Supplement', 'Protection', 'Herbal Medicine', 'Other'];
 export const inputField1 = ['Name', 'ID number', 'Year of birth', 'Password'];
 export const inputField2 = ['Province/City', 'District/County', 'Ward/Village', 'Facility'];
 

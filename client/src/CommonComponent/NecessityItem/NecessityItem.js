@@ -1,44 +1,51 @@
-import classNames from "classnames/bind";
-import styles from "./NecessityItem.module.scss";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
+import classNames from 'classnames/bind';
+import styles from './NecessityItem.module.scss';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
-function NecessityItem() {
+function NecessityItem({ infos, showDelete, clickDelete = () => {}, onClick = () => {} }) {
     var settings = {
         infinite: true,
         variableWidth: false,
         arrows: true,
         dots: true,
-      };
+    };
 
-    return ( <div className={cx('wrapper')}>
-        <div className={cx('slider')}>
-            <Slider {...settings}>
-                <div className={cx('img')}>
-                    <img src="http://placekitten.com/g/400/200" />
+    return (
+        <div className={cx('wrapper')}>
+            <button
+                onClick={clickDelete}
+                className={cx('delete-btn', 'flex-center', {
+                    delete: showDelete,
+                })}
+            >
+                <FontAwesomeIcon icon={faXmark} />
+            </button>
+            <div className={cx('slider')}>
+                <Slider {...settings}>
+                    {infos.images.map((linkImg, index) => {
+                        return (
+                            <div key={index} className={cx('img')}>
+                                <img src={`http://localhost:5000/${linkImg}`} />
+                            </div>
+                        );
+                    })}
+                </Slider>
+            </div>
+            <div onClick={onClick} className={cx('info')}>
+                <div>{infos.name}</div>
+                <div className={cx('price', 'flex-center')}>
+                    <span>{`${infos.price}VND`}</span>
+                    <span>{`/${infos.quantity_unit}`}</span>
                 </div>
-                <div className={cx('img')}>
-                    <img src="http://placekitten.com/g/400/200" />
-                </div>
-                <div className={cx('img')}>
-                    <img src="http://placekitten.com/g/400/200" />
-                </div>
-                <div className={cx('img')}>
-                    <img src="http://placekitten.com/g/400/200" />
-                </div>
-                <div className={cx('img')}>
-                    <img src="http://placekitten.com/g/400/200" />
-                </div>
-            </Slider>
+            </div>
         </div>
-        <div className={cx('info')}>
-            <div>Name</div>
-            <div>10000VND/1kg</div>
-        </div>
-    </div> );
+    );
 }
 
 export default NecessityItem;
