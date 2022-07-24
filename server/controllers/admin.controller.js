@@ -40,11 +40,11 @@ exports.getAll = async (req, res) => {
   }
 };
 
-exports.getAdminInfo = async (req, res) => {
-  try {
-    const admin = await Admin.find().populate("account_id");
-    res.send(admin);
-  } catch (err) {
-    res.status(400).send(err);
-  }
-};
+// exports.getAdminInfo = async (req, res) => {
+//   try {
+//     const admin = await Admin.find().populate("account_id");
+//     res.send(admin);
+//   } catch (err) {
+//     res.status(400).send(err);
+//   }
+// };
