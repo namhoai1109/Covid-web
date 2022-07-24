@@ -7,12 +7,15 @@ import SelectOption from '~/CommonComponent/SelectOption';
 import { useCallback, useRef, useState } from 'react';
 import { PlusIcon } from '~/CommonComponent/icons';
 import { postFormAPI } from '~/APIservices/postFormAPI';
+import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { putAPI } from '~/APIservices/putAPI';
 
 const cx = classNames.bind(styles);
 
-function InputForm() {
+function InfoNecessity() {
     let removeSpace = useCallback((title) => {
         return title.replaceAll(' ', '_');
     });
@@ -30,37 +33,37 @@ function InputForm() {
         return data;
     });
 
-    let [imgs, setImgs] = useState([]);
-    let inputRef = useRef();
+    let infoNecessity = useSelector((state) => state.currentNecessity.curr);
+    //console.log(infoNecessity);
+    let setFirstValue = useCallback((menu) => {
+        let data = {};
+        for (let i = 0; i < menu.length; i++) {
+            let key = removeSpace(menu[i]);
+            data[key] = infoNecessity[key.toLocaleLowerCase()];
+        }
 
-    let initData = initDataInput(necessityFields);
+        return data;
+    });
+
+    //update mode
+    let [updateMode, setUpdateMode] = useState(false);
+
+    //input images
+    let [imgs, setImgs] = useState(infoNecessity.images || []);
+    let inputRef = useRef();
+    let [deletions, setDeletions] = useState([]);
+    //console.log(imgs, deletions);
+
+    //input field
+    let initData = setFirstValue(necessityFields);
     initData.Type = '--choose type--';
     let [dataInput, setDataInput] = useState(initData);
 
+    //validate
     let validateData = initDataInput(necessityFields);
     validateData.Type = '';
     validateData.Images = '';
     let [validate, setValidate] = useState(validateData);
-
-    let handleChooseFile = (e) => {
-        let files = e.target.files;
-        let arrFiles = [];
-        for (let i = 0; i < files.length; i++)
-            if (files[i]) {
-                arrFiles.push(files[i]);
-            }
-        setImgs([...imgs, ...arrFiles]);
-    };
-
-    let handleClickInput = () => {
-        inputRef.current.click();
-        setValidate({ ...validate, Images: '' });
-    };
-
-    let handleChangeInput = (val, title) => {
-        setDataInput({ ...dataInput, [title]: val });
-        setValidate({ ...validate, [title]: '' });
-    };
 
     let validateDataSubmit = (dataInput, listFile) => {
         let isOk = true;
@@ -93,36 +96,77 @@ function InputForm() {
         return isOk;
     };
 
+    //handle event
+    let handleChooseFile = (e) => {
+        let files = e.target.files;
+        let arrFiles = [];
+        for (let i = 0; i < files.length; i++)
+            if (files[i]) {
+                arrFiles.push(files[i]);
+            }
+        setImgs([...imgs, ...arrFiles]);
+    };
+
+    let handleClickInput = () => {
+        inputRef.current.click();
+        setValidate({ ...validate, Images: '' });
+    };
+
+    let handleChangeInput = (val, title) => {
+        setDataInput({ ...dataInput, [title]: val });
+        setValidate({ ...validate, [title]: '' });
+    };
+
     let handleDeleteImg = (index) => {
-        let newImgs = [...imgs];
-        newImgs.splice(index, 1);
-        setImgs(newImgs);
+        let img = imgs[index];
+        if (typeof img === 'string') {
+            setDeletions([...deletions, img]);
+            let nArr = [...imgs];
+            nArr.splice(index, 1);
+            setImgs(nArr);
+        } else {
+            let nArr = [...imgs];
+            nArr.splice(index, 1);
+            setImgs(nArr);
+        }
     };
 
     let handleSubmit = async () => {
-        let isOke = validateDataSubmit(dataInput, imgs);
-        if (isOke) {
-            let formData = new FormData();
-            imgs.forEach((file) => {
-                formData.append('images', file);
-            });
+        if (updateMode) {
+            let isOke = validateDataSubmit(dataInput, imgs);
+            if (isOke) {
+                let formData = new FormData();
+                if (imgs.length > 0) {
+                    imgs.forEach((file) => {
+                        if (typeof file !== 'string') {
+                            formData.append('images', file);
+                        }
+                    });
+                }
 
-            Object.keys(dataInput).forEach((key) => {
-                formData.append(key.toLocaleLowerCase(), dataInput[key]);
-            });
+                if (deletions.length > 0) {
+                    deletions.forEach((file) => {
+                        formData.append('deletions', file);
+                    });
+                }
 
-            let res = await postFormAPI('/doctor/products', formData);
-            console.log(res);
-            setDataInput(initData);
-            setImgs([]);
+                Object.keys(dataInput).forEach((key) => {
+                    formData.append(key.toLocaleLowerCase(), dataInput[key]);
+                });
+
+                let res = await putAPI('doctor/products/id=' + infoNecessity._id, formData);
+                console.log(res);
+            }
         }
+        setUpdateMode(!updateMode);
     };
 
     return (
         <div className={cx('wrapper')}>
             <WrapContent>
+                {updateMode && <div className={cx('noti')}>Now you can update the information</div>}
                 <button onClick={handleSubmit} className={cx('submit-btn', 'flex-center')}>
-                    <PlusIcon width="2.5rem" height="2.5rem" />
+                    {updateMode ? <FontAwesomeIcon icon={faCheck} /> : <FontAwesomeIcon icon={faPenToSquare} />}
                 </button>
                 {necessityFields.map((title, index) => {
                     let formatedTitle = removeSpace(title);
@@ -134,6 +178,7 @@ function InputForm() {
                                 <FormInput
                                     type={number ? 'number' : 'text'}
                                     inputVal={dataInput[formatedTitle]}
+                                    readOnly={!updateMode}
                                     onChange={(e) => handleChangeInput(e.target.value, formatedTitle)}
                                 />
                             </div>
@@ -145,6 +190,7 @@ function InputForm() {
                     <div className={cx('field-input', 'flex-center')}>
                         Type
                         <SelectOption
+                            readOnly={!updateMode}
                             options={typeNecessity}
                             value={dataInput.Type}
                             onChange={(val) => handleChangeInput(val, 'Type')}
@@ -159,37 +205,42 @@ function InputForm() {
                 </div>
                 <div className={cx('flex-center', 'list-img')}>
                     {imgs.map((img, index) => {
+                        let url = typeof img === 'string' ? `http://localhost:5000/${img}` : URL.createObjectURL(img);
                         return (
                             <div key={index} className={cx('img-item')}>
                                 <div className={cx('img')}>
-                                    <img src={URL.createObjectURL(img)} />
+                                    <img src={url} />
                                 </div>
-                                <button
-                                    onClick={() => handleDeleteImg(index)}
-                                    className={cx('delete-img', 'flex-center')}
-                                >
-                                    <FontAwesomeIcon icon={faXmark} />
-                                </button>
+                                {updateMode && (
+                                    <button
+                                        onClick={() => handleDeleteImg(index)}
+                                        className={cx('delete-img', 'flex-center')}
+                                    >
+                                        <FontAwesomeIcon icon={faXmark} />
+                                    </button>
+                                )}
                             </div>
                         );
                     })}
-                    <div onClick={handleClickInput} className={cx('wrap-input-file')}>
-                        <input
-                            className={cx('input-file')}
-                            type="file"
-                            ref={inputRef}
-                            onChange={handleChooseFile}
-                            accept="image/png, image/jpeg, image/jpg"
-                            multiple
-                        />
-                        <div className={cx('add-btn')}>
-                            <PlusIcon width="4rem" height="4rem" />
+                    {updateMode && (
+                        <div onClick={handleClickInput} className={cx('wrap-input-file')}>
+                            <input
+                                className={cx('input-file')}
+                                type="file"
+                                ref={inputRef}
+                                onChange={handleChooseFile}
+                                accept="image/png, image/jpeg, image/jpg"
+                                multiple
+                            />
+                            <div className={cx('add-btn')}>
+                                <PlusIcon width="4rem" height="4rem" />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </WrapContent>
         </div>
     );
 }
 
-export default InputForm;
+export default InfoNecessity;

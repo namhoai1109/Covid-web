@@ -4,7 +4,7 @@ import styles from './SelectOption.module.scss';
 
 const cx = classNames.bind(styles);
 
-function SelectOption({ options, value, onChange }) {
+function SelectOption({ readOnly, options, value, onChange }) {
     let [option, setOption] = useState(value);
     let [showOptions, setShowOptions] = useState(false);
 
@@ -13,7 +13,9 @@ function SelectOption({ options, value, onChange }) {
     }, [value]);
 
     let handleShowOption = () => {
-        setShowOptions(!showOptions);
+        if (!readOnly) {
+            setShowOptions(!showOptions);
+        }
     };
 
     let handleValueOption = (value) => {

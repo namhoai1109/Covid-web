@@ -21,6 +21,7 @@ export const doctorRoutes = {
     newPatient: '/newpatient',
     infoPatient: '/infopatient',
     newNecessity: '/newnecessity',
+    infoNecessity: '/infonecessity',
 };
 
 export const patientRoutes = {

@@ -39,6 +39,20 @@ export const post = async (url, data, token) => {
     }
 };
 
+export const postForm = async (url, data, token) => {
+    try {
+        let res = await request.post(url, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                ContentType: 'multipart/form-data',
+            },
+        });
+        return res.data;
+    } catch (error) {
+        return error.response.data.message;
+    }
+};
+
 export const _delete = async (url, token) => {
     try {
         let res = await request.delete(url, {

@@ -72,7 +72,8 @@ function Header() {
 
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:
                 [filterItem, sortItem] = getFilterSortMenu(necessityFields);
-                addLink = configs.mainRoutes.doctor + configs.doctorRoutes.newNecessity;
+                addLink =
+                    configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem + configs.doctorRoutes.newNecessity;
                 return { filterItem, sortItem, addLink };
             default:
                 return {};

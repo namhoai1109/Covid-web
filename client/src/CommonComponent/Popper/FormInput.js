@@ -12,6 +12,7 @@ function FormInput({
     type = 'text',
     placeholder = '',
     passGen,
+    readOnly,
 }) {
     return (
         <div className={cx('form-input')}>
@@ -23,7 +24,7 @@ function FormInput({
                 onFocus={onFocus}
                 onKeyDown={onKeyDown}
                 className={cx('input')}
-                readOnly={passGen}
+                readOnly={passGen || readOnly}
             />
             {passGen && (
                 <button onClick={onClick} className={cx('btn')}>
