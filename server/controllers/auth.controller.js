@@ -23,7 +23,8 @@ exports.login = async (req, res) => {
 
     // If account is legit, save log info
     const log = new Log({
-      account_id: account._id,
+      account: account._id,
+      action: `Login`,
     });
     await log.save();
 

@@ -21,19 +21,16 @@ const patientSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => /^[a-zA-Z ]+$/.test(v),
+      validator: (v) => /^[a-zA-Z ]{1,50}$/.test(v),
       message: (props) => ({ message: `${props.value} is not a valid name` }),
     },
-    min: 1,
-    max: 50,
   },
   // Format: YYYY-MM-DD
   DOB: {
     type: Date,
     required: true,
     validate: {
-      validator: (v) =>
-        v.getFullYear() > 1900 && v.getFullYear() <= new Date().getFullYear(),
+      validator: (v) => v.getFullYear() > 1900 && v.getFullYear() <= new Date().getFullYear(),
       message: (props) => ({ message: `${props.value} is not a valid date` }),
     },
   },

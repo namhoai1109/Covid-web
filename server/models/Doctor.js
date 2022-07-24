@@ -19,11 +19,9 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     default: "Anonymous",
     validate: {
-      validator: (v) => /^[a-zA-Z ]+$/.test(v),
+      validator: (v) => /^[a-zA-Z ]{1,50}$/.test(v),
       message: (props) => ({ message: `${props.value} is not a valid name` }),
     },
-    min: 1,
-    max: 50,
   },
   patients: [
     {
