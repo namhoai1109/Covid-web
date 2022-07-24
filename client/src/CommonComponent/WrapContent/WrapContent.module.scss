@@ -3,13 +3,15 @@
     height: 100%;
     animation: moveToRight 0.3s ease-in;
     overflow-y: overlay;
+    padding-top: 10px;
 }
 
 @keyframes moveToRight {
     0% {
         transform: translateX(-30px);
         opacity: 0;
-    } 100% {
+    }
+    100% {
         transform: translateX(0px);
         opacity: 1;
     }

@@ -2,19 +2,25 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const listPatientSlice = createSlice({
     name: 'listPatient',
-    initialState: [],
+    initialState: {
+        list: [],
+        currentPatient: {},
+    },
     reducers: {
         addPatient: (state, action) => {
-            state.push(action.payload);
+            state.list.push(action.payload);
+        },
+        addCurrentPatient: (state, action) => {
+            state.currentPatient = action.payload;
         },
         clearList: (state) => {
-            state.length = 0;
+            state.list.length = 0;
         },
         deletePatient: (state, action) => {
-            state.splice(action.payload, 1);
+            state.list.splice(action.payload, 1);
         },
     },
 });
 
-export const { addPatient, clearList, deletePatient } = listPatientSlice.actions;
+export const { addPatient, clearList, deletePatient, addCurrentPatient } = listPatientSlice.actions;
 export default listPatientSlice.reducer;

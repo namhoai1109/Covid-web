@@ -4,11 +4,10 @@ import Patient from '~/Patient';
 import ManagerPage from '~/Admin/ManagerPage';
 import FacilityPage from '~/Admin/FacilityPage';
 import Login from '~/Login';
-import CovidPatient from '~/Doctor/CovidPatient';
-import { InputForm, ListPatient } from '~/Doctor/CovidPatient';
 import { InputFormNecessity } from '~/Doctor/EssentialItem';
 import EssentialItem from '~/Doctor/EssentialItem';
 import configs from '~/config';
+import CovidPatientRoutes from '~/Doctor/CovidPatient/covidPatientRoutes';
 
 export const mainRoutes = [
     {
@@ -42,20 +41,12 @@ export const adminRoutes = [
 
 export const doctorRoutes = [
     {
-        path: configs.doctorRoutes.covidPatient,
-        element: CovidPatient,
+        path: configs.doctorRoutes.covidPatient + configs.subRoute,
+        element: CovidPatientRoutes,
     },
     {
         path: configs.doctorRoutes.essentialItem,
         element: EssentialItem,
-    },
-    {
-        path: configs.doctorRoutes.newPatient,
-        element: InputForm,
-    },
-    {
-        path: configs.doctorRoutes.listPatient,
-        element: ListPatient,
     },
     {
         path: configs.doctorRoutes.newNecessity,

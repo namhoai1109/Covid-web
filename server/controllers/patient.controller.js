@@ -1,4 +1,5 @@
 const Doctor = require("../models/Doctor");
+
 const Patient = require("../models/Patient");
 const Facility = require("../models/Facility");
 const Log = require("../models/Log");
