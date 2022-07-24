@@ -65,6 +65,7 @@ exports.deleteAccount = async(req, res) => {
         res.status(400).send({ message: err.message });
     }
 };
+
 // exports.getAdminInfo = async (req, res) => {
 //   try {
 //     const admin = await Admin.find().populate("account_id");

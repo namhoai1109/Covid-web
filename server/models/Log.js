@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const logSchema = new mongoose.Schema({
-  account_id: {
+  account: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Account'
   },
@@ -9,6 +9,9 @@ const logSchema = new mongoose.Schema({
     type: Date,
     immutable: true,
     default: Date.now
+  },
+  action: {
+    type: String,
   }
 });
 

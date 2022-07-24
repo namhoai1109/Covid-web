@@ -66,6 +66,10 @@
         margin-right: 10px;
     }
 
+    .attention {
+        color: var(--attention-color);
+    }
+
     .radio {
         &:hover {
             cursor: pointer;
