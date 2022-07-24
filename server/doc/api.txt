@@ -72,6 +72,31 @@ returns: [
   }
 ]
 
+number: 4
+description: Change status of account (active/inactive)
+route: localhost:5000/api/admin/doctors/id=:id/changestatus
+eg: localhost:5000/api/admin/doctors/id=62d5710ffe25ed38b535bf53/changestatus
+method: PUT
+body:
+{
+  "status": "inactive" || "active"
+}
+return 
+{
+  message: String
+}
+
+number: 5
+description: Delete account
+route: localhost:5000/api/admin/doctors/id=:id/delete
+eg: localhost:5000/api/admin/doctors/id=62d624944ba3d2fc45b2e894/delete
+method: DELETE
+
+return{
+  message: String
+}
+
+
 III. Doctor routes
 number: 4
 description: Get all patients information of a specific doctor
