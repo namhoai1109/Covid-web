@@ -35,6 +35,25 @@ returns: {
   message: Boolean
 }
 
+number: 3
+description: Set new password for newly created account that has never logged in
+route: http://localhost:5000/api/auth/update-password
+method: POST
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+  },
+  password: {
+    type: String,
+    length: >= 6
+  }
+}
+returns: {
+  message: Boolean
+}
+
+
 II.Admin routes
 number: 1
 description: Register new doctor
@@ -432,7 +451,7 @@ returns: {
 }
 
 number: 3
-description: Change password
+description: Change password for client
 route: http://localhost:5000/api/patient/password
 method: PUT
 headers: {

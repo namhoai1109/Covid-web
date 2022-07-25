@@ -52,14 +52,14 @@ function Header() {
 
     let handleClick = async (inputVals) => {
         if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
-            await registerManager({
-                username: inputVals.id,
-                password: inputVals.password,
-                name: inputVals.username,
-            });
+            // await registerManager({
+            //     username: inputVals.id,
+            //     password: inputVals.password,
+            //     name: inputVals.username,
+            // });
             inputVals.status = 'active';
-            if (!inputVals.username) {
-                inputVals.username = 'Anonymous';
+            if (!inputVals.name) {
+                inputVals.name = 'Anonymous';
             }
             console.log(inputVals);
             dispatch(addManager(inputVals));

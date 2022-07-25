@@ -24,13 +24,13 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
         return data;
     });
 
-    // let makeLowerCase = useCallback((menu) => {
-    //     let nArr = [...menu];
-    //     for (let i = 0; i < nArr.length; i++) {
-    //         nArr[i].title = nArr[i].title.toLowerCase();
-    //     }
-    //     return nArr;
-    // });
+    let makeLowerCase = useCallback((menu) => {
+        let nArr = [...menu];
+        for (let i = 0; i < nArr.length; i++) {
+            nArr[i].title = nArr[i].title.toLowerCase();
+        }
+        return nArr;
+    });
 
     let makePass = useCallback((length) => {
         var result = '';

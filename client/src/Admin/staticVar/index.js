@@ -1,4 +1,4 @@
-export const menuManager = ['ID', 'Username'];
+export const menuManager = ['Username', 'Name'];
 export const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
 let makeItemForm = (title, type) => {
     return {
@@ -7,8 +7,8 @@ let makeItemForm = (title, type) => {
     };
 };
 export const formInputDoctor = [
-    makeItemForm('ID', 'input'),
     makeItemForm('Username', 'input'),
+    makeItemForm('Name', 'input'),
     makeItemForm('Password', 'passGen'),
 ];
 export const formInputFacility = [

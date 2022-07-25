@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { getAPI } from '~/APIservices/getAPI';
 import { addManager, clearList, setStatus } from '../redux/listManagerSlice';
 import { useEffect } from 'react';
+import { menuManager } from '../staticVar';
 
 const cx = classNames.bind(styles);
 
@@ -22,8 +23,8 @@ function ManagerPage() {
                 if (doctor.id_number !== null || doctor.account !== null) {
                     dispatch(
                         addManager({
-                            id: doctor.id_number,
-                            username: doctor.name,
+                            username: doctor.id_number,
+                            name: doctor.name,
                             status: doctor.account.status,
                         }),
                     );
@@ -46,15 +47,6 @@ function ManagerPage() {
 
         let newList = list.map((item, index) => {
             return {
-                id_number: (
-                    <span
-                        className={cx({
-                            inactive: item.status === 'inactive',
-                        })}
-                    >
-                        {item.id}
-                    </span>
-                ),
                 username: (
                     <span
                         className={cx({
@@ -62,6 +54,15 @@ function ManagerPage() {
                         })}
                     >
                         {item.username}
+                    </span>
+                ),
+                name: (
+                    <span
+                        className={cx({
+                            inactive: item.status === 'inactive',
+                        })}
+                    >
+                        {item.name}
                     </span>
                 ),
                 ig1: '',
@@ -97,8 +98,13 @@ function ManagerPage() {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('row', 'list-item', 'z1')}>
-                <div className={cx('col2-4', 'item')}>ID</div>
-                <div className={cx('col2-4', 'item')}>Username</div>
+                {menuManager.map((item, index) => {
+                    return (
+                        <div key={index} className={cx('col2-4', 'item')}>
+                            {item}
+                        </div>
+                    );
+                })}
             </div>
             <WrapContent>
                 {newList.map((item, index) => {
