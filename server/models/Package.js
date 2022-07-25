@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 
-const arrayLimit = (val) => {
-  return val.length >= 2;
-}
-
 const packageSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -27,11 +23,10 @@ const packageSchema = new mongoose.Schema({
       ref: "Product",
     }],
     required: true,
-    validate: {
-      validator: arrayLimit,
-      message: (props) => ({ message: `${props.value} is not a valid array` }),
-    }
   }
+  // TODO: Mức giới hạn số lượng mỗi sản phẩm trong gói
+  // TODO: Mức giới hạn số lượng gói cho mỗi người theo thời gian
+  // TODO: Thời gian giới hạn (ngày, tuần, tháng)
 });
 
 module.exports = mongoose.model('Package', packageSchema);

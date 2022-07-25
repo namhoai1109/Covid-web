@@ -2,7 +2,7 @@ API Management List
 
 I.Auth routes
 number: 1
-description: This route is for login
+description: Login
 route: http://localhost:5000/api/auth/login
 method: POST
 body: {
@@ -19,6 +19,20 @@ returns: {
   token: String,
   username: Number (username) (cmnd or cccd),
   role: String
+}
+
+number: 2
+description: Check if has ever logged in before
+route: http://localhost:5000/api/auth/check
+method: POST
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+  }
+}
+returns: {
+  message: Boolean
 }
 
 II.Admin routes
@@ -286,6 +300,99 @@ returns: {
   message: String
 }
 
+number 9:
+description: Get list of packages
+route: http://localhost:5000/api/doctor/packages
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    name: String,
+    max: Number,
+    products: [
+      {
+        _id: String,
+        name: String,
+        price: Number,
+        quantity_unit: String,
+        images: [
+          String
+        ]
+      }
+    ]
+  }
+]
+
+number: 10
+description: Register a new package
+route: http://localhost:5000/api/doctor/packages
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  name: {
+    type: String,
+    required: true
+  },
+  max: {
+    type: Number,
+    required: true
+  },
+  products: [ String ] (Database _id of Product)
+}
+returns: {
+  message: String
+}
+
+number: 11
+description: Delete a package
+route: http://localhost:5000/api/doctor/packages/id=:id
+params: Database ID of package
+method: DELETE
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}
+
+number: 12
+description: Update a package
+route: http://localhost:5000/api/doctor/packages/id=:id
+params: Database ID of package
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  name: {
+    type: String,
+    required: true
+  },
+  max: {
+    type: Number,
+    required: true
+  },
+  products: [ String ] (Database _id of Product)
+}
+returns: {
+  message: String
+}
+
+
+
 III. Patient
 number: 1
 description: Get logs
@@ -343,7 +450,6 @@ body: {
 returns: {
   message: String
 }
-
 
 
 
