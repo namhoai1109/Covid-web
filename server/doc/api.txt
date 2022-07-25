@@ -22,7 +22,7 @@ returns: {
 }
 
 II.Admin routes
-number: 2
+number: 1
 description: Register new doctor
 route: http://localhost:5000/api/admin/register
 method: POST
@@ -51,7 +51,7 @@ returns: {
   message: String
 }
 
-number: 3
+number: 2
 description: Get list of doctors
 route: http://localhost:5000/api/admin/doctors
 method: GET
@@ -72,7 +72,7 @@ returns: [
   }
 ]
 
-number: 4
+number: 3
 description: Change status of account (active/inactive)
 route: localhost:5000/api/admin/doctors/id=:id/changestatus
 eg: localhost:5000/api/admin/doctors/id=62d5710ffe25ed38b535bf53/changestatus
@@ -86,19 +86,19 @@ return
   message: String
 }
 
-number: 5
+number: 4
 description: Delete account
 route: localhost:5000/api/admin/doctors/id=:id/delete
 eg: localhost:5000/api/admin/doctors/id=62d624944ba3d2fc45b2e894/delete
 method: DELETE
 
-return{
+return {
   message: String
 }
 
 
 III. Doctor routes
-number: 4
+number: 1
 description: Get all patients information of a specific doctor
 route: http://localhost:5000/api/doctor/patients
 method: GET
@@ -126,7 +126,7 @@ returns: [
   }
 ]
 
-number: 5
+number: 2
 description: Register new patient to a specific doctor
 route: http://localhost:5000/api/doctor/patients
 method: POST
@@ -172,7 +172,7 @@ returns: {
   message: String
 }
 
-number: 6
+number: 3
 description: Update patient information of a specific doctor
 route: http://localhost:5000/api/doctor/patients/id=:id
 params: _id of database
@@ -198,7 +198,7 @@ body: {
   ]
 }
 
-number: 7
+number: 4
 description: Delete a patient of a specific doctor
 route: http://localhost:5000/api/doctor/patients/id=:id
 params: _id of database
@@ -212,7 +212,7 @@ returns: {
   message: String
 }
 
-number: 8
+number: 5
 description: Register a new product
 form: enctype="multipart/form-data"
 // Create a new formData() and append data to it
@@ -230,7 +230,7 @@ returns: {
   message: String
 }
 
-number: 9
+number: 6
 description: Get list of products of a specific doctor
 route: http://localhost:5000/api/doctor/products
 method: GET
@@ -251,7 +251,7 @@ returns: [
   }
 ]
 
-number: 10
+number: 7
 description: Delete a product
 route: http://localhost:5000/api/doctor/products/id=:id
 form: enctype="multipart/form-data"
@@ -266,7 +266,7 @@ returns: {
   message: String
 }
 
-number: 11
+number: 8
 description: Update a product
 route: http://localhost:5000/api/doctor/products/id=:id
 params: Database ID of product
@@ -282,6 +282,64 @@ headers: {
   }
 }
 body: formData() // the formData() created above
+returns: {
+  message: String
+}
+
+III. Patient
+number: 1
+description: Get logs
+route: http://localhost:5000/api/patient/logs
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String (Database ID),
+    account: String (_id of account),
+    action: String,
+    time: String (yyyy-mm-dd hh:mm:ss)
+  }
+]
+
+number: 2
+description: Get info
+route: http://localhost:5000/api/patient/info
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  _id: String (Database ID),
+  id_number: String,
+  name: String,
+  DOB: String,
+  address: String,
+  status: String,
+  current_facility: String,
+}
+
+number: 3
+description: Change password
+route: http://localhost:5000/api/patient/password
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  new_password: {
+    type: String
+    minlength: 6,
+    required: true
+  }
+}
 returns: {
   message: String
 }

@@ -24,7 +24,8 @@ exports.login = async (req, res) => {
     // If account is legit, save log info
     const log = new Log({
       account: account._id,
-      action: `Login`,
+      action: `login`,
+      description: `Account ${account.username} logged in`,
     });
     await log.save();
 

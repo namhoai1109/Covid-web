@@ -48,7 +48,8 @@ exports.registerAccount = async (req, res) => {
 
     const patientLog = new Log({
       account: patient.account,
-      action: `Account registered by doctor ${doctor.name}`
+      action: 'create',
+      description: `Account created by doctor ${doctor.name}`
     });
     await patientLog.save();
 
@@ -100,6 +101,24 @@ exports.updatePatient = async (req, res) => {
     const newStatusNumber = Number(req.body.status?.[1]); //0, 1, 2, 3
     const step = newStatusNumber - statusNumber;
 
+    // Create history record
+    const facility = await Facility.findOne({ _id: patient.current_facility });
+    statusString = ""
+    if (req.body.status && req.body.status !== patient.status) {
+      statusString += `Status changed to ${req.body.status}\n`;
+    }
+    if (req.body.current_facility && req.current_facility !== patient.current_facility) {
+      statusString += `Current facility changed to ${facility.name}\n`;
+    }
+    if (statusString) {
+      const patientLog = new Log({
+        account: patient.account,
+        action: 'update',
+        description: statusString + `Updated by doctor ${doctor.name}`
+      });
+      await patientLog.save();
+    }
+
     // Update patient's text information
     patient.status = req.body.status ? req.body.status : patient.status;
     patient.close_contact_list = req.body.close_contact_list ? req.body.close_contact_list : patient.close_contact_list;
@@ -107,19 +126,7 @@ exports.updatePatient = async (req, res) => {
     await patient.save();
 
     // Create history record
-    const facility = await Facility.findOne({ _id: patient.current_facility });
-    statusString = ""
-    if (req.body.status) {
-      statusString += `Status changed to ${req.body.status}\n`;
-    }
-    if (req.current_facility) {
-      statusString += `Current facility changed to ${facility.name}\n`;
-    }
-    const patientLog = new Log({
-      account: patient.account,
-      action: statusString + `Updated by doctor ${doctor.name}`
-    });
-    await patientLog.save();
+
 
     // Update contact list status
     const contactListID = patient.close_contact_list;
