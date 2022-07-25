@@ -40,7 +40,7 @@ const authorizeUser = function (...roles) {
             req.idNumber = idNumber;
             next();
           } else {
-            return res.status(401).send({ message: "Account is disabled!" });
+            return res.status(401).send({ message: "Account is disabled, please contact your administrator" });
           }
         } else {
           return res.status(401).send({ message: "Permission denied!" });
