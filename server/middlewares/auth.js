@@ -1,20 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Account = require("../models/Account");
 
-// const isLoggedIn = function (req, res, next) {
-//   const token = req.header("auth-token");
-//   if (!token) {
-//     return res.status(401).send("You are not logged in.");
-//   }
-//   try {
-//     const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-//     req.user = verified;
-//     next();
-//   } catch (err) {
-//     res.status(400).send(err);
-//   }
-// };
-
 const authorizeUser = function (...roles) {
   return async (req, res, next) => {
     // Get the authorization header token

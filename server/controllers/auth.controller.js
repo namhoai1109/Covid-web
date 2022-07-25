@@ -36,3 +36,28 @@ exports.login = async (req, res) => {
     res.status(400).send(err);
   }
 };
+
+// Check if patient account has logged in, if has never logged in, return to client side for setting new password
+exports.checkHasLoggedIn = async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.body.username });
+    if (!account) {
+      return res.status(404).send({ message: "Invalid username" });
+    }
+
+    if (account.role === "patient") {
+      const log = await Log.findOne({
+        account: account._id,
+        action: `login`,
+      });
+
+      if (!log) {
+        return res.status(200).send({ message: false })
+      }
+    }
+
+    res.status(200).send({ message: true });
+  } catch (err) {
+    res.status(500).send({ message: err });
+  }
+}

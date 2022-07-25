@@ -19,5 +19,7 @@ router.delete("/products/id=:id", productController.deleteProduct);
 // Packages related
 router.get("/packages", packageController.getAllPackages);
 router.post("/packages", packageController.registerPackage);
+router.put("/packages/id=:id", packageController.updatePackage);
+router.delete("/packages/id=:id", packageController.deletePackage);
 
 module.exports = router;

@@ -35,40 +35,39 @@ app.use("/api/doctor", authorizeUser("doctor"), doctorRouter);
 app.use("/api/facility", authorizeUser("doctor"), facilityRouter);
 app.use("/api/patient", authorizeUser("patient"), patientRouter);
 
-
 // Initialize admin account on first setup
-const initAdmin = async() => {
-    try {
-        const account = await Account.find();
-        if (account.length === 0) {
-            try {
-                // Create admin acount
-                const password = "admin";
-                const hashedPassword = await bcrypt.hash(password, 10);
-                const adminAccount = new Account({
-                    username: "000000000",
-                    password: hashedPassword,
-                    role: "admin",
-                });
-                await adminAccount.save();
+const initAdmin = async () => {
+  try {
+    const account = await Account.find();
+    if (account.length === 0) {
+      try {
+        // Create admin acount
+        const password = "admin";
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const adminAccount = new Account({
+          username: "000000000",
+          password: hashedPassword,
+          role: "admin",
+        });
+        await adminAccount.save();
 
-                // Create admin
-                const admin = new Admin({
-                    account: adminAccount._id,
-                });
-                await admin.save();
-            } catch (err) {
-                console.log(err.message);
-            }
-        }
-    } catch (err) {
+        // Create admin
+        const admin = new Admin({
+          account: adminAccount._id,
+        });
+        await admin.save();
+      } catch (err) {
         console.log(err.message);
+      }
     }
+  } catch (err) {
+    console.log(err.message);
+  }
 };
 
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    initAdmin();
-    console.log(`Server is running on http://localhost:${PORT}`);
+  initAdmin();
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

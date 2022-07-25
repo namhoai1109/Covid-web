@@ -1,4 +1,6 @@
 const Product = require('../models/Product');
+const Log = require('../models/Log');
+const Account = require('../models/Account');
 const fs = require('fs');
 
 exports.getAllProducts = async (req, res) => {
@@ -11,8 +13,6 @@ exports.getAllProducts = async (req, res) => {
 };
 
 exports.registerProduct = async (req, res) => {
-  console.log(req.file || req.files);
-  console.log(req.body);
   const product = new Product({
     name: req.body.name,
     price: req.body.price,
@@ -21,6 +21,15 @@ exports.registerProduct = async (req, res) => {
   });
 
   try {
+    // Create history records for doctor
+    const account = await Account.findOne({ username: req.idNumber });
+    const log = new Log({
+      account: account._id,
+      action: 'create',
+      description: `Registered a new product: ${product.name}`
+    })
+    await log.save();
+
     await product.save();
     res.status(200).send({ message: "Product registered successfully" });
   } catch (err) {
@@ -30,11 +39,20 @@ exports.registerProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    console.log(req.body);
     const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).send({ message: "Product not found in the database" });
     }
+
+    // Create history records for doctor
+    const account = await Account.findOne({ username: req.idNumber });
+    const log = new Log({
+      account: account._id,
+      action: 'update',
+      description: `Updated product: ${product.name}`
+    });
+    await log.save();
+
     // Update text fields
     product.name = req.body.name ? req.body.name : product.name;
     product.price = req.body.price ? req.body.price : product.price;
@@ -48,7 +66,7 @@ exports.updateProduct = async (req, res) => {
     } else {
       deleteImages = req.body.deletions;
     }
-    console.log(deleteImages);
+
     if (deleteImages) {
       deleteImages.forEach((image) => {
         const index = product.images.indexOf(image);
@@ -84,6 +102,16 @@ exports.deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).send({ message: "Product not found" });
     }
+
+    // Create history records for doctor
+    const account = await Account.findOne({ username: req.idNumber });
+    const log = new Log({
+      account: account._id,
+      action: 'delete',
+      description: `Deleted product: ${product.name}`
+    })
+    await log.save();
+
     const images = product.images;
     if (images) {
       images.forEach((image) => {
