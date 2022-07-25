@@ -98,43 +98,41 @@ exports.updatePatient = async (req, res) => {
     patient = isBelong.patient;
     doctor = isBelong.doctor;
 
-    // Create history record for patient
-    const facility = await Facility.findOne({ _id: patient.current_facility });
-    statusString = ""
-    if (req.body.status && req.body.status !== patient.status) {
-      statusString += `Status changed to ${req.body.status}\n`;
-    }
-    if (req.body.current_facility && req.current_facility !== patient.current_facility) {
-      statusString += `Current facility changed to ${facility.name}\n`;
-    }
-    if (statusString) {
-      const patientLog = new Log({
-        account: patient.account,
-        action: 'update',
-        description: statusString + `Updated by doctor ${doctor.name}`
-      });
-      await patientLog.save();
-    }
+    // Declare a log string variable for history record
+    let logString = "";
 
-    // Create history record for doctor
-    const doctorLog = new Log({
-      account: doctor.account,
-      action: 'update',
-      description: `Updated patient: ID: ${patient.id_number}, Name: ${patient.name}`
-    })
-    await doctorLog.save();
-
+    // Variables needed to update close contact list status
     const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
-    const newStatusNumber = req.body.status ? Number(req.body.status[1]) : statusNumber;
+    const newStatusNumber = req.body.status ? Number(req.body.status[1]) : statusNumber; //0, 1, 2, 3
     const step = newStatusNumber - statusNumber;
 
-    // Update patient's text information
-    patient.status = req.body.status ? req.body.status : patient.status;
+    // Update patient's status
+    if (req.body.status) {
+      patient.status = req.body.status;
+      logString += `Status changed to ${patient.status}\n`;
+    }
+    // Update patient's contact list
     patient.close_contact_list = req.body.close_contact_list ? req.body.close_contact_list : patient.close_contact_list;
-    patient.current_facility = req.body.current_facility ? req.body.current_facility : patient.current_facility;
+
+    // Change patient's current facility
+    if (req.body.current_facility) {
+      const newFacility = await Facility.findOne({ _id: req.body.current_facility });
+      if (newFacility) {
+        if (newFacility.current_count < newFacility.capacity) {
+          newFacility.current_count++;
+          await newFacility.save();
+          patient.current_facility = newFacility._id;
+
+          logString += `Changed current facility to ${newFacility.name}\n`;
+        } else {
+          return res.status(400).send({ message: "New facility has reached maximum capacity" });
+        }
+      }
+    }
+    // Save patient to database
     await patient.save();
 
-    // Update contact list status
+    // Update each patient's status in contact list
     const contactListID = patient.close_contact_list;
     const contactList = await Patient.find().where("_id").in(contactListID);
     contactList.forEach(async (patient) => {
@@ -147,7 +145,6 @@ exports.updatePatient = async (req, res) => {
         if (newStatusNumber > 3) {
           newStatusNumber = 3;
         }
-
         patient.status = `F${newStatusNumber}`;
         await patient.save();
 
@@ -160,6 +157,23 @@ exports.updatePatient = async (req, res) => {
         await patientLog.save();
       }
     });
+
+    // Create history record for patient
+    if (logString) {
+      const patientLog = new Log({
+        account: patient.account,
+        action: 'update',
+        description: logString + `Updated by doctor ${doctor.name}`
+      });
+      await patientLog.save();
+    }
+    // Create history record for doctor
+    const doctorLog = new Log({
+      account: doctor.account,
+      action: 'update',
+      description: `Updated patient: ID: ${patient.id_number}, Name: ${patient.name}`
+    })
+    await doctorLog.save();
 
     res.status(200).send({ message: "Patient updated successfully" });
   } catch (err) {
