@@ -12,11 +12,8 @@ import { setDelete } from '../redux/deleteSlice';
 import { addManager } from '../redux/listManagerSlice';
 import { addFacility } from '../redux/listFacilitySlice';
 import { postAPI } from '~/APIservices/postAPI';
-
+import { menuFacility, menuManager, formInputDoctor, formInputFacility } from '../staticVar';
 const cx = classNames.bind(styles);
-
-const menuManager = ['ID', 'Username'];
-const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
 
 let getFilterSortMenu = (menu) => {
     let filterItem = menu.map((title) => ({
@@ -42,9 +39,6 @@ let registerManager = async (data) => {
     }
 };
 
-const formInputDoctor = ['ID', 'Username', 'Password'];
-const formInputFacility = ['Name', 'Max no. patient'];
-
 function Header() {
     let location = useLocation();
     let dispatch = useDispatch();
@@ -64,10 +58,19 @@ function Header() {
                 name: inputVals.username,
             });
             inputVals.status = 'active';
+            if (!inputVals.username) {
+                inputVals.username = 'Anonymous';
+            }
+            console.log(inputVals);
             dispatch(addManager(inputVals));
         } else {
-            inputVals.noPatient = 0; //tmp
-            dispatch(addFacility(inputVals));
+            console.log(inputVals);
+            let nInputVals = {
+                name: inputVals['name'],
+                ['max no. patient']: inputVals['max no. patient'],
+                noPatient: 0,
+            };
+            dispatch(addFacility(nInputVals));
         }
     };
 
