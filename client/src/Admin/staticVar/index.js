@@ -7,7 +7,7 @@ let makeItemForm = (title, type) => {
     };
 };
 export const formInputDoctor = [
-    makeItemForm('Username', 'input'),
+    makeItemForm('Username', 'number'),
     makeItemForm('Name', 'input'),
     makeItemForm('Password', 'passGen'),
 ];

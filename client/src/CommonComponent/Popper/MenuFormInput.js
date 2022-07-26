@@ -24,14 +24,6 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
         return data;
     });
 
-    let makeLowerCase = useCallback((menu) => {
-        let nArr = [...menu];
-        for (let i = 0; i < nArr.length; i++) {
-            nArr[i].title = nArr[i].title.toLowerCase();
-        }
-        return nArr;
-    });
-
     let makePass = useCallback((length) => {
         var result = '';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -47,39 +39,39 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
 
     useEffect(() => {
         setInputVals(initDataInput(menu));
-    }, []);
+    }, [menu]);
 
-    let handleOnClick = () => {
+    let handleOnClick = useCallback(() => {
         onClick(inputVals);
         setInputVals(initInputVal);
-    };
+    });
 
-    let handleHide = () => {
+    let handleHide = useCallback(() => {
         setInputVals(initInputVal);
-    };
+    });
 
-    let handleChange = (e, title) => {
+    let handleChange = useCallback((e, title) => {
         let inputval = e.target.value;
         setInputVals({
             ...inputVals,
             [title]: inputval,
         });
-    };
+    });
 
-    let handleRandPass = (title) => {
+    let handleRandPass = useCallback((title) => {
         let randPass = makePass(6);
         setInputVals({
             ...inputVals,
             [title]: randPass,
         });
-    };
+    });
 
-    let handleChangeSelect = (val, title) => {
+    let handleChangeSelect = useCallback((val, title) => {
         setInputVals({
             ...inputVals,
             [title]: val,
         });
-    };
+    });
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>
@@ -87,6 +79,7 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
                 <button onClick={handleOnClick} className={cx('submit-btn')}>
                     <PlusIcon />
                 </button>
+                <span></span>
                 <div className={cx('flex-center')}>
                     <div>
                         {menu.map((item, index) => (
@@ -110,6 +103,7 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
                                             />
                                         ) : (
                                             <FormInput
+                                                type={item.type === 'number' ? item.type : 'text'}
                                                 passGen={item.type === 'passGen'}
                                                 onClick={(e) => handleRandPass(nTitle)}
                                                 inputVal={inputVals[nTitle]}

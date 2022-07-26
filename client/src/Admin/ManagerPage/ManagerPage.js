@@ -5,95 +5,87 @@ import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './ManagerPage.module.scss';
 import { removeManager } from '../redux/listManagerSlice';
 import { Link } from 'react-router-dom';
-import { getAPI } from '~/APIservices/getAPI';
-import { addManager, clearList, setStatus } from '../redux/listManagerSlice';
-import { useEffect } from 'react';
+import { setStatus } from '../redux/listManagerSlice';
+import { useCallback, useEffect } from 'react';
 import { menuManager } from '../staticVar';
+import { deleteAPI } from '~/APIservices/deleteAPI';
+import { initListManager } from '../fetchAPI';
+import { putAPI } from '~/APIservices/putAPI';
 
 const cx = classNames.bind(styles);
 
 function ManagerPage() {
     let dispatch = useDispatch();
 
-    let initListManager = async () => {
-        try {
-            let doctors = await getAPI('admin/doctors');
-            dispatch(clearList());
-            doctors.forEach((doctor) => {
-                if (doctor.id_number !== null || doctor.account !== null) {
-                    dispatch(
-                        addManager({
-                            username: doctor.id_number,
-                            name: doctor.name,
-                            status: doctor.account.status,
-                        }),
-                    );
-                }
+    let formatItem = useCallback((item, index) => {
+        let handleInactive = async (index) => {
+            let res = await putAPI(`admin/doctors/id=${item.id_account}/changestatus`, {
+                status: item.status === 'active' ? 'inactive' : 'active',
             });
-        } catch (err) {
-            console.log(err);
+            if (res.message && res.message === 'Status changed successfully') {
+                dispatch(
+                    setStatus({
+                        index,
+                        status: item.status === 'active' ? 'inactive' : 'active',
+                    }),
+                );
+            }
+        };
+
+        return {
+            username: (
+                <span
+                    className={cx({
+                        inactive: item.status === 'inactive',
+                    })}
+                >
+                    {item.username}
+                </span>
+            ),
+            name: (
+                <span
+                    className={cx({
+                        inactive: item.status === 'inactive',
+                    })}
+                >
+                    {item.name}
+                </span>
+            ),
+            ig1: '',
+            history: (
+                <Link
+                    className={cx('btn-item', {
+                        inactive: item.status === 'inactive',
+                    })}
+                    to=""
+                >
+                    view history
+                </Link>
+            ),
+            inactive: (
+                <div onClick={() => handleInactive(index)} className={cx('btn-item')}>
+                    {item.status === 'active' ? 'inactive' : 'active'}
+                </div>
+            ),
+        };
+    });
+
+    let handleDeleteDoctor = async (infoDoctor, index) => {
+        console.log(infoDoctor);
+
+        let res = await deleteAPI(`admin/doctors/id=${infoDoctor._id}/delete`);
+        console.log(res.message);
+        if (res.message && res.message === 'Account deleted successfully') {
+            dispatch(removeManager(index));
         }
     };
 
-    let formatList = (list) => {
-        let handleInactive = (index) => {
-            dispatch(
-                setStatus({
-                    index,
-                    status: list[index].status === 'active' ? 'inactive' : 'active',
-                }),
-            );
-        };
-
-        let newList = list.map((item, index) => {
-            return {
-                username: (
-                    <span
-                        className={cx({
-                            inactive: item.status === 'inactive',
-                        })}
-                    >
-                        {item.username}
-                    </span>
-                ),
-                name: (
-                    <span
-                        className={cx({
-                            inactive: item.status === 'inactive',
-                        })}
-                    >
-                        {item.name}
-                    </span>
-                ),
-                ig1: '',
-                history: (
-                    <Link
-                        className={cx('btn-item', {
-                            inactive: item.status === 'inactive',
-                        })}
-                        to=""
-                    >
-                        view history
-                    </Link>
-                ),
-                inactive: (
-                    <div onClick={() => handleInactive(index)} className={cx('btn-item')}>
-                        inactive
-                    </div>
-                ),
-            };
-        });
-
-        return newList;
-    };
-
     useEffect(() => {
-        initListManager();
+        initListManager(dispatch);
     }, []);
 
     let deleteState = useSelector((state) => state.delete);
     let listManager = useSelector((state) => state.listManager);
-    let newList = formatList(listManager);
 
     return (
         <div className={cx('wrapper')}>
@@ -107,15 +99,14 @@ function ManagerPage() {
                 })}
             </div>
             <WrapContent>
-                {newList.map((item, index) => {
+                {listManager.map((item, index) => {
+                    let nItem = formatItem(item, index);
                     return (
                         <ListItem
                             key={index}
-                            infos={item}
+                            infos={nItem}
                             showDelete={deleteState.isShow}
-                            clickDelete={() => {
-                                dispatch(removeManager(index));
-                            }}
+                            clickDelete={() => handleDeleteDoctor(item, index)}
                         />
                     );
                 })}
