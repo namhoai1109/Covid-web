@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const patientController = require("../controllers/patient.controller");
+const patientController = require("../controllers/doctor.controller");
 const productController = require("../controllers/product.controller");
 const { uploadFile } = require('../middlewares/multer');
 
