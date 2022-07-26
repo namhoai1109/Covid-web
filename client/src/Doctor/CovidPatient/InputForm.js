@@ -85,14 +85,14 @@ function InputForm() {
         });
     };
 
-    let handleRandPass = (formatedTitle) => {
+    let handleRandPass = useCallback((formatedTitle) => {
         let randPass = makePass(6);
         setInputField({
             ...inputField,
             [formatedTitle]: randPass,
         });
         setValidateString({ ...validateString, [formatedTitle]: '' });
-    };
+    });
 
     let registerPatient = useCallback(async (data) => {
         try {
@@ -117,7 +117,7 @@ function InputForm() {
         }
     });
 
-    let validateForm = (inputField, selectValue) => {
+    let validateForm = useCallback((inputField, selectValue) => {
         let validateStr = {};
         let isOke = true;
 
@@ -162,9 +162,9 @@ function InputForm() {
         } else {
             return isOke;
         }
-    };
+    });
 
-    let handleSubmit = () => {
+    let handleSubmit = useCallback(() => {
         let contact_list = contactList.map((item) => item._id);
         let readySubmit = validateForm(inputField, selectValue);
 
@@ -184,21 +184,21 @@ function InputForm() {
 
             registerPatient(dataSubmit);
         }
-    };
+    });
 
-    let handleDeleteContact = (index) => {
+    let handleDeleteContact = useCallback((index) => {
         dispatch(deleteItem(index));
-    };
+    });
 
-    let handleChangeSelect = (value, key) => {
+    let handleChangeSelect = useCallback((value, key) => {
         setSelectValue({ ...selectValue, [key]: value });
         setValidateSelect({ ...validateSelect, [key]: '' });
-    };
+    });
 
-    let handleChangeStatus = (e) => {
+    let handleChangeStatus = useCallback((e) => {
         setInputField({ ...inputField, Status: e.target.value });
         setValidateString({ ...validateString, Status: '' });
-    };
+    });
 
     return (
         <div className={cx('wrapper')}>
