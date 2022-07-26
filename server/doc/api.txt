@@ -122,6 +122,7 @@ return
 number: 4
 description: Delete account
 route: localhost:5000/api/admin/doctors/id=:id/delete
+params: account id
 eg: localhost:5000/api/admin/doctors/id=62d624944ba3d2fc45b2e894/delete
 method: DELETE
 
@@ -469,6 +470,40 @@ body: {
 returns: {
   message: String
 }
+
+IV/ Facility Route
+number: 1
+description: Create Facility
+route: http://localhost:5000/api/facility/create
+method: POST
+authorization: admin bearer token
+body:
+{
+    "name": "Test12",
+    "capacity": 300,
+    "current_count": 200,
+    "province": "Hanoi",
+    "district": "Cau Giay",
+    "ward": "5"
+}
+
+number: 2
+description: update facility
+route: http://localhost:5000/api/facility/update/id=:id
+method: PUT 
+authorization: admin
+body:
+{
+  "name": "Test12",
+    "capacity": 
+    "current_count": 
+    "province": 
+    "district": 
+    "ward": 
+}
+
+optional key-value pair
+
 
 
 
