@@ -131,7 +131,6 @@ exports.deleteProduct = async (req, res) => {
           await package.save();
         }
       });
-
     }
 
     await product.remove();
