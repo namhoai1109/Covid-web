@@ -5,6 +5,11 @@
     color: white;
     padding: 5px 10px;
     border-radius: 50px;
+
+    &.tiny {
+        width: 100px;
+    }
+
     &:hover {
         cursor: pointer;
     }

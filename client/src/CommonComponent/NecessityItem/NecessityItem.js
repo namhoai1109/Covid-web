@@ -5,6 +5,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { memo } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -48,4 +49,4 @@ function NecessityItem({ infos, showDelete, clickDelete = () => {}, onClick = ()
     );
 }
 
-export default NecessityItem;
+export default memo(NecessityItem);

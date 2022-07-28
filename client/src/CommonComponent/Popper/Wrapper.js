@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind';
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 import styles from './Wrapper.module.scss';
 const cx = classNames.bind(styles);
 
@@ -11,4 +12,4 @@ Wrapper.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-export default Wrapper;
+export default memo(Wrapper);

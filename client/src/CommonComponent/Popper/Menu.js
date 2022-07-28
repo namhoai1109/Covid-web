@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import TippyHeadless from '@tippyjs/react/headless';
 import Wrapper, { MenuItem } from '../Popper';
 
@@ -18,7 +18,7 @@ function Menu({ menu, children }) {
                     let isParent = !!item.child;
                     return (
                         <MenuItem
-                            nohover={typeof(item.data) !== 'string'}
+                            nohover={typeof item.data !== 'string'}
                             key={index}
                             data={item.data}
                             onClick={() => {
@@ -52,4 +52,4 @@ function Menu({ menu, children }) {
     );
 }
 
-export default Menu;
+export default memo(Menu);

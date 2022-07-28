@@ -1,10 +1,10 @@
 import classNames from 'classnames/bind';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import styles from './SelectOption.module.scss';
 
 const cx = classNames.bind(styles);
 
-function SelectOption({ readOnly, options, value, onChange }) {
+function SelectOption({ readOnly, options, value, onChange, tiny }) {
     let [option, setOption] = useState(value);
     let [showOptions, setShowOptions] = useState(false);
 
@@ -25,7 +25,7 @@ function SelectOption({ readOnly, options, value, onChange }) {
     };
 
     return (
-        <div onClick={handleShowOption} className={cx('custom-select', { up: showOptions })}>
+        <div onClick={handleShowOption} className={cx('custom-select', { up: showOptions, tiny: tiny })}>
             <div onClick={handleShowOption} className={cx('curr-option')}>
                 {option}
             </div>
@@ -46,4 +46,4 @@ function SelectOption({ readOnly, options, value, onChange }) {
     );
 }
 
-export default SelectOption;
+export default memo(SelectOption);

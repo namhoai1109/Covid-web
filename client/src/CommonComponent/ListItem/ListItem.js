@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind';
 import { TrashIcon } from '~/CommonComponent/icons';
 import styles from './ListItem.module.scss';
+import { memo } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -29,4 +30,4 @@ function ListItem({ infos, showDelete, clickDelete = () => {} }) {
     );
 }
 
-export default ListItem;
+export default memo(ListItem);

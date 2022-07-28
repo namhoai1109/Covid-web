@@ -11,15 +11,16 @@
         margin: 0 8px;
         border-radius: 10px;
         transition: all ease-in-out 0.3s;
+        color: var(--green2);
 
         .icon {
             width: 58px;
             height: 54px;
         }
 
-        &:hover {
-            background-color: var(--green1);
-        }
+        // &:hover {
+        //     background-color: var(--green3-1);
+        // }
 
         &:hover ~ .sub-title {
             transform: translate(5%, -50%);
@@ -39,7 +40,7 @@
         text-align: center;
         font-size: 1.8rem;
         border-radius: 10px;
-        background-color: var(--green1);
+        background-color: var(--primary);
         color: white;
         transition: all ease-in-out 0.3s;
 

@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './SearchInput.module.scss';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -45,4 +45,4 @@ function SearchInput({ stateDynamique, icon }) {
     );
 }
 
-export default SearchInput;
+export default memo(SearchInput);
