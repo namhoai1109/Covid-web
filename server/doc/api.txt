@@ -599,6 +599,19 @@ description: return one facility
 route: http://localhost:5000/api/facility/get/id=:id
 method: GET
 auth: doctor
+EX:
+    {
+        "location": {
+            "formattedAddress": "Phuong 5, Quan Cau Giay, TP SAIGON",
+            "province": "SAIGON",
+            "district": "Cau Giay",
+            "ward": "5"
+        },
+        "_id": "62e2d8c172ab805cb03a6883",
+        "name": "Test123",
+        "capacity": 300,
+        "current_count": 200,
+    }
 
 number: 6
 description: return all facilities
