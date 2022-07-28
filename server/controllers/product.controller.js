@@ -1,6 +1,7 @@
 const Product = require('../models/Product');
 const Log = require('../models/Log');
 const Account = require('../models/Account');
+const Package = require('../models/Package');
 const fs = require('fs');
 
 exports.getAllProducts = async (req, res) => {
@@ -119,6 +120,18 @@ exports.deleteProduct = async (req, res) => {
           if (err) { console.log(err); }
         });
       });
+    }
+
+    const packages = await Package.find();
+    if (packages) {
+      packages.forEach(async (package) => {
+        const index = package.products.findIndex((product) => product.product.toString() === req.params.id);
+        if (index > -1) {
+          package.products.splice(index, 1);
+          await package.save();
+        }
+      });
+
     }
 
     await product.remove();
