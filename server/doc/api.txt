@@ -551,7 +551,7 @@ number: 1
 description: Create Facility
 route: http://localhost:5000/api/facility/create
 method: POST
-authorization: admin bearer token
+authorization: doctor bearer token
 body:
 {
     "name": "Test12",
@@ -566,7 +566,7 @@ number: 2
 description: update facility
 route: http://localhost:5000/api/facility/update/id=:id
 method: PUT 
-authorization: admin
+authorization: doctor
 body:
 {
   "name": "Test12",
@@ -578,6 +578,34 @@ body:
 }
 
 optional key-value pair
+
+
+number: 3
+description: delete facility
+route: http://localhost:5000/api/facility/delete/id=:id
+method: DELETE 
+auth: doctor
+
+delete one facility with ObjectID
+
+number: 4
+description: delete all facilities
+route: http://localhost:5000/api/facility/delete/all
+method: DELETE
+auth: doctor 
+
+number: 5
+description: return one facility
+route: http://localhost:5000/api/facility/get/id=:id
+method: GET
+auth: doctor
+
+number: 6
+description: return all facilities
+route: http://localhost:5000/api/facility/get/all
+method: GET
+auth: doctor
+
 
 
 
