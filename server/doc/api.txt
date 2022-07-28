@@ -331,18 +331,26 @@ headers: {
 }
 returns: [
   {
-    _id: String,
+    _id: String (Database ID),
+    time_limit: {
+      "value": Number,
+      "unit": String ["day", "week", "month"]
+    },
+    limit_per_patient: Number,
     name: String,
-    max: Number,
     products: [
       {
-        _id: String,
-        name: String,
-        price: Number,
-        quantity_unit: String,
-        images: [
-          String
-        ]
+        product: {
+          _id: String (Database ID),
+          name: String,
+          price: Number,
+          quantity_unit: String,
+          images: [
+            String
+          ]
+        },
+        quantity: Number,
+        _id: String (Dont know what this is :))))
       }
     ]
   }
@@ -362,11 +370,17 @@ body: {
     type: String,
     required: true
   },
-  max: {
-    type: Number,
-    required: true
+  time_limit: {
+    value: Number,
+    unit: String ['day', 'week', 'month']
   },
-  products: [ String ] (Database _id of Product)
+  limit_per_patient: Number,
+  products: [
+    {
+      product: String (Database ID of product),
+      quantity: Number
+    }
+  ]
 }
 returns: {
   message: String
@@ -401,17 +415,21 @@ body: {
     type: String,
     required: true
   },
-  max: {
-    type: Number,
-    required: true
+  time_limit: {
+    value: Number,
+    unit: String ['day', 'week', 'month']
   },
-  products: [ String ] (Database _id of Product)
+  limit_per_patient: Number,
+  products: [
+    {
+      product: String (Database ID of product),
+      quantity: Number
+    }
+  ]
 }
 returns: {
   message: String
 }
-
-
 
 III. Patient
 number: 1
@@ -471,6 +489,30 @@ returns: {
   message: String
 }
 
+
+number: 4
+description: Buy a package
+route: http://localhost:5000/api/patient/packages/id=:id
+params: Database ID of package
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  products: [
+    {
+      id: String (Database ID of product),
+      quantity: Number
+    }
+  ]
+}
+returns: {
+  message: String
+}
+
+
 IV/ Facility Route
 number: 1
 description: Create Facility
@@ -503,7 +545,6 @@ body:
 }
 
 optional key-value pair
-
 
 
 

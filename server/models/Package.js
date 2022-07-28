@@ -9,24 +9,33 @@ const packageSchema = new mongoose.Schema({
       message: (props) => ({ message: `${props.value} is not a valid name` }),
     },
   },
-  max: {
+  time_limit: {
+    value: {
+      type: Number,
+      required: true,
+    },
+    unit: {
+      type: String,
+      enum: ["day", "week", "month"],
+      required: true,
+    },
+  },
+  limit_per_patient: {
     type: Number,
     required: true,
-    validate: {
-      validator: (v) => v > 0,
-      message: (props) => ({ message: `${props.value} is not a valid number` }),
-    }
   },
-  products: {
-    type: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-    }],
-    required: true,
-  }
-  // TODO: Mức giới hạn số lượng mỗi sản phẩm trong gói
-  // TODO: Mức giới hạn số lượng gói cho mỗi người theo thời gian
-  // TODO: Thời gian giới hạn (ngày, tuần, tháng)
+  products: [
+    {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+      },
+      quantity: {
+        type: Number,
+        required: true,
+      }
+    }
+  ]
 });
 
 module.exports = mongoose.model('Package', packageSchema);
