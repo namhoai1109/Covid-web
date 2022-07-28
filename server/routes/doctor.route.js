@@ -6,6 +6,7 @@ const { uploadFile } = require('../middlewares/multer');
 
 // Patients related
 router.get("/patients", patientController.getAllPatients);
+router.get("/patients/search", patientController.searchPatients);
 router.post("/patients", patientController.registerAccount);
 router.put("/patients/id=:id", patientController.updatePatient);
 router.delete("/patients/id=:id", patientController.deletePatient);
