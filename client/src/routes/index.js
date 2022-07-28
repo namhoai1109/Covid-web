@@ -7,6 +7,7 @@ import Login from '~/Login';
 import configs from '~/config';
 import CovidPatientRoutes from '~/Doctor/CovidPatient/covidPatientRoutes';
 import NecessityRoutes from '~/Doctor/EssentialItem/necessityRoutes';
+import EssentialPackageRoutes from '~/Doctor/EssentialPackage/EssentialPackageRoutes';
 
 export const mainRoutes = [
     {
@@ -46,5 +47,9 @@ export const doctorRoutes = [
     {
         path: configs.doctorRoutes.essentialItem + configs.subRoute,
         element: NecessityRoutes,
+    },
+    {
+        path: configs.doctorRoutes.essentialPackage + configs.subRoute,
+        element: EssentialPackageRoutes,
     },
 ];

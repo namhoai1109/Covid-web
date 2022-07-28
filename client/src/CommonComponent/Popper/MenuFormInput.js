@@ -5,7 +5,7 @@ import { FormInput } from '../Popper';
 
 import classNames from 'classnames/bind';
 import styles from './Wrapper.module.scss';
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import SelectOption from '../SelectOption';
 import { dataAddress } from '~/Admin/staticVar';
 
@@ -136,4 +136,4 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
     );
 }
 
-export default MenuFormInput;
+export default memo(MenuFormInput);

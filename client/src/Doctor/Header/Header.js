@@ -5,7 +5,7 @@ import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu } from '~/CommonComponent/Popper';
-import { patientFields, necessityFields } from '../staticVar';
+import { patientFields, necessityFields, essentialPackageFields } from '../staticVar';
 import configs from '~/config';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -74,6 +74,11 @@ function Header() {
                 [filterItem, sortItem] = getFilterSortMenu(necessityFields);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem + configs.doctorRoutes.newNecessity;
+                return { filterItem, sortItem, addLink };
+            case configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage:
+                [filterItem, sortItem] = getFilterSortMenu(essentialPackageFields);
+                addLink =
+                    configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage + configs.doctorRoutes.newPackage;
                 return { filterItem, sortItem, addLink };
             default:
                 return {};

@@ -19,7 +19,7 @@ function EssentialItem() {
     let deleteState = useSelector((state) => state.deleteState.state);
     let fetchListProduct = async () => {
         let list = await getAPI('/doctor/products');
-        //console.log(list);
+        console.log(list);
         setListProduct(list);
     };
 

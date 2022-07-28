@@ -5,7 +5,7 @@ import { patientFields } from '../staticVar';
 import { getAPI } from '~/APIservices/getAPI';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addPatient, clearList, deletePatient, addCurrentPatient } from '../redux/listPatientSlice';
+import { addPatient, clearList, addCurrentPatient } from '../redux/listPatientSlice';
 import ListItem from '~/CommonComponent/ListItem';
 import { deleteAPI } from '~/APIservices/deleteAPI';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +20,10 @@ function CovidPatient() {
     let getListPatient = async () => {
         try {
             let listPatient = await getAPI('/doctor/patients');
+            console.log(listPatient);
+            if (listPatient.message === 'timeout of 5000ms exceeded') {
+                listPatient = [];
+            }
             dispatch(clearList());
             listPatient.forEach((patient) => {
                 dispatch(addPatient(patient));
