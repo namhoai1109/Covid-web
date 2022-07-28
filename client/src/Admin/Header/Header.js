@@ -9,10 +9,10 @@ import { useLocation } from 'react-router-dom';
 import configs from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDelete } from '../redux/deleteSlice';
-import { addManager } from '../redux/listManagerSlice';
 import { addFacility } from '../redux/listFacilitySlice';
 import { postAPI } from '~/APIservices/postAPI';
 import { menuFacility, menuManager, formInputDoctor, formInputFacility } from '../staticVar';
+import { initListManager } from '../fetchAPI';
 const cx = classNames.bind(styles);
 
 let getFilterSortMenu = (menu) => {
@@ -33,9 +33,9 @@ let registerManager = async (data) => {
     try {
         let token = JSON.parse(localStorage.getItem('Token')).token;
         let res = await postAPI('admin/register', data, token);
-        console.log(res);
+        return res;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 };
 
@@ -52,17 +52,20 @@ function Header() {
 
     let handleClick = async (inputVals) => {
         if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
-            await registerManager({
-                username: inputVals.id,
+            let res = await registerManager({
+                username: inputVals.username,
                 password: inputVals.password,
-                name: inputVals.username,
+                name: inputVals.name,
             });
-            inputVals.status = 'active';
-            if (!inputVals.username) {
-                inputVals.username = 'Anonymous';
+            console.log(res);
+
+            if (typeof res !== 'string') {
+                inputVals.status = 'active';
+                if (!inputVals.name) {
+                    inputVals.name = 'Anonymous';
+                }
+                initListManager(dispatch);
             }
-            console.log(inputVals);
-            dispatch(addManager(inputVals));
         } else {
             console.log(inputVals);
             let nInputVals = {
