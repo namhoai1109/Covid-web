@@ -6,12 +6,71 @@ const fs = require('fs');
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find()
+    const sortBy = req.query.sort_by || 'price';
+    const sortOrder = req.query.sort_order || 'asc';
+    const products = await Product.find().sort({ [sortBy]: sortOrder }).exec();
     res.status(200).send(products);
   } catch (err) {
-    res.status(400).send({ message: err.message });
+    res.status(500).send({ message: err.message });
   }
 };
+
+exports.searchProducts = async (req, res) => {
+  try {
+    const queryValue = req.query.value;
+    const re = new RegExp(queryValue, 'i');
+    let products;
+
+    // Search
+    if (!req.query.filter_by) {
+      products = await Product.find({
+        $or: [
+          { name: { $regex: re } },
+          { quantity_unit: { $regex: re } },
+          { type: { $regex: re } },
+        ]
+      }).sort({ price: 'asc' })
+        .exec();
+    }
+    // Filter
+    else {
+      // Filter by price
+      if (req.query.filter_by === 'price') {
+        const ranges = Array.isArray(queryValue) ? queryValue : [queryValue];
+        const rangeConversion = {
+          'lt-200': { $lt: 200000 },
+          '200-500': { $gte: 200000, $lte: 500000 },
+          '500-1000': { $gte: 500000, $lte: 1000000 },
+          '1000-2000': { $gte: 1000000, $lte: 2000000 },
+          '2000-5000': { $gte: 2000000, $lte: 5000000 },
+          'gt-5000': { $gt: 5000000 },
+        }
+        products = await Product.find({
+          $or: [
+            { price: rangeConversion[ranges[0]] },
+            { price: rangeConversion[ranges[1]] },
+            { price: rangeConversion[ranges[2]] },
+            { price: rangeConversion[ranges[3]] },
+            { price: rangeConversion[ranges[4]] },
+            { price: rangeConversion[ranges[5]] },
+          ]
+        }).sort({ price: 'asc' })
+          .exec()
+      }
+      // Filter by field other than price
+      else {
+        products = await Product.find({
+          [req.query.filter_by]: queryValue
+        }).sort({ price: 'asc' })
+          .exec()
+      }
+    }
+
+    res.status(200).send(products);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
 
 exports.registerProduct = async (req, res) => {
   const product = new Product({
