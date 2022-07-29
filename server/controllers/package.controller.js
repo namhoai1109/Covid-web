@@ -30,7 +30,68 @@ const validatePackage = (package) => {
 
 exports.getAllPackages = async (req, res) => {
   try {
-    const packages = await Package.find().populate('products.product');
+    const sortBy = req.query.sort_by || 'name';
+    const sortOrder = req.query.sort_order || 'asc';
+    const packages = await Package.find()
+      .sort({ [sortBy]: sortOrder })
+      .populate('products.product')
+      .exec();
+    res.status(200).send(packages);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
+exports.searchPackages = async (req, res) => {
+  try {
+    const queryValue = req.query.value;
+    const re = new RegExp(queryValue, 'i');
+    let packages;
+
+    // Search
+    if (!req.query.filter_by) {
+      packages = await Package.aggregate([
+        {
+          $lookup: {
+            from: Product.collection.name,
+            localField: 'products.product',
+            foreignField: '_id',
+            as: 'products',
+          }
+        },
+        {
+          $match: {
+            $or: [
+              { name: { $regex: re } },
+              { "products.name": { $regex: re } },
+              { "time_limit.unit": { $regex: re } },
+            ]
+          }
+        },
+        {
+          $sort: {
+            name: 1
+          }
+        }
+      ]).exec();
+    }
+    // Filter
+    else {
+      if (req.query.filter_by === 'time_limit') {
+        packages = await Package.find({
+          "time_limit.unit": { $regex: re }
+        }).populate('products.product')
+          .sort({ name: 'asc' })
+          .exec();
+      } else {
+        packages = await Package.find({
+          [req.query.filter_by]: { $regex: re }
+        }).populate('products.product')
+          .sort({ name: 'asc' })
+          .exec();
+      }
+    }
+
     res.status(200).send(packages);
   } catch (err) {
     res.status(500).send({ message: err.message });

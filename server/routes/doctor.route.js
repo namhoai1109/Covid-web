@@ -13,12 +13,14 @@ router.delete("/patients/id=:id", patientController.deletePatient);
 
 // Necessities related
 router.get("/products", productController.getAllProducts);
+router.get("/products/search", productController.searchProducts);
 router.post("/products", uploadFile('images', 'array', 5), productController.registerProduct);
 router.put("/products/id=:id", uploadFile('images', 'array', 5), productController.updateProduct);
 router.delete("/products/id=:id", productController.deleteProduct);
 
 // Packages related
 router.get("/packages", packageController.getAllPackages);
+router.get("/packages/search", packageController.searchPackages);
 router.post("/packages", packageController.registerPackage);
 router.put("/packages/id=:id", packageController.updatePackage);
 router.delete("/packages/id=:id", packageController.deletePackage);

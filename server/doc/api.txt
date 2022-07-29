@@ -298,8 +298,46 @@ returns: {
 }
 
 number: 6 -> Called
-description: Get list of products of a specific doctor
+description: Get list of products
 route: http://localhost:5000/api/doctor/products
+query (optional): {
+  sort_by: String (a field of product),
+  sort_order: String (asc or desc)
+}
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    name: String,
+    price: Number,
+    quantity_unit: String,
+    images: [
+      String
+    ]
+  }
+]
+
+number: 6.5
+description: Search/Filter products
+route: localhost:5000/api/doctor/products/search
+query: {
+  filter_by: String (field of product)(optional),
+  value: String/Number (value of field or value for searching)
+}
+// If seach, only value is required
+// If filter, both value and filter_by are required
+// If filter by price: value is of the following values:
+- 'lt-200': price < 200000
+- '200-500': price between 200000 and 500000
+- '500-1000': price between 500000 and 1000000
+- '1000-2000': price between 1000000 and 2000000
+- '2000-5000': price between 2000000 and 5000000
+- 'gt-5000': price > 5000000
 method: GET
 headers: {
   Bearer authorization: {
@@ -356,6 +394,52 @@ returns: {
 number 9:
 description: Get list of packages
 route: http://localhost:5000/api/doctor/packages
+query (optional): {
+  sort_by: String (name)
+  sort_order: String (asc or desc)
+}
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String (Database ID),
+    time_limit: {
+      "value": Number,
+      "unit": String ["day", "week", "month"]
+    },
+    limit_per_patient: Number,
+    name: String,
+    products: [
+      {
+        product: {
+          _id: String (Database ID),
+          name: String,
+          price: Number,
+          quantity_unit: String,
+          images: [
+            String
+          ]
+        },
+        quantity: Number,
+        _id: String (Dont know what this is :))))
+      }
+    ]
+  }
+]
+
+number: 9.5
+description: Search/Filter packages
+route: localhost:5000/api/doctor/packages/search
+query: {
+  filter_by: String (name or time_limit)(optional),
+  value: String/Number (value of field or value for searching)
+}
+// If seach, only value is required
+// If filter, both value and filter_by are required
 method: GET
 headers: {
   Bearer authorization: {
