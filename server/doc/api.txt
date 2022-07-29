@@ -136,7 +136,7 @@ number: 0
 description: Search/Filter patients
 route: localhost:5000/api/doctor/patients/search
 query: {
-  filter_by: String (field of patient)(this is optional),
+  filter_by: String (name, id_number, DOB, address, status),
   value: String/Number (value of field)
 }
 // Remember to encode query value. Ex: encodeURI(value): Sai Gon => Sai%20Gon

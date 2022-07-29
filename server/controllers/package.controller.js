@@ -44,7 +44,7 @@ exports.getAllPackages = async (req, res) => {
 
 exports.searchPackages = async (req, res) => {
   try {
-    const queryValue = req.query.value;
+    const queryValue = decodeURI(req.query.value);
     const re = new RegExp(queryValue, 'i');
     let packages;
 
