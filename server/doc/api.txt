@@ -353,7 +353,7 @@ returns: {
   message: String
 }
 
-number 9:
+number 9: -> Called
 description: Get list of packages
 route: http://localhost:5000/api/doctor/packages
 method: GET
@@ -389,7 +389,7 @@ returns: [
   }
 ]
 
-number: 10
+number: 10 -> Called
 description: Register a new package
 route: http://localhost:5000/api/doctor/packages
 method: POST
@@ -419,7 +419,7 @@ returns: {
   message: String
 }
 
-number: 11
+number: 11 -> Called
 description: Delete a package
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
@@ -433,7 +433,7 @@ returns: {
   message: String
 }
 
-number: 12
+number: 12 -> Called
 description: Update a package
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package

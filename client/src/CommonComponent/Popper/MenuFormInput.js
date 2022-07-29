@@ -11,7 +11,7 @@ import { dataAddress } from '~/Admin/staticVar';
 
 const cx = classNames.bind(styles);
 
-function MenuFormInput({ menu, onClick = () => {}, children }) {
+function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setValidateStr }) {
     let initDataInput = useCallback((menu) => {
         let data = {};
         for (let i = 0; i < menu.length; i++) {
@@ -41,9 +41,11 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
         setInputVals(initDataInput(menu));
     }, [menu]);
 
-    let handleOnClick = useCallback(() => {
-        onClick(inputVals);
-        setInputVals(initInputVal);
+    let handleOnClick = useCallback(async () => {
+        let clearInput = await onClick(inputVals);
+        if (clearInput) {
+            setInputVals(initInputVal);
+        }
     });
 
     let handleHide = useCallback(() => {
@@ -56,6 +58,7 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
             ...inputVals,
             [title]: inputval,
         });
+        setValidateStr('');
     });
 
     let handleRandPass = useCallback((title) => {
@@ -64,6 +67,7 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
             ...inputVals,
             [title]: randPass,
         });
+        setValidateStr('');
     });
 
     let handleChangeSelect = useCallback((val, title) => {
@@ -71,6 +75,7 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
             ...inputVals,
             [title]: val,
         });
+        setValidateStr('');
     });
 
     let renderItem = (attrs) => (
@@ -79,7 +84,7 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
                 <button onClick={handleOnClick} className={cx('submit-btn')}>
                     <PlusIcon />
                 </button>
-                <span></span>
+                <span className={cx('noti')}>{validateStr}</span>
                 <div className={cx('flex-center')}>
                     <div>
                         {menu.map((item, index) => (

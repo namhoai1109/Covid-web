@@ -5,18 +5,20 @@ import configs from '~/config';
 import classNames from 'classnames/bind';
 import styles from './SideBar.module.scss';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouseMedical, faRightFromBracket, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
 function SideBar() {
-    let navigate = useNavigate()
-    let id = JSON.parse(localStorage.getItem('Token')).username
+    let navigate = useNavigate();
+    let id = JSON.parse(localStorage.getItem('Token')).username;
 
     let handleSignOut = () => {
         localStorage.removeItem('Token');
         console.log('sign out');
         navigate('/', { replace: true });
-    }
+    };
 
     return (
         <SidebarLayout>
@@ -27,16 +29,20 @@ function SideBar() {
                     </div>
                     <SidebarItem
                         title={'Manager'}
-                        icon={<MaskIcon width="5rem" height="5rem" />}
+                        icon={<FontAwesomeIcon icon={faUserDoctor} />}
                         path={configs.mainRoutes.admin + configs.adminRoutes.doctorManagement}
                     />
                     <SidebarItem
                         title={'Facility'}
-                        icon={<MaskIcon width="5rem" height="5rem" />}
+                        icon={<FontAwesomeIcon icon={faHouseMedical} />}
                         path={configs.mainRoutes.admin + configs.adminRoutes.facilityManagement}
                     />
                 </div>
-                <SidebarItem title={'Sign out'} icon={<SignOutIcon width="3rem" height="3rem" />} onClick={handleSignOut} />
+                <SidebarItem
+                    title={'Sign out'}
+                    icon={<FontAwesomeIcon icon={faRightFromBracket} />}
+                    onClick={handleSignOut}
+                />
             </div>
         </SidebarLayout>
     );
