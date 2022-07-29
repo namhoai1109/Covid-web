@@ -102,8 +102,8 @@ exports.searchPatients = async (req, res) => {
       return res.status(500).send({ message: "Doctor not found in the database" });
     }
 
-    const searchValue = decodeURI(req.query.value);
-    const re = new RegExp(searchValue, "i");
+    const queryValue = decodeURI(req.query.value);
+    const re = new RegExp(queryValue, "i");
     let patients;
     if (!req.query.filter_by) {
       patients = await Patient.find({ "_id": { $in: doctor.patients } })
@@ -125,20 +125,41 @@ exports.searchPatients = async (req, res) => {
         .exec();
     }
     else {
-      patients = await Patient.find({
-        "_id": { $in: doctor.patients },
-        [req.query.filter_by]: { $regex: re }
-      })
-        .populate("account", "username role status")
-        .populate("current_facility", "name")
-        .populate(
-          "close_contact_list",
-          "_id id_number name DOB status current_facility",
-        )
-        .sort({
-          'id_number': 1
+      if (req.query.filter_by === 'DOB') {
+        const DOB = new Date(queryValue);
+        patients = await Patient.find({
+          "_id": { $in: doctor.patients },
+          //Compare year only
+          "DOB": {
+            $gte: new Date(DOB.getFullYear(), 0, 1),
+            $lte: new Date(DOB.getFullYear(), 11, 31)
+          }
+        }).populate("account", "username role status")
+          .populate("current_facility", "name")
+          .populate(
+            "close_contact_list",
+            "_id id_number name DOB status current_facility",
+          )
+          .sort({
+            'id_number': 1
+          })
+          .exec();
+      } else {
+        patients = await Patient.find({
+          "_id": { $in: doctor.patients },
+          [req.query.filter_by]: { $regex: re }
         })
-        .exec();
+          .populate("account", "username role status")
+          .populate("current_facility", "name")
+          .populate(
+            "close_contact_list",
+            "_id id_number name DOB status current_facility",
+          )
+          .sort({
+            'id_number': 1
+          })
+          .exec();
+      }
     }
 
     res.status(200).send(patients);
