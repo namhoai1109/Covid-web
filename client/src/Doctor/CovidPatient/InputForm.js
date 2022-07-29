@@ -135,6 +135,13 @@ function InputForm() {
             }
         });
 
+        if (inputField.Name !== '') {
+            if (/^[a-zA-Z ]{1,50}$/.test(inputField.Name) === false) {
+                validateStr.Name = 'Name is invalid';
+                isOke = false;
+            }
+        }
+
         if (inputField.ID_number !== '') {
             let idlen = inputField.ID_number.length;
             if (idlen !== 9 && idlen !== 11) {

@@ -4,6 +4,8 @@ export const essentialPackageFields = ['Name', 'Type', 'Time limited'];
 export const typeNecessity = ['Drug', 'Supply', 'Food', 'Dietary Supplement', 'Protection', 'Herbal Medicine', 'Other'];
 export const inputField1 = ['Name', 'ID number', 'Year of birth', 'Password'];
 export const inputField2 = ['Province/City', 'District/County', 'Ward/Village', 'Facility'];
+export const unitTime = ['day', 'week', 'month'];
+export const packageFields = ['Name', 'Price', 'Quantity unit', 'Limit'];
 
 const Province = ['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng'];
 const District = ['Quận 1', 'Quận 2', 'Quận 3', 'Quận 4'];
