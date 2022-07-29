@@ -4,18 +4,18 @@ import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './EssentialItem.module.scss';
 import { necessityFields, typeNecessity } from '../staticVar';
 import SelectOption from '~/CommonComponent/SelectOption';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PlusIcon } from '~/CommonComponent/icons';
-import { postFormAPI } from '~/APIservices/postFormAPI';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { putAPI } from '~/APIservices/putAPI';
+import { removeCurr } from '../redux/currentNecessity';
 
 const cx = classNames.bind(styles);
 
-function InfoNecessity() {
+function InfoNecessity({ viewOnly }) {
     let removeSpace = useCallback((title) => {
         return title.replaceAll(' ', '_');
     });
@@ -35,6 +35,13 @@ function InfoNecessity() {
 
     let infoNecessity = useSelector((state) => state.currentNecessity.curr);
     //console.log(infoNecessity);
+    let dispatch = useDispatch();
+    useEffect(() => {
+        return () => {
+            dispatch(removeCurr());
+        };
+    }, []);
+
     let setFirstValue = useCallback((menu) => {
         let data = {};
         for (let i = 0; i < menu.length; i++) {
@@ -132,8 +139,9 @@ function InfoNecessity() {
     };
 
     let handleSubmit = async () => {
+        let isOke = true;
         if (updateMode) {
-            let isOke = validateDataSubmit(dataInput, imgs);
+            isOke = validateDataSubmit(dataInput, imgs);
             if (isOke) {
                 let formData = new FormData();
                 if (imgs.length > 0) {
@@ -158,16 +166,19 @@ function InfoNecessity() {
                 console.log(res);
             }
         }
-        setUpdateMode(!updateMode);
+
+        if (isOke) setUpdateMode(!updateMode);
     };
 
     return (
         <div className={cx('wrapper')}>
             <WrapContent>
                 {updateMode && <div className={cx('noti')}>Now you can update the information</div>}
-                <button onClick={handleSubmit} className={cx('submit-btn', 'flex-center')}>
-                    {updateMode ? <FontAwesomeIcon icon={faCheck} /> : <FontAwesomeIcon icon={faPenToSquare} />}
-                </button>
+                {!viewOnly && (
+                    <button onClick={handleSubmit} className={cx('submit-btn', 'flex-center')}>
+                        {updateMode ? <FontAwesomeIcon icon={faCheck} /> : <FontAwesomeIcon icon={faPenToSquare} />}
+                    </button>
+                )}
                 {necessityFields.map((title, index) => {
                     let formatedTitle = removeSpace(title);
                     let number = formatedTitle === 'Price';

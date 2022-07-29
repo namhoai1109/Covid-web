@@ -6,25 +6,23 @@ import ListItem from '~/CommonComponent/ListItem';
 import { FormInput } from '~/CommonComponent/Popper';
 import SelectOption from '~/CommonComponent/SelectOption';
 import WrapContent from '~/CommonComponent/WrapContent';
-import { deleteProduct, resetList } from '../redux/currentListProduct';
+import { addProduct, deleteProduct, resetList, setList } from '../redux/currentListProduct';
 import { packageFields, unitTime } from '../staticVar';
 import styles from './EssentialPackage.module.scss';
 import ListProduct from './ListProduct';
 import Counting from '~/CommonComponent/Counting';
 import { postAPI } from '~/APIservices/postAPI';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
+import { putAPI } from '~/APIservices/putAPI';
+import { useNavigate } from 'react-router-dom';
+import configs from '~/config';
+import { setCurr } from '../redux/currentNecessity';
 
 const cx = classNames.bind(styles);
 
-function InputPackage() {
-    let [inputFields, setInputFields] = useState({
-        name: '',
-        limit_per_patient: '',
-        time_limit: {
-            value: '',
-            unit: '--select--',
-        },
-    });
-
+function InfoPackage() {
     let [validate, setValidate] = useState({
         name: '',
         complexFields: '',
@@ -32,18 +30,51 @@ function InputPackage() {
     });
 
     let currentProducts = useSelector((state) => state.currentListProduct.list);
-    let [subPage, setSubPage] = useState(false);
-    let [listCounting, setListCounting] = useState({});
+    let currentPackage = useSelector((state) => state.currentPackage.current);
+    let [inputFields, setInputFields] = useState({
+        name: currentPackage.name || '',
+        limit_per_patient: currentPackage.limit_per_patient || '',
+        time_limit: {
+            value: (currentPackage.time_limit && currentPackage.time_limit.value) || '',
+            unit: (currentPackage.time_limit && currentPackage.time_limit.unit) || '--select--',
+        },
+    });
 
     let dispatch = useDispatch();
+    let navigate = useNavigate();
+    let [subPage, setSubPage] = useState(false);
+    let [listCounting, setListCounting] = useState({});
+    let [updateMode, setUpdateMode] = useState(false);
+
     useEffect(() => {
-        let tmp = { ...listCounting };
-        currentProducts.forEach((item) => {
-            if (tmp[item._id] === undefined) {
-                tmp[item._id] = 1;
+        if (currentPackage.products) {
+            let tmp = {};
+            let arr = [];
+            currentPackage.products.forEach((product) => {
+                arr.push(product.product);
+                tmp[product.product._id] = product.quantity;
+            });
+            setListCounting(tmp);
+            dispatch(setList(arr));
+        }
+
+        return () => {
+            dispatch(resetList());
+        };
+    }, []);
+
+    useEffect(() => {
+        if (currentPackage.products) {
+            if (currentProducts.length > currentPackage.products.length) {
+                let tmp = { ...listCounting };
+                currentProducts.forEach((item) => {
+                    if (tmp[item._id] === undefined) {
+                        tmp[item._id] = 1;
+                    }
+                });
+                setListCounting(tmp);
             }
-        });
-        setListCounting(tmp);
+        }
     }, [currentProducts]);
 
     let handleInputName = useCallback((e) => {
@@ -87,11 +118,33 @@ function InputPackage() {
             setListCounting((prev) => ({ ...prev, [id]: prev[id] - 1 }));
         };
 
+        let handleShowDetails = () => {
+            dispatch(setCurr(product));
+            navigate(
+                configs.mainRoutes.doctor +
+                    configs.doctorRoutes.essentialPackage +
+                    configs.doctorRoutes.infoPackage +
+                    configs.doctorRoutes.infoNecessity,
+            );
+        };
+
         let nProduct = {
             name: product.name,
             price: product.price,
             quantity_unit: product.quantity_unit,
-            counting: <Counting value={listCounting[id]} increasing={increasing} decreasing={decreasing} />,
+            counting: (
+                <Counting
+                    hideBtn={!updateMode}
+                    value={listCounting[id]}
+                    increasing={increasing}
+                    decreasing={decreasing}
+                />
+            ),
+            details: !updateMode && (
+                <button className={cx('details')} onClick={handleShowDetails}>
+                    details
+                </button>
+            ),
         };
 
         return nProduct;
@@ -139,40 +192,32 @@ function InputPackage() {
     });
 
     let handleSubmit = useCallback(async () => {
-        let readySubmit = validateInput();
-        if (readySubmit) {
-            let products = [];
-            Object.keys(listCounting).forEach((key) => {
-                products.push({
-                    product: currentProducts[key],
-                    quantity: listCounting[key],
+        let readySubmit = true;
+        if (updateMode) {
+            readySubmit = validateInput();
+            if (readySubmit) {
+                let products = [];
+                Object.keys(listCounting).forEach((id) => {
+                    products.push({
+                        product: id,
+                        quantity: listCounting[id],
+                    });
                 });
-            });
-            inputFields.time_limit.value = Number(inputFields.time_limit.value);
-            let data = {
-                name: inputFields.name,
-                time_limit: inputFields.time_limit,
-                limit_per_patient: Number(inputFields.limit_per_patient),
-                products: products,
-            };
+                inputFields.time_limit.value = Number(inputFields.time_limit.value);
+                let data = {
+                    name: inputFields.name,
+                    time_limit: inputFields.time_limit,
+                    limit_per_patient: Number(inputFields.limit_per_patient),
+                    products: products,
+                };
 
-            let token = JSON.parse(localStorage.getItem('Token')).token;
-            let res = await postAPI('doctor/packages', data, token);
-            console.log(res);
-            if (!res.message && res.includes('name')) {
-                setValidate({ ...validate, name: 'This name is invalid' });
-            } else if (res.message && res.message === 'Package registered successfully') {
-                setInputFields({
-                    name: '',
-                    limit_per_patient: '',
-                    time_limit: {
-                        value: '',
-                        unit: '--select--',
-                    },
-                });
-                dispatch(resetList());
+                console.log(data);
+                let res = await putAPI('doctor/packages/id=' + currentPackage._id, data);
+                console.log(res);
             }
         }
+
+        if (readySubmit) setUpdateMode(!updateMode);
     });
 
     return (
@@ -181,13 +226,18 @@ function InputPackage() {
                 <ListProduct onBack={() => setSubPage(false)} />
             ) : (
                 <WrapContent>
+                    {updateMode && <div className={cx('noti')}>Now you can update the information</div>}
                     <button onClick={handleSubmit} className={cx('submit-btn', 'flex-center')}>
-                        <PlusIcon width="2.5rem" height="2.5rem" />
+                        {updateMode ? <FontAwesomeIcon icon={faCheck} /> : <FontAwesomeIcon icon={faPenToSquare} />}
                     </button>
                     <div>
                         <div className={cx('input-field', 'flex-center')}>
                             <span className={cx('label')}>Name</span>
-                            <FormInput inputVal={inputFields.name} onChange={(e) => handleInputName(e)} />
+                            <FormInput
+                                readOnly={!updateMode}
+                                inputVal={inputFields.name}
+                                onChange={(e) => handleInputName(e)}
+                            />
                         </div>
                         <span
                             className={cx({
@@ -201,6 +251,7 @@ function InputPackage() {
                         <div className={cx('input-field', 'flex-center')}>
                             <span className={cx('label')}>Maximum number of packages:</span>
                             <FormInput
+                                readOnly={!updateMode}
                                 inputVal={inputFields.limit_per_patient}
                                 tiny
                                 type="number"
@@ -208,6 +259,7 @@ function InputPackage() {
                             />
                             <span className={cx('label', 'ml')}>in</span>
                             <FormInput
+                                readOnly={!updateMode}
                                 tiny
                                 type="number"
                                 inputVal={inputFields.time_limit.value}
@@ -215,6 +267,7 @@ function InputPackage() {
                             />
                             <div className={cx('select-field')}>
                                 <SelectOption
+                                    readOnly={!updateMode}
                                     options={unitTime}
                                     tiny
                                     value={inputFields.time_limit.unit}
@@ -233,11 +286,17 @@ function InputPackage() {
                     <div className={cx('input-field', 'flex-center')}>
                         <span className={cx('label', 'title')}>Add products</span>
                         <div
-                            onClick={() => {
-                                setSubPage(true);
-                                setValidate({ ...validate, products: '' });
-                            }}
-                            className={cx('icon', 'flex-center')}
+                            onClick={
+                                updateMode
+                                    ? () => {
+                                          setSubPage(true);
+                                          setValidate({ ...validate, products: '' });
+                                      }
+                                    : () => {}
+                            }
+                            className={cx('icon', 'flex-center', {
+                                disabled: !updateMode,
+                            })}
                         >
                             <PlusIcon width="2rem" height="2rem" />
                         </div>
@@ -247,12 +306,12 @@ function InputPackage() {
                     <div className={cx('list-product')}>
                         <ListItem noUnderLine infos={packageFields} />
                         {currentProducts.map((product, index) => {
-                            let nProduct = formatedProducts(product, index);
+                            let nProduct = formatedProducts(product);
                             return (
                                 <ListItem
                                     key={index}
                                     infos={nProduct}
-                                    showDelete
+                                    showDelete={updateMode}
                                     clickDelete={() => handleDeleteProduct(index, product._id)}
                                 />
                             );
@@ -264,4 +323,4 @@ function InputPackage() {
     );
 }
 
-export default InputPackage;
+export default InfoPackage;

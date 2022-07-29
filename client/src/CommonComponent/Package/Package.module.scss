@@ -9,8 +9,8 @@
         position: absolute;
         top: -10px;
         right: -10px;
-        width: 25px;
-        height: 25px;
+        width: 26px;
+        height: 26px;
         font-size: 2rem;
         background-color: var(--primary);
         color: white;
@@ -36,11 +36,22 @@
         }
     }
 
-    .icon {
-        font-size: 4rem;
-    }
+    .wrap-content {
+        width: 100%;
 
-    .title {
-        font-size: 2rem;
+        &:hover {
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .icon {
+            font-size: 4rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .title {
+            font-size: 2rem;
+            transition: all 0.3s ease-in-out;
+        }
     }
 }

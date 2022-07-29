@@ -4,7 +4,7 @@ import classNames from 'classnames/bind';
 import styles from './Package.module.scss';
 const cx = classNames.bind(styles);
 
-function Package({ infos, deleteState, clickDelete }) {
+function Package({ infos, deleteState, clickDelete, onClick }) {
     return (
         <div className={cx('wrapper')}>
             <button
@@ -15,10 +15,12 @@ function Package({ infos, deleteState, clickDelete }) {
             >
                 <FontAwesomeIcon icon={faXmark} />
             </button>
-            <div className={cx('icon', 'flex-center')}>
-                <FontAwesomeIcon icon={faBoxArchive} />
+            <div onClick={onClick} className={cx('wrap-content')}>
+                <div className={cx('icon', 'flex-center')}>
+                    <FontAwesomeIcon icon={faBoxArchive} />
+                </div>
+                <span className={cx('title', 'flex-center')}>{infos.name}</span>
             </div>
-            <span className={cx('title', 'flex-center')}>Package</span>
         </div>
     );
 }
