@@ -101,66 +101,184 @@ exports.searchPatients = async (req, res) => {
     if (!doctor) {
       return res.status(500).send({ message: "Doctor not found in the database" });
     }
-
-    const queryValue = decodeURI(req.query.value);
+    const queryValue = req.query.value;
+    console.log(queryValue);
     const re = new RegExp(queryValue, "i");
-    let patients;
-    if (!req.query.filter_by) {
-      patients = await Patient.find({ "_id": { $in: doctor.patients } })
-        .or([
-          { 'id_number': { $regex: re } },
-          { 'name': { $regex: re } },
-          { 'address': { $regex: re } },
-          { 'status': { $regex: re } },
-        ])
-        .populate("account", "username role status")
-        .populate("current_facility", "name")
-        .populate(
-          "close_contact_list",
-          "_id id_number name DOB status current_facility",
-        )
-        .sort({
-          'id_number': 1
-        })
-        .exec();
-    }
-    else {
-      if (req.query.filter_by === 'DOB') {
-        const DOB = new Date(queryValue);
-        patients = await Patient.find({
-          "_id": { $in: doctor.patients },
-          //Compare year only
-          "DOB": {
-            $gte: new Date(DOB.getFullYear(), 0, 1),
-            $lte: new Date(DOB.getFullYear(), 11, 31)
-          }
-        }).populate("account", "username role status")
-          .populate("current_facility", "name")
-          .populate(
-            "close_contact_list",
-            "_id id_number name DOB status current_facility",
-          )
-          .sort({
-            'id_number': 1
-          })
-          .exec();
-      } else {
-        patients = await Patient.find({
-          "_id": { $in: doctor.patients },
-          [req.query.filter_by]: { $regex: re }
-        })
-          .populate("account", "username role status")
-          .populate("current_facility", "name")
-          .populate(
-            "close_contact_list",
-            "_id id_number name DOB status current_facility",
-          )
-          .sort({
-            'id_number': 1
-          })
-          .exec();
+    console.log(re);
+    const patients = await Patient.aggregate([
+      {
+        $match: {
+          _id: { $in: doctor.patients },
+        }
+      },
+      {
+        $lookup: {
+          from: Facility.collection.name,
+          localField: "current_facility",
+          foreignField: "_id",
+          as: "current_facility",
+        }
+      },
+      {
+        $lookup: {
+          from: Account.collection.name,
+          localField: "account",
+          foreignField: "_id",
+          as: "account",
+        }
+      },
+      {
+        $lookup: {
+          from: Patient.collection.name,
+          localField: "close_contact_list",
+          foreignField: "_id",
+          as: "close_contact_list",
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          account: {
+            _id: 1,
+            username: 1,
+            role: 1,
+            status: 1,
+          },
+          id_number: 1,
+          name: 1,
+          address: 1,
+          DOB: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$DOB" } },
+          status: 1,
+          close_contact_list: {
+            _id: 1,
+            id_number: 1,
+            name: 1,
+            DOB: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$DOB" } },
+            status: 1,
+            current_facility: {
+              _id: 1,
+              name: 1,
+            },
+          },
+          current_facility: {
+            _id: 1,
+            name: 1,
+          },
+        }
+      },
+      {
+        $match: {
+          $or: [
+            { id_number: { $regex: re } },
+            { name: { $regex: re } },
+            { address: { $regex: re } },
+            { status: { $regex: re } },
+            { DOB: { $regex: re } },
+          ]
+        }
+      },
+      {
+        $sort: {
+          id_number: 1
+        }
       }
+    ]).exec();
+
+    res.status(200).send(patients);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
+exports.filterPatients = async (req, res) => {
+  try {
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
+    if (!doctor) {
+      return res.status(500).send({ message: "Doctor not found in the database" });
     }
+
+    const queryValue = req.query.value;
+    const filterBy = Array.isArray(req.query.filter_by) ? req.query.filter_by : [req.query.filter_by];
+    const filterValues = Array.isArray(queryValue) ? queryValue : [queryValue];
+    values = filterValues.map(value => ({ $regex: new RegExp(value, "i") }));
+    const patients = await Patient.aggregate([
+      {
+        $match: {
+          _id: { $in: doctor.patients },
+        }
+      },
+      {
+        $lookup: {
+          from: Facility.collection.name,
+          localField: "current_facility",
+          foreignField: "_id",
+          as: "current_facility",
+        }
+      },
+      {
+        $lookup: {
+          from: Account.collection.name,
+          localField: "account",
+          foreignField: "_id",
+          as: "account",
+        }
+      },
+      {
+        $lookup: {
+          from: Patient.collection.name,
+          localField: "close_contact_list",
+          foreignField: "_id",
+          as: "close_contact_list",
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          account: {
+            _id: 1,
+            username: 1,
+            role: 1,
+            status: 1,
+          },
+          id_number: 1,
+          name: 1,
+          address: 1,
+          DOB: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$DOB" } },
+          status: 1,
+          close_contact_list: {
+            _id: 1,
+            id_number: 1,
+            name: 1,
+            DOB: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$DOB" } },
+            status: 1,
+            current_facility: {
+              _id: 1,
+              name: 1,
+            },
+          },
+          current_facility: {
+            _id: 1,
+            name: 1,
+          },
+        }
+      },
+      {
+        $match: {
+          $and: [
+            { [filterBy[0]]: values[0] },
+            { [filterBy[1]]: values[1] },
+            { [filterBy[2]]: values[2] },
+            { [filterBy[3]]: values[3] },
+            { [filterBy[4]]: values[4] },
+          ]
+        }
+      },
+      {
+        $sort: {
+          id_number: 1
+        }
+      }
+    ]).exec();
 
     res.status(200).send(patients);
   } catch (err) {

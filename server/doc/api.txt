@@ -133,15 +133,54 @@ return {
 
 III. Doctor routes
 number: 0
-description: Search/Filter patients
+description: Search patients
 route: localhost:5000/api/doctor/patients/search
 query: {
-  filter_by: String (name, id_number, DOB, address, status),
   value: String/Number (value of field)
 }
 // Remember to encode query value. Ex: encodeURI(value): Sai Gon => Sai%20Gon
 // Ex: http://localhost:5000/api/doctor/patients/search?filter_by=address&value=Sai%20Gon
 method:GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    account: {
+      _id: String,
+      username: String,
+      role: String,
+      status: String,
+    },
+    id_number: String,
+    name: String,
+    DOB: String,
+    address: String,
+    status: String,
+    close_contact_list: []
+    current_facility: String,
+  }
+]
+
+number: 0.5
+description: Filter patients
+route: localhost:5000/api/doctor/patients/filter
+query: {
+  filter_by: String (name, id_number, DOB, address, status),
+  value: String/Number (value of field)
+}
+// Remember to encode query value. Ex: encodeURI(value): Sai Gon => Sai%20Gon
+// Filtered field must be followed by a value
+// Ex: http://localhost:5000/api/doctor/patients/filter?filter_by=address&value=Sai%20Gon&filter_by=status&value=f1
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
 returns: [
   {
     _id: String,
@@ -323,14 +362,37 @@ returns: [
 ]
 
 number: 6.5
-description: Search/Filter products
+description: Search products
 route: localhost:5000/api/doctor/products/search
 query: {
-  filter_by: String (field of product)(optional),
-  value: String/Number (value of field or value for searching)
+  value: String (value for searching)
 }
 // If seach, only value is required
-// If filter, both value and filter_by are required
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    name: String,
+    price: Number,
+    quantity_unit: String,
+    images: [
+      String
+    ]
+  }
+]
+
+number: 6.55
+description: Filter products
+route: localhost:5000/api/doctor/products/filter
+query: {
+  filter_by: String (name, price, quantity_unit, type),
+  value: String (value of field)
+}
 // If filter by price: value is of the following values:
 - 'lt-200': price < 200000
 - '200-500': price between 200000 and 500000
@@ -432,14 +494,51 @@ returns: [
 ]
 
 number: 9.5
-description: Search/Filter packages
+description: Search packages
 route: localhost:5000/api/doctor/packages/search
 query: {
-  filter_by: String (name or time_limit)(optional),
-  value: String/Number (value of field or value for searching)
+  value: String (value of field or value for searching)
 }
-// If seach, only value is required
-// If filter, both value and filter_by are required
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String (Database ID),
+    time_limit: {
+      "value": Number,
+      "unit": String ["day", "week", "month"]
+    },
+    limit_per_patient: Number,
+    name: String,
+    products: [
+      {
+        product: {
+          _id: String (Database ID),
+          name: String,
+          price: Number,
+          quantity_unit: String,
+          images: [
+            String
+          ]
+        },
+        quantity: Number,
+        _id: String (Dont know what this is :))))
+      }
+    ]
+  }
+]
+
+number: 9.55
+description: Filter packages
+route: localhost:5000/api/doctor/packages/filter
+query: {
+  filter_by: String (name, time_limit, limit_per_patient),
+  value: String (value of field)
+}
 method: GET
 headers: {
   Bearer authorization: {
