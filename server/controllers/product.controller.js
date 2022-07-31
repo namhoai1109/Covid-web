@@ -19,51 +19,53 @@ exports.searchProducts = async (req, res) => {
   try {
     const queryValue = decodeURI(req.query.value);
     const re = new RegExp(queryValue, 'i');
-    let products;
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: re } },
+        { quantity_unit: { $regex: re } },
+        { type: { $regex: re } },
+      ]
+    }).sort({ price: 'asc' })
+      .exec();
 
-    // Search
-    if (!req.query.filter_by) {
+    res.status(200).send(products);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
+exports.filterProducts = async (req, res) => {
+  try {
+    const queryValue = req.query.value;
+    const re = new RegExp(queryValue, 'i');
+    if (req.query.filter_by === 'price') {
+      const ranges = Array.isArray(queryValue) ? queryValue : [queryValue];
+      const rangeConversion = {
+        'lt-200': { $lt: 200000 },
+        '200-500': { $gte: 200000, $lte: 500000 },
+        '500-1000': { $gte: 500000, $lte: 1000000 },
+        '1000-2000': { $gte: 1000000, $lte: 2000000 },
+        '2000-5000': { $gte: 2000000, $lte: 5000000 },
+        'gt-5000': { $gt: 5000000 },
+      }
       products = await Product.find({
         $or: [
-          { name: { $regex: re } },
-          { quantity_unit: { $regex: re } },
-          { type: { $regex: re } },
+          { price: rangeConversion[ranges[0]] },
+          { price: rangeConversion[ranges[1]] },
+          { price: rangeConversion[ranges[2]] },
+          { price: rangeConversion[ranges[3]] },
+          { price: rangeConversion[ranges[4]] },
+          { price: rangeConversion[ranges[5]] },
         ]
       }).sort({ price: 'asc' })
-        .exec();
+        .exec()
     }
-    // Filter
+    // Filter by field that is not price
     else {
-      // Filter by price
-      if (req.query.filter_by === 'price') {
-        const ranges = Array.isArray(queryValue) ? queryValue : [queryValue];
-        const rangeConversion = {
-          'lt-200': { $lt: 200000 },
-          '200-500': { $gte: 200000, $lte: 500000 },
-          '500-1000': { $gte: 500000, $lte: 1000000 },
-          '1000-2000': { $gte: 1000000, $lte: 2000000 },
-          '2000-5000': { $gte: 2000000, $lte: 5000000 },
-          'gt-5000': { $gt: 5000000 },
-        }
-        products = await Product.find({
-          $or: [
-            { price: rangeConversion[ranges[0]] },
-            { price: rangeConversion[ranges[1]] },
-            { price: rangeConversion[ranges[2]] },
-            { price: rangeConversion[ranges[3]] },
-            { price: rangeConversion[ranges[4]] },
-            { price: rangeConversion[ranges[5]] },
-          ]
-        }).sort({ price: 'asc' })
-          .exec()
-      }
-      // Filter by field other than price
-      else {
-        products = await Product.find({
-          [req.query.filter_by]: queryValue
-        }).sort({ price: 'asc' })
-          .exec()
-      }
+      products = await Product.find({
+        [req.query.filter_by]: { $regex: re }
+      }).sort({ price: 'asc' })
+        .exec()
     }
 
     res.status(200).send(products);
@@ -76,6 +78,7 @@ exports.registerProduct = async (req, res) => {
   const product = new Product({
     name: req.body.name,
     price: req.body.price,
+    type: req.body.type,
     quantity_unit: req.body.quantity_unit,
     images: req.file?.path || req.files?.map((file) => file.path),
   });
@@ -116,6 +119,7 @@ exports.updateProduct = async (req, res) => {
     // Update text fields
     product.name = req.body.name ? req.body.name : product.name;
     product.price = req.body.price ? req.body.price : product.price;
+    product.type = req.body.type ? req.body.type : product.type;
     product.quantity_unit = req.body.quantity_unit ? req.body.quantity_unit : product.quantity_unit;
 
     // Update delete images
