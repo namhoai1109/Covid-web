@@ -3,7 +3,7 @@ import { FormInput } from '~/CommonComponent/Popper';
 import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './CovidPatient.module.scss';
 import { inputField1, inputField2, Status, dataAddress } from '../staticVar';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SelectOption from '~/CommonComponent/SelectOption';
 import { PlusIcon } from '~/CommonComponent/icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import { postAPI } from '~/APIservices/postAPI';
 import { reset, deleteItem } from '../redux/currentCloseContactList';
 import ListItem from '~/CommonComponent/ListItem';
 import ListPatient from './ListPatient';
+import { getAPI } from '~/APIservices/getAPI';
 
 const cx = classNames.bind(styles);
 
@@ -54,7 +55,7 @@ function InputForm() {
         return {
             id: item.id_number,
             name: item.name,
-            YoB: item.DOB.split('-')[0],
+            dob: item.dob.split('-')[0],
             status: item.status,
             facility: '',
         };
@@ -66,12 +67,17 @@ function InputForm() {
     let [validateString, setValidateString] = useState(initValue);
 
     let initValueSelect = initDataSelect(inputField2, '-- make your choice --');
+    initValueSelect.Facility = '-- make your choice --';
     let [selectValue, setSelectValue] = useState(initValueSelect);
     let initSelectValidate = initDataSelect(inputField2, '');
+    initSelectValidate.Facility = '';
     let [validateSelect, setValidateSelect] = useState(initSelectValidate);
 
     let [showList, setShowList] = useState(false);
-
+    let [listFacility, setListFacility] = useState({
+        first: [],
+        sec: [],
+    });
     let contactList = useSelector((state) => state.currentCloseContactList.list);
     let dispatch = useDispatch();
     // console.log(inputField);
@@ -176,15 +182,19 @@ function InputForm() {
         let readySubmit = validateForm(inputField, selectValue);
 
         if (readySubmit) {
+            let id_facility = '';
+            listFacility.first.forEach((item) => {
+                if (item.name === selectValue.Facility.split('-')[0]) id_facility = item._id;
+            });
             let dataSubmit = {
                 username: inputField.ID_number,
                 name: inputField.Name,
-                DOB: inputField.Year_of_birth,
+                dob: inputField.Year_of_birth,
                 address: `${selectValue.Province} ${
                     selectValue.District === '-- make your choice --' ? '' : selectValue.District
                 } ${selectValue.Ward === '-- make your choice --' ? '' : selectValue.Ward}`.trim(),
                 status: inputField.Status || '',
-                //current_facility: selectValue.Facility,
+                current_facility: id_facility,
                 password: inputField.Password,
                 close_contact_list: contact_list,
             };
@@ -206,6 +216,21 @@ function InputForm() {
         setInputField({ ...inputField, Status: e.target.value });
         setValidateString({ ...validateString, Status: '' });
     });
+
+    let getListFacily = useCallback(async () => {
+        let list = await getAPI('doctor/facilities');
+
+        let tmp = [];
+        list.forEach((item) => {
+            let str = item.name + '-' + item.location.province;
+            tmp.push(str);
+        });
+
+        setListFacility({ first: list, sec: tmp });
+    });
+    useEffect(() => {
+        getListFacily();
+    }, []);
 
     return (
         <div className={cx('wrapper')}>
@@ -262,6 +287,20 @@ function InputForm() {
                                 </div>
                             );
                         })}
+                    </div>
+
+                    <div className={cx('row', 'field-input')}>
+                        <div className={cx('col3')}>
+                            <div className={cx('flex-center')}>
+                                <span className={cx('label')}>Facility</span>
+                                <SelectOption
+                                    options={listFacility.sec}
+                                    value={selectValue['Facility']}
+                                    onChange={(value) => handleChangeSelect(value, 'Facility')}
+                                />
+                            </div>
+                            <span className={cx('flex-center', 'attention')}>{validateSelect['Facility']}</span>
+                        </div>
                     </div>
 
                     <div className={cx('row', 'field-input')}>

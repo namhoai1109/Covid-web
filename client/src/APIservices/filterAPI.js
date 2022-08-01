@@ -1,4 +1,4 @@
-import { filter } from '~/utils/httpRequest';
+import { getParam } from '~/utils/httpRequest';
 
 export const filterAPI = async (url, valueFilter) => {
     try {
@@ -10,8 +10,7 @@ export const filterAPI = async (url, valueFilter) => {
         });
 
         let token = JSON.parse(localStorage.getItem('Token')).token;
-        const res = await filter(url, token, params);
-        console.log(res);
+        const res = await getParam(url, token, params);
         return res;
     } catch (err) {
         return err;

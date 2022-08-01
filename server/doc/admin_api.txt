@@ -76,10 +76,10 @@ return {
 
 ------------------------------FACILITIES RELATED------------------------------------
 number: 1
-description: Create Facility
+description: Create Facility -> Called
 route: http://localhost:5000/api/facility/create
 method: POST
-authorization: admin bearer token
+authorization: doctor bearer token
 body:
 {
     "name": "Test12",
@@ -91,10 +91,10 @@ body:
 }
 
 number: 2
-description: update facility
+description: update facility -> Called
 route: http://localhost:5000/api/facility/update/id=:id
 method: PUT 
-authorization: admin
+authorization: doctor
 body:
 {
   "name": "Test12",
@@ -106,3 +106,43 @@ body:
 }
 
 optional key-value pair
+
+
+number: 3
+description: delete facility -> Called
+route: http://localhost:5000/api/facility/delete/id=:id
+method: DELETE 
+auth: doctor
+
+delete one facility with ObjectID
+
+number: 4
+description: delete all facilities
+route: http://localhost:5000/api/facility/delete/all
+method: DELETE
+auth: doctor 
+
+number: 5
+description: return one facility
+route: http://localhost:5000/api/facility/get/id=:id
+method: GET
+auth: doctor
+EX:
+    {
+        "location": {
+            "formattedAddress": "Phuong 5, Quan Cau Giay, TP SAIGON",
+            "province": "SAIGON",
+            "district": "Cau Giay",
+            "ward": "5"
+        },
+        "_id": "62e2d8c172ab805cb03a6883",
+        "name": "Test123",
+        "capacity": 300,
+        "current_count": 200,
+    }
+
+number: 6
+description: return all facilities -> Called
+route: http://localhost:5000/api/facility/get/all
+method: GET
+auth: admin
