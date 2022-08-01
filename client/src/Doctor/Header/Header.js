@@ -70,13 +70,12 @@ function Header() {
     let getDataField = useCallback((location) => {
         let addLink = '';
         let urlSearch = '';
-        let filterItem, sortItem;
         let dispatchFunc = () => {};
+        let filterItem, sortItem;
         switch (location) {
             case configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient:
-                urlSearch = 'doctor/patients/search';
                 dispatchFunc = (data) => dispatch(setListPatient(data));
-                [filterItem, sortItem] = getFilterSortMenu(patientFields, urlSearch, dispatchFunc);
+                [filterItem, sortItem] = getFilterSortMenu(patientFields, 'doctor/patients/filter', dispatchFunc);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient + configs.doctorRoutes.newPatient;
                 return { filterItem, sortItem, addLink, urlSearch, dispatchFunc };
@@ -127,12 +126,7 @@ function Header() {
                         <Menu menu={paramHeader.sortItem || []}>
                             <TaskBtn title="Sort" />
                         </Menu>
-                        <SearchInput
-                            dispatchFunc={paramHeader.dispatchFunc}
-                            url={paramHeader.urlSearch}
-                            stateDynamique={true}
-                            icon={<SearchIcon />}
-                        />
+                        <SearchInput stateDynamique={true} icon={<SearchIcon />} />
                     </div>
                 </>
             )}

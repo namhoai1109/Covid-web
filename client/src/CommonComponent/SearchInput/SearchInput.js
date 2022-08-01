@@ -1,9 +1,9 @@
 import classNames from 'classnames/bind';
 import styles from './SearchInput.module.scss';
 import { memo, useCallback, useEffect, useState } from 'react';
-import { searchAPI } from '~/APIservices/searchAPI';
-import { addFilter } from '~/Doctor/redux/filterState';
-import { useDispatch } from 'react-redux';
+import { filterAPI } from '~/APIservices/filterAPI';
+import { addFilter, setValue } from '~/Doctor/redux/filterState';
+import { useDispatch, useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
@@ -11,6 +11,8 @@ function SearchInput({ stateDynamique, icon, filter = '', url, dispatchFunc }) {
     let [searchVal, setSearchVal] = useState('');
     let [skrink, setSkrink] = useState(stateDynamique);
     let dispatch = useDispatch();
+
+    let valueFilter = useSelector((state) => state.filterState.value);
 
     let handleBlur = useCallback(() => {
         if (stateDynamique) {
@@ -30,9 +32,9 @@ function SearchInput({ stateDynamique, icon, filter = '', url, dispatchFunc }) {
         }
     });
 
-    let fetchSearchValue = useCallback(async () => {
-        let res = await searchAPI(url, filter, searchVal);
-        dispatchFunc(res);
+    let fetchFilterValue = useCallback(async () => {
+        let res = await filterAPI(url, valueFilter);
+        //dispatchFunc(res);
     });
 
     useEffect(() => {
@@ -40,8 +42,8 @@ function SearchInput({ stateDynamique, icon, filter = '', url, dispatchFunc }) {
     }, []);
 
     useEffect(() => {
-        if (searchVal !== '') {
-            fetchSearchValue();
+        if (filter !== '') {
+            dispatch(setValue({ filter, value: searchVal }));
         }
     }, [searchVal]);
 

@@ -56,7 +56,7 @@ function Header() {
             let readySubmit = true;
             let clearInput = false;
             if (inputVals.username === '' || inputVals.password === '') {
-                setValidate('Username, password is required');
+                setValidate('Username, password are required');
                 readySubmit = false;
             } else if (inputVals.name !== '') {
                 if (/^[a-zA-Z ]{1,50}$/.test(inputVals.name) === false) {
@@ -84,19 +84,43 @@ function Header() {
             return clearInput;
         } else {
             console.log(inputVals);
-            let body = {
-                name: inputVals.name,
-                capacity: Number(inputVals.capacity),
-                province: inputVals['province/city'],
-                district: inputVals['district/county'],
-                ward: inputVals['ward/village'],
-            };
+            let clearInput = false;
+            let readySubmit = true;
 
-            let token = JSON.parse(localStorage.getItem('Token')).token;
-            let res = await postAPI('facility/create', body, token);
-            if (res.message && res.message === 'Facility created successfully') {
-                getListFacility(dispatch);
+            Object.keys(inputVals).forEach((key) => {
+                if (inputVals[key] === '' || inputVals[key] === '--select--') {
+                    setValidate(`These fields are required`);
+                    readySubmit = false;
+                }
+            });
+
+            if (inputVals.capacity !== '') {
+                if (inputVals.capacity <= 0) {
+                    setValidate('Capacity is invalid');
+                    readySubmit = false;
+                }
             }
+
+            if (readySubmit) {
+                let body = {
+                    name: inputVals.name,
+                    capacity: Number(inputVals.capacity),
+                    province: inputVals['province/city'],
+                    district: inputVals['district/county'],
+                    ward: inputVals['ward/village'],
+                };
+
+                let token = JSON.parse(localStorage.getItem('Token')).token;
+                let res = await postAPI('facility/create', body, token);
+                console.log(res);
+                if (typeof res === 'string' && res.includes('duplicate')) {
+                    setValidate('Username is already exist');
+                } else if (res.message && res.message === 'Facility created successfully') {
+                    getListFacility(dispatch);
+                    clearInput = true;
+                }
+            }
+            return clearInput;
         }
     };
 

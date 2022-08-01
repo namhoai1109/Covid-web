@@ -21,7 +21,7 @@ export const get = async (url, token) => {
     }
 };
 
-export const search = async (url, token, params) => {
+export const filter = async (url, token, params) => {
     try {
         let res = await request.get(url, {
             headers: {
