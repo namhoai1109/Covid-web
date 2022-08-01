@@ -8,16 +8,21 @@ import { Menu } from '~/CommonComponent/Popper';
 import { patientFields, necessityFields, essentialPackageFields } from '../staticVar';
 import configs from '~/config';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDelete } from '../redux/deleteStateSlice';
+import { setListPatient } from '../redux/listPatientSlice';
 
 const cx = classNames.bind(styles);
 
-let getFilterSortMenu = (menu) => {
+let getFilterSortMenu = (menu, url = '', dispatchFunc) => {
     let filterItem = menu.map((title) => ({
         data: title,
-        child: { data: [{ data: <SearchInput icon={<SearchIcon />} /> }] },
+        child: {
+            data: [
+                { data: <SearchInput dispatchFunc={dispatchFunc} url={url} filter={title} icon={<SearchIcon />} /> },
+            ],
+        },
     }));
 
     let sortItem = menu.map((title) => ({
@@ -50,6 +55,8 @@ function Header() {
     let navigate = useNavigate();
     let dispatch = useDispatch();
     let deleteState = useSelector((state) => state.deleteState);
+    //let [urlSearch, setUrlSearch] = useState('');
+    let [paramHeader, setParamHeader] = useState({});
 
     let [showHeader, setShowHeader] = useState();
     useEffect(() => {
@@ -60,56 +67,72 @@ function Header() {
         }
     }, [location.pathname]);
 
-    let getDataField = (location) => {
+    let getDataField = useCallback((location) => {
         let addLink = '';
+        let urlSearch = '';
         let filterItem, sortItem;
+        let dispatchFunc = () => {};
         switch (location) {
             case configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient:
-                [filterItem, sortItem] = getFilterSortMenu(patientFields);
+                urlSearch = 'doctor/patients/search';
+                dispatchFunc = (data) => dispatch(setListPatient(data));
+                [filterItem, sortItem] = getFilterSortMenu(patientFields, urlSearch, dispatchFunc);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient + configs.doctorRoutes.newPatient;
-                return { filterItem, sortItem, addLink };
+                return { filterItem, sortItem, addLink, urlSearch, dispatchFunc };
 
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:
                 [filterItem, sortItem] = getFilterSortMenu(necessityFields);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem + configs.doctorRoutes.newNecessity;
-                return { filterItem, sortItem, addLink };
+                return { filterItem, sortItem, addLink, urlSearch, dispatchFunc };
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage:
                 [filterItem, sortItem] = getFilterSortMenu(essentialPackageFields);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage + configs.doctorRoutes.newPackage;
-                return { filterItem, sortItem, addLink };
+                return { filterItem, sortItem, addLink, urlSearch, dispatchFunc };
             default:
                 return {};
         }
-    };
+    });
 
     let handleBack = () => {
         navigate(-1, { replace: true });
     };
 
-    let { filterItem, sortItem, addLink } = getDataField(location.pathname);
+    useEffect(() => {
+        setParamHeader(getDataField(location.pathname));
+    }, [location.pathname]);
 
     return (
         <HeaderLayout>
-            {!showHeader && <TaskBtn title="Back" to={addLink || ''} onClick={handleBack} />}
+            {!showHeader && <TaskBtn title="Back" to={paramHeader.addLink || ''} onClick={handleBack} />}
             {showHeader && (
                 <>
-                    <TaskBtn title="Add" to={addLink || ''} onClick={() => setShowHeader(false)} icon={<PlusIcon />} />
+                    <TaskBtn
+                        title="Add"
+                        to={paramHeader.addLink || ''}
+                        onClick={() => setShowHeader(false)}
+                        icon={<PlusIcon />}
+                    />
                     <div className={cx('list_btn')}>
                         <TaskBtn
                             title="Delete"
                             active={deleteState.state}
                             onClick={() => dispatch(setDelete(!deleteState.state))}
                         />
-                        <Menu menu={filterItem || []}>
+                        <Menu menu={paramHeader.filterItem || []}>
                             <TaskBtn title="Filter" />
                         </Menu>
-                        <Menu menu={sortItem || []}>
+                        <Menu menu={paramHeader.sortItem || []}>
                             <TaskBtn title="Sort" />
                         </Menu>
-                        <SearchInput stateDynamique={true} icon={<SearchIcon />} />
+                        <SearchInput
+                            dispatchFunc={paramHeader.dispatchFunc}
+                            url={paramHeader.urlSearch}
+                            stateDynamique={true}
+                            icon={<SearchIcon />}
+                        />
                     </div>
                 </>
             )}

@@ -1,4 +1,4 @@
-export const patientFields = ['ID', 'Name', 'YoB', 'Status', 'Facility'];
+export const patientFields = ['ID', 'Name', 'DoB', 'Status', 'Facility'];
 export const necessityFields = ['Name', 'Price', 'Quantity unit'];
 export const essentialPackageFields = ['Name', 'Type', 'Time limited'];
 export const typeNecessity = ['Drug', 'Supply', 'Food', 'Dietary Supplement', 'Protection', 'Herbal Medicine', 'Other'];

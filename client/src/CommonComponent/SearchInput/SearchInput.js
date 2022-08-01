@@ -1,31 +1,49 @@
 import classNames from 'classnames/bind';
 import styles from './SearchInput.module.scss';
-import { memo, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { searchAPI } from '~/APIservices/searchAPI';
+import { addFilter } from '~/Doctor/redux/filterState';
+import { useDispatch } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
-function SearchInput({ stateDynamique, icon }) {
+function SearchInput({ stateDynamique, icon, filter = '', url, dispatchFunc }) {
     let [searchVal, setSearchVal] = useState('');
     let [skrink, setSkrink] = useState(stateDynamique);
+    let dispatch = useDispatch();
 
-    let handleBlur = () => {
+    let handleBlur = useCallback(() => {
         if (stateDynamique) {
             if (searchVal === '') {
                 setSkrink(true);
             }
         }
-    };
+    });
 
-    let handleClick = () => {
+    let handleClick = useCallback(() => {
         if (stateDynamique) {
             setSkrink(!skrink);
         }
 
         if (searchVal !== '') {
-            console.log(searchVal); //call api
             setSkrink(false);
         }
-    };
+    });
+
+    let fetchSearchValue = useCallback(async () => {
+        let res = await searchAPI(url, filter, searchVal);
+        dispatchFunc(res);
+    });
+
+    useEffect(() => {
+        if (filter !== '') dispatch(addFilter(filter));
+    }, []);
+
+    useEffect(() => {
+        if (searchVal !== '') {
+            fetchSearchValue();
+        }
+    }, [searchVal]);
 
     return (
         <div className={cx('wrapper')}>

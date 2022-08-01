@@ -632,7 +632,7 @@ returns: {
 
 IV/ Facility Route
 number: 1
-description: Create Facility
+description: Create Facility -> Called
 route: http://localhost:5000/api/facility/create
 method: POST
 authorization: doctor bearer token
@@ -665,7 +665,7 @@ optional key-value pair
 
 
 number: 3
-description: delete facility
+description: delete facility -> Called
 route: http://localhost:5000/api/facility/delete/id=:id
 method: DELETE 
 auth: doctor
@@ -698,7 +698,7 @@ EX:
     }
 
 number: 6
-description: return all facilities
+description: return all facilities -> Called
 route: http://localhost:5000/api/facility/get/all
 method: GET
 auth: doctor

@@ -5,6 +5,7 @@ import currentCloseContactListReducer from './currentCloseContactList';
 import currentNecessityReducer from './currentNecessity';
 import currentListProductReducer from './currentListProduct';
 import currentPackageSlice from './currentPackage';
+import filterStateSlice from './filterState';
 
 const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
         currentNecessity: currentNecessityReducer,
         currentListProduct: currentListProductReducer,
         currentPackage: currentPackageSlice,
+        filterState: filterStateSlice,
     },
 });
 
