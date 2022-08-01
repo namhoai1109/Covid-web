@@ -26,7 +26,7 @@ const patientSchema = new mongoose.Schema({
     },
   },
   // Format: YYYY-MM-DD
-  DOB: {
+  dob: {
     type: Date,
     required: true,
     validate: {
