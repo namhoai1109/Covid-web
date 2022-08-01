@@ -139,7 +139,7 @@ query: {
   value: String/Number (value of field)
 }
 // Remember to encode query value. Ex: encodeURI(value): Sai Gon => Sai%20Gon
-// Ex: http://localhost:5000/api/doctor/patients/search?filter_by=address&value=Sai%20Gon
+// Ex: http://localhost:5000/api/doctor/patients/search?value=Sai%20Gon
 method:GET
 headers: {
   Bearer authorization: {
@@ -746,7 +746,7 @@ body:
 }
 
 number: 2
-description: update facility
+description: update facility -> Called
 route: http://localhost:5000/api/facility/update/id=:id
 method: PUT 
 authorization: doctor

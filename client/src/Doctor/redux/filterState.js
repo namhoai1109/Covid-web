@@ -4,6 +4,7 @@ const filterState = createSlice({
     name: 'filterState',
     initialState: {
         filter: [],
+        value: {},
     },
     reducers: {
         addFilter: (state, action) => {
@@ -16,20 +17,19 @@ const filterState = createSlice({
 
             if (!isExist) {
                 state.filter.push(action.payload);
+                state.value[action.payload] = '';
             }
         },
         deleteFilter: (state, action) => {
             let index = state.filter.indexOf(action.payload);
             state.filter.splice(index, 1);
+            delete state.value[action.payload];
         },
-        setFilter: (state, action) => {
-            state.filter = action.payload;
-        },
-        resetFilter: (state) => {
-            state.filter = '';
+        setValue: (state, action) => {
+            state.value[action.payload.filter] = action.payload.value;
         },
     },
 });
 
-export const { setFilter, resetFilter, addFilter, deleteFilter } = filterState.actions;
+export const { setValue, addFilter, deleteFilter } = filterState.actions;
 export default filterState.reducer;

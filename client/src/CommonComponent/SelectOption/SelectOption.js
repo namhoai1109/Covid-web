@@ -4,7 +4,7 @@ import styles from './SelectOption.module.scss';
 
 const cx = classNames.bind(styles);
 
-function SelectOption({ readOnly, options, value, onChange, tiny }) {
+function SelectOption({ readOnly, options, value, onChange, tiny, disabled }) {
     let [option, setOption] = useState(value);
     let [showOptions, setShowOptions] = useState(false);
 
@@ -25,7 +25,10 @@ function SelectOption({ readOnly, options, value, onChange, tiny }) {
     };
 
     return (
-        <div onClick={handleShowOption} className={cx('custom-select', { up: showOptions, tiny: tiny })}>
+        <div
+            onClick={handleShowOption}
+            className={cx('custom-select', { up: showOptions, tiny: tiny, disabled: disabled })}
+        >
             <div onClick={handleShowOption} className={cx('curr-option')}>
                 {option}
             </div>

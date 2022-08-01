@@ -2,7 +2,6 @@ import TippyHeadless from '@tippyjs/react/headless';
 import Wrapper, { MenuItem } from '../Popper';
 import { PlusIcon } from '../icons';
 import { FormInput } from '../Popper';
-
 import classNames from 'classnames/bind';
 import styles from './Wrapper.module.scss';
 import { memo, useCallback, useEffect, useState } from 'react';

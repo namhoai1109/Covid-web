@@ -13,6 +13,7 @@ import configs from '~/config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilterCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { deleteFilter } from '../redux/filterState';
+import { filterAPI } from '~/APIservices/filterAPI';
 
 const cx = classNames.bind(styles);
 
@@ -31,7 +32,7 @@ function CovidPatient() {
     let getListPatient = async () => {
         try {
             let listPatient = await getAPI('/doctor/patients');
-            console.log(listPatient);
+            //console.log(listPatient);
             if (listPatient.message === 'timeout of 5000ms exceeded') {
                 listPatient = [];
             }
@@ -41,6 +42,11 @@ function CovidPatient() {
             console.log(err);
             // return err;
         }
+    };
+
+    let getListFilter = async () => {
+        let res = await filterAPI('doctor/patients/filter', valueFilter);
+        dispatch(setListPatient(res));
     };
 
     let fetchDeletePatient = async (id) => {
@@ -73,17 +79,18 @@ function CovidPatient() {
         };
     });
 
+    let listPatient = useSelector((state) => state.listPatient.list);
+    let filterState = useSelector((state) => state.filterState.filter);
+    let valueFilter = useSelector((state) => state.filterState.value);
+    let deleteState = useSelector((state) => state.deleteState);
+
     useEffect(() => {
         getListPatient();
     }, []);
 
-    let listPatient = useSelector((state) => state.listPatient.list);
-    let filterState = useSelector((state) => state.filterState.filter);
-    let deleteState = useSelector((state) => state.deleteState);
-
     useEffect(() => {
-        if (filterState.length === 0) {
-            getListPatient();
+        if (filterState.length !== 0) {
+            getListFilter();
         }
     }, [filterState]);
 

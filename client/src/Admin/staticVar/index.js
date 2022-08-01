@@ -16,8 +16,10 @@ export const formInputFacility = [
     makeItemForm('District/County', 'select'),
     makeItemForm('Ward/Village', 'select'),
     makeItemForm('Name', 'input'),
-    makeItemForm('Capacity', 'input'),
+    makeItemForm('Capacity', 'number'),
 ];
+
+export const formUpdateFacility = [makeItemForm('Name', 'input'), makeItemForm('Capacity', 'number')];
 
 const Province = ['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng'];
 const District = ['Quận 1', 'Quận 2', 'Quận 3', 'Quận 4'];
