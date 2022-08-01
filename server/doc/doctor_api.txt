@@ -1,145 +1,11 @@
-API Management List
-
-I.Auth routes
-number: 1 -> Called
-description: Login
-route: http://localhost:5000/api/auth/login
-method: POST
-body: {
-  username: {
-    type: String (number only)
-    length: 9 or 11,
-  },
-  password: {
-    type: String
-    minlength: 6,
-  }
-}
-returns: {
-  token: String,
-  username: Number (username) (cmnd or cccd),
-  role: String
-}
-
-number: 2 -> Called
-description: Check if has ever logged in before
-route: http://localhost:5000/api/auth/check
-method: POST
-body: {
-  username: {
-    type: String (number only)
-    length: 9 or 11,
-  }
-}
-returns: {
-  message: Boolean
-}
-
-number: 3 -> Called
-description: Set new password for newly created account that has never logged in
-route: http://localhost:5000/api/auth/update-password
-method: POST
-body: {
-  username: {
-    type: String (number only)
-    length: 9 or 11,
-  },
-  password: {
-    type: String,
-    length: >= 6
-  }
-}
-returns: {
-  message: Boolean
-}
-
-
-II.Admin routes
-number: 1 -> Called
-description: Register new doctor
-route: http://localhost:5000/api/admin/register
-method: POST
-headers: {
-  Bearer authorization: {
-    type: String (JWT token)
-  }
-}
-body: {
-  username: {
-    type: String (number only)
-    length: 9 or 11,
-    required: true
-  },
-  password: {
-    type: String
-    minlength: 6,
-    required: true,
-  },
-  name: {
-    type: String,
-    required: false
-  }
-}
-returns: {
-  message: String
-}
-
-number: 2 -> Called
-description: Get list of doctors
-route: http://localhost:5000/api/admin/doctors
-method: GET
-returns: [
-  {
-    _id: String,
-    account: {
-      _id: String,
-      username: String,
-      role: String,
-      status: String,
-    },
-    id_number: String,
-    name: String,
-    patients: [
-      String
-    ]
-  }
-]
-
-number: 3 -> Called
-description: Change status of account (active/inactive)
-route: localhost:5000/api/admin/doctors/id=:id/changestatus
-eg: localhost:5000/api/admin/doctors/id=62d5710ffe25ed38b535bf53/changestatus
-method: PUT
-body:
-{
-  "status": "inactive" || "active"
-}
-return 
-{
-  message: String
-}
-
-number: 4 -> Called
-description: Delete account
-route: localhost:5000/api/admin/doctors/id=:id/delete
-params: account id
-eg: localhost:5000/api/admin/doctors/id=62d624944ba3d2fc45b2e894/delete
-method: DELETE
-
-return {
-  message: String
-}
-
-
-III. Doctor routes
-number: 0
+------------------------PATIENTS RELATED---------------------------
+number: 1
 description: Search patients
 route: localhost:5000/api/doctor/patients/search
 query: {
-  value: String/Number (value of field)
+  value: String (value of field)
 }
-// Remember to encode query value. Ex: encodeURI(value): Sai Gon => Sai%20Gon
-// Ex: http://localhost:5000/api/doctor/patients/search?filter_by=address&value=Sai%20Gon
+// Ex: http://localhost:5000/api/doctor/patients/search?&value=Sai%20Gon
 method:GET
 headers: {
   Bearer authorization: {
@@ -157,7 +23,7 @@ returns: [
     },
     id_number: String,
     name: String,
-    DOB: String,
+    dob: String,
     address: String,
     status: String,
     close_contact_list: []
@@ -165,11 +31,11 @@ returns: [
   }
 ]
 
-number: 0.5
+number: 2
 description: Filter patients
 route: localhost:5000/api/doctor/patients/filter
 query: {
-  filter_by: String (name, id_number, DOB, address, status),
+  filter_by: String (name, id_number, dob, address, status),
   value: String/Number (value of field)
 }
 // Remember to encode query value. Ex: encodeURI(value): Sai Gon => Sai%20Gon
@@ -192,7 +58,7 @@ returns: [
     },
     id_number: String,
     name: String,
-    DOB: String,
+    dob: String,
     address: String,
     status: String,
     close_contact_list: []
@@ -200,7 +66,7 @@ returns: [
   }
 ]
 
-number: 1 -> Called
+number: 3 -> Called
 description: Get all patients information of a specific doctor
 route: http://localhost:5000/api/doctor/patients
 query (optional): {
@@ -224,7 +90,7 @@ returns: [
     },
     id_number: String,
     name: String,
-    DOB: String,
+    dob: String,
     address: String,
     status: String,
     close_contact_list: []
@@ -232,7 +98,7 @@ returns: [
   }
 ]
 
-number: 2 -> Called
+number: 4 -> Called
 description: Register new patient to a specific doctor
 route: http://localhost:5000/api/doctor/patients
 method: POST
@@ -256,7 +122,7 @@ body: {
     type: String,
     required: true
   },
-  DOB: {
+  dob: {
     type: Date,
     required: true
   },
@@ -278,7 +144,7 @@ returns: {
   message: String
 }
 
-number: 3 -> Called
+number: 5 -> Called
 description: Update patient information of a specific doctor
 route: http://localhost:5000/api/doctor/patients/id=:id
 params: _id of database
@@ -304,7 +170,7 @@ body: {
   ]
 }
 
-number: 4 -> Called
+number: 6 -> Called
 description: Delete a patient of a specific doctor
 route: http://localhost:5000/api/doctor/patients/id=:id
 params: _id of database
@@ -318,25 +184,8 @@ returns: {
   message: String
 }
 
-number: 5 -> Called
-description: Register a new product
-form: enctype="multipart/form-data"
-// Create a new formData() and append data to it
-// Make sure to append each file in the files array to the formData() with field name is 'images'
-route: http://localhost:5000/api/doctor/products
-method: POST
-headers: {
-  Content-Type: 'multipart/form-data',
-  Bearer authorization: {
-    type: String (JWT token)
-  }
-}
-body: formData() // the formData() created above
-returns: {
-  message: String
-}
-
-number: 6 -> Called
+---------------------------------PRODUCTS RELATED----------------------------
+number: 1 -> Called
 description: Get list of products
 route: http://localhost:5000/api/doctor/products
 query (optional): {
@@ -361,13 +210,12 @@ returns: [
   }
 ]
 
-number: 6.5
+number: 2
 description: Search products
 route: localhost:5000/api/doctor/products/search
 query: {
   value: String (value for searching)
 }
-// If seach, only value is required
 method: GET
 headers: {
   Bearer authorization: {
@@ -386,7 +234,7 @@ returns: [
   }
 ]
 
-number: 6.55
+number: 3
 description: Filter products
 route: localhost:5000/api/doctor/products/filter
 query: {
@@ -418,22 +266,25 @@ returns: [
   }
 ]
 
-number: 7 -> Called
-description: Delete a product
-route: http://localhost:5000/api/doctor/products/id=:id
+number: 4 -> Called
+description: Register a new product
 form: enctype="multipart/form-data"
-params: Database ID of product
-method: DELETE
+// Create a new formData() and append data to it
+// Make sure to append each file in the files array to the formData() with field name is 'images'
+route: http://localhost:5000/api/doctor/products
+method: POST
 headers: {
+  Content-Type: 'multipart/form-data',
   Bearer authorization: {
     type: String (JWT token)
   }
 }
+body: formData() // the formData() created above
 returns: {
   message: String
 }
 
-number: 8 -> Called
+number: 5 -> Called
 description: Update a product
 route: http://localhost:5000/api/doctor/products/id=:id
 params: Database ID of product
@@ -453,7 +304,23 @@ returns: {
   message: String
 }
 
-number 9:
+number: 6 -> Called
+description: Delete a product
+route: http://localhost:5000/api/doctor/products/id=:id
+form: enctype="multipart/form-data"
+params: Database ID of product
+method: DELETE
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}
+
+-----------------------------------PACKAGES RELATED--------------------------------------
+number 1:
 description: Get list of packages
 route: http://localhost:5000/api/doctor/packages
 query (optional): {
@@ -493,7 +360,7 @@ returns: [
   }
 ]
 
-number: 9.5
+number: 2
 description: Search packages
 route: localhost:5000/api/doctor/packages/search
 query: {
@@ -532,7 +399,7 @@ returns: [
   }
 ]
 
-number: 9.55
+number: 3
 description: Filter packages
 route: localhost:5000/api/doctor/packages/filter
 query: {
@@ -572,7 +439,7 @@ returns: [
   }
 ]
 
-number: 10
+number: 4
 description: Register a new package
 route: http://localhost:5000/api/doctor/packages
 method: POST
@@ -602,21 +469,7 @@ returns: {
   message: String
 }
 
-number: 11
-description: Delete a package
-route: http://localhost:5000/api/doctor/packages/id=:id
-params: Database ID of package
-method: DELETE
-headers: {
-  Bearer authorization: {
-    type: String (JWT token)
-  }
-}
-returns: {
-  message: String
-}
-
-number: 12
+number: 5
 description: Update a package
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
@@ -647,121 +500,16 @@ returns: {
   message: String
 }
 
-III. Patient
-number: 1
-description: Get logs
-route: http://localhost:5000/api/patient/logs
-method: GET
-headers: {
-  Bearer authorization: {
-    type: String (JWT token)
-  }
-}
-returns: [
-  {
-    _id: String (Database ID),
-    account: String (_id of account),
-    action: String,
-    time: String (yyyy-mm-dd hh:mm:ss)
-  }
-]
-
-number: 2
-description: Get info
-route: http://localhost:5000/api/patient/info
-method: GET
-headers: {
-  Bearer authorization: {
-    type: String (JWT token)
-  }
-}
-returns: {
-  _id: String (Database ID),
-  id_number: String,
-  name: String,
-  DOB: String,
-  address: String,
-  status: String,
-  current_facility: String,
-}
-
-number: 3
-description: Change password for client
-route: http://localhost:5000/api/patient/password
-method: PUT
-headers: {
-  Bearer authorization: {
-    type: String (JWT token)
-  }
-}
-body: {
-  new_password: {
-    type: String
-    minlength: 6,
-    required: true
-  }
-}
-returns: {
-  message: String
-}
-
-
-number: 4
-description: Buy a package
-route: http://localhost:5000/api/patient/packages/id=:id
+number: 6
+description: Delete a package
+route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
-method: POST
+method: DELETE
 headers: {
   Bearer authorization: {
     type: String (JWT token)
   }
 }
-body: {
-  products: [
-    {
-      id: String (Database ID of product),
-      quantity: Number
-    }
-  ]
-}
 returns: {
   message: String
 }
-
-
-IV/ Facility Route
-number: 1
-description: Create Facility
-route: http://localhost:5000/api/facility/create
-method: POST
-authorization: admin bearer token
-body:
-{
-    "name": "Test12",
-    "capacity": 300,
-    "current_count": 200,
-    "province": "Hanoi",
-    "district": "Cau Giay",
-    "ward": "5"
-}
-
-number: 2
-description: update facility
-route: http://localhost:5000/api/facility/update/id=:id
-method: PUT 
-authorization: admin
-body:
-{
-  "name": "Test12",
-    "capacity": 
-    "current_count": 
-    "province": 
-    "district": 
-    "ward": 
-}
-
-optional key-value pair
-
-
-
-

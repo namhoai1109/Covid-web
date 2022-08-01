@@ -18,7 +18,7 @@ exports.registerAccount = async (req, res) => {
     account: account._id,
     id_number: req.body.username,
     name: req.body.name,
-    DOB: req.body.DOB,
+    dob: req.body.dob,
     address: req.body.address,
     status: req.body.status,
     current_facility: req.body.current_facility,
@@ -83,7 +83,7 @@ exports.getAllPatients = async (req, res) => {
       .populate("current_facility", "name")
       .populate(
         "close_contact_list",
-        "_id id_number name DOB status current_facility",
+        "_id id_number name dob status current_facility",
       )
       .sort({
         [sortBy]: sortOrder,
@@ -147,13 +147,13 @@ exports.searchPatients = async (req, res) => {
           id_number: 1,
           name: 1,
           address: 1,
-          DOB: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$DOB" } },
+          dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
           status: 1,
           close_contact_list: {
             _id: 1,
             id_number: 1,
             name: 1,
-            DOB: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$DOB" } },
+            dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
             status: 1,
             current_facility: {
               _id: 1,
@@ -173,7 +173,7 @@ exports.searchPatients = async (req, res) => {
             { name: { $regex: re } },
             { address: { $regex: re } },
             { status: { $regex: re } },
-            { DOB: { $regex: re } },
+            { dob: { $regex: re } },
           ]
         }
       },
@@ -243,13 +243,13 @@ exports.filterPatients = async (req, res) => {
           id_number: 1,
           name: 1,
           address: 1,
-          DOB: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$DOB" } },
+          dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
           status: 1,
           close_contact_list: {
             _id: 1,
             id_number: 1,
             name: 1,
-            DOB: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$DOB" } },
+            dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
             status: 1,
             current_facility: {
               _id: 1,

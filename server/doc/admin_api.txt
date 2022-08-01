@@ -1,0 +1,108 @@
+------------------------------DOCTORS RELATED----------------------------
+number: 1 -> Called
+description: Register new doctor
+route: http://localhost:5000/api/admin/register
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  username: {
+    type: String (number only)
+    length: 9 or 11,
+    required: true
+  },
+  password: {
+    type: String
+    minlength: 6,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: false
+  }
+}
+returns: {
+  message: String
+}
+
+number: 2 -> Called
+description: Get list of doctors
+route: http://localhost:5000/api/admin/doctors
+method: GET
+returns: [
+  {
+    _id: String,
+    account: {
+      _id: String,
+      username: String,
+      role: String,
+      status: String,
+    },
+    id_number: String,
+    name: String,
+    patients: [
+      String
+    ]
+  }
+]
+
+number: 3 -> Called
+description: Change status of account (active/inactive)
+route: localhost:5000/api/admin/doctors/id=:id/changestatus
+eg: localhost:5000/api/admin/doctors/id=62d5710ffe25ed38b535bf53/changestatus
+method: PUT
+body:
+{
+  "status": "inactive" || "active"
+}
+return 
+{
+  message: String
+}
+
+number: 4 -> Called
+description: Delete account
+route: localhost:5000/api/admin/doctors/id=:id/delete
+params: account id
+eg: localhost:5000/api/admin/doctors/id=62d624944ba3d2fc45b2e894/delete
+method: DELETE
+
+return {
+  message: String
+}
+
+------------------------------FACILITIES RELATED------------------------------------
+number: 1
+description: Create Facility
+route: http://localhost:5000/api/facility/create
+method: POST
+authorization: admin bearer token
+body:
+{
+    "name": "Test12",
+    "capacity": 300,
+    "current_count": 200,
+    "province": "Hanoi",
+    "district": "Cau Giay",
+    "ward": "5"
+}
+
+number: 2
+description: update facility
+route: http://localhost:5000/api/facility/update/id=:id
+method: PUT 
+authorization: admin
+body:
+{
+  "name": "Test12",
+    "capacity": 
+    "current_count": 
+    "province": 
+    "district": 
+    "ward": 
+}
+
+optional key-value pair
