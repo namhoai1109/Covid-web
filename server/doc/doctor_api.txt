@@ -130,6 +130,9 @@ body: {
     type: String,
     required: true
   },
+  current_facility: {
+    type: String, (id)
+  },
   status: {
     type: enum('F0', 'F1', 'F2', 'F3')
     required: true

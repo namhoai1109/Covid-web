@@ -11,16 +11,26 @@ import { deleteAPI } from '~/APIservices/deleteAPI';
 import { useNavigate } from 'react-router-dom';
 import configs from '~/config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilterCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import { deleteFilter } from '../redux/filterState';
+import { faArrowDownWideShort, faFilterCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { deleteFilter, deleteSort } from '../redux/filterState';
 import { filterAPI } from '~/APIservices/filterAPI';
+import { searchAPI } from '~/APIservices/searchAPI';
+import { sortAPI } from '~/APIservices/sortAPI';
 
 const cx = classNames.bind(styles);
 
 let FilterBtn = ({ onClick }) => {
     return (
-        <div onClick={onClick} className={cx('wrap-filter-btn')}>
+        <div onClick={onClick} className={cx('wrap-filter-sort-btn')}>
             <FontAwesomeIcon icon={faFilterCircleXmark} />
+        </div>
+    );
+};
+
+let SortBtn = ({ onClick }) => {
+    return (
+        <div onClick={onClick} className={cx('wrap-filter-sort-btn')}>
+            <FontAwesomeIcon icon={faArrowDownWideShort} />
         </div>
     );
 };
@@ -44,11 +54,6 @@ function CovidPatient() {
         }
     };
 
-    let getListFilter = async () => {
-        let res = await filterAPI('doctor/patients/filter', valueFilter);
-        dispatch(setListPatient(res));
-    };
-
     let fetchDeletePatient = async (id) => {
         try {
             let res = await deleteAPI('/doctor/patients/id=' + id);
@@ -56,6 +61,22 @@ function CovidPatient() {
         } catch (err) {
             console.log(err);
         }
+    };
+
+    let getListFilter = async () => {
+        let res = await filterAPI('doctor/patients/filter', valueFilter);
+        dispatch(setListPatient(res));
+    };
+
+    let getListSearch = async (value) => {
+        let res = await searchAPI('doctor/patients/search', value);
+        dispatch(setListPatient(res));
+    };
+
+    let getListSort = async (sortParam) => {
+        let res = await sortAPI('doctor/patients', sortParam);
+        console.log(res);
+        dispatch(setListPatient(res));
     };
 
     let handleDeletePatient = (index, id) => {
@@ -73,15 +94,17 @@ function CovidPatient() {
         return {
             id: item.id_number,
             name: item.name,
-            YoB: item.DOB.split('-')[0],
+            dob: item.dob.split('-')[0],
             status: item.status,
-            facility: '',
+            facility: item.current_facility.name,
         };
     });
 
     let listPatient = useSelector((state) => state.listPatient.list);
     let filterState = useSelector((state) => state.filterState.filter);
-    let valueFilter = useSelector((state) => state.filterState.value);
+    let valueFilter = useSelector((state) => state.filterState.valueFilter);
+    let searchValue = useSelector((state) => state.filterState.search);
+    let sortParam = useSelector((state) => state.filterState.sort);
     let deleteState = useSelector((state) => state.deleteState);
 
     useEffect(() => {
@@ -92,7 +115,19 @@ function CovidPatient() {
         if (filterState.length !== 0) {
             getListFilter();
         }
-    }, [filterState]);
+
+        if (searchValue !== '') {
+            getListSearch(searchValue);
+        }
+
+        if (sortParam.sort_by) {
+            getListSort(sortParam);
+        }
+
+        if (filterState.length === 0 && searchValue === '' && !sortParam.sort_by) {
+            getListPatient();
+        }
+    }, [valueFilter, filterState, searchValue, sortParam]);
 
     let checkinFilter = (item) => {
         let isExist = false;
@@ -112,6 +147,9 @@ function CovidPatient() {
                     return (
                         <div className={cx('col2-4', 'item', 'flex-center')} key={index}>
                             {field}
+                            {sortParam.sort_by === field.toLowerCase() && (
+                                <SortBtn onClick={() => dispatch(deleteSort())} />
+                            )}
                             {checkinFilter(field) && <FilterBtn onClick={() => dispatch(deleteFilter(field))} />}
                         </div>
                     );

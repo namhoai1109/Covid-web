@@ -20,9 +20,9 @@ function InfoPatient() {
         return {
             id: item.id_number,
             name: item.name,
-            YoB: item.DOB.split('-')[0],
+            dob: item.dob.split('-')[0],
             status: item.status,
-            facility: '',
+            facility: item.current_facility.name,
         };
     });
 
@@ -97,7 +97,7 @@ function InfoPatient() {
                         </div>
                         <div className={cx('col2', 'field-info')}>
                             <span className={cx('label')}>Year of birth:</span>
-                            <span>{patient.DOB && patient.DOB.split('-')[0]}</span>
+                            <span>{patient.dob && patient.dob.split('-')[0]}</span>
                         </div>
                     </div>
 
@@ -110,7 +110,7 @@ function InfoPatient() {
                     <div className={cx('row', 'field-input')}>
                         <div className={cx('col2', 'field-info')}>
                             <span className={cx('label')}>Facility:</span>
-                            <span>{}</span>
+                            <span>{(patient.current_facility && patient.current_facility.name) || ''}</span>
                         </div>
                     </div>
 

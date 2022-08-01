@@ -32,9 +32,9 @@ function ListPatient({ onBack }) {
         return {
             id: item.id_number,
             name: item.name,
-            YoB: item.DOB.split('-')[0],
+            dob: item.dob.split('-')[0],
             status: item.status,
-            facility: '',
+            facility: item.current_facility.name,
         };
     });
 

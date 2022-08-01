@@ -6,6 +6,6 @@ export const getAPI = async (url) => {
         let res = await httpRequest.get(url, token);
         return res;
     } catch (err) {
-        return err
+        return err;
     }
-}
+};

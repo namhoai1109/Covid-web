@@ -5,29 +5,61 @@ import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu } from '~/CommonComponent/Popper';
-import { patientFields, necessityFields, essentialPackageFields } from '../staticVar';
+import { patientFields, necessityFields, essentialPackageFields, patientSortFilter } from '../staticVar';
 import configs from '~/config';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDelete } from '../redux/deleteStateSlice';
-import { setListPatient } from '../redux/listPatientSlice';
+import { setSort } from '../redux/filterState';
 
 const cx = classNames.bind(styles);
 
-let getFilterSortMenu = (menu, url = '', dispatchFunc) => {
+let SortBtn = ({ sort_by, sort_order, children }) => {
+    let dispatch = useDispatch();
+    let handleSortState = () => {
+        dispatch(
+            setSort({
+                sort_by: sort_by.toLowerCase(),
+                sort_order: sort_order.toLowerCase(),
+            }),
+        );
+    };
+    return (
+        <div className={cx('sort-btn')} onClick={handleSortState}>
+            {children}
+        </div>
+    );
+};
+
+let getFilterSortMenu = (menu) => {
     let filterItem = menu.map((title) => ({
         data: title,
         child: {
-            data: [
-                { data: <SearchInput dispatchFunc={dispatchFunc} url={url} filter={title} icon={<SearchIcon />} /> },
-            ],
+            data: [{ data: <SearchInput filter={title} icon={<SearchIcon />} /> }],
         },
     }));
 
     let sortItem = menu.map((title) => ({
         data: title,
-        child: { data: [{ data: 'Ascending' }, { data: 'Descending' }] },
+        child: {
+            data: [
+                {
+                    data: (
+                        <SortBtn sort_by={title} sort_order={'Asc'}>
+                            Ascending
+                        </SortBtn>
+                    ),
+                },
+                {
+                    data: (
+                        <SortBtn sort_by={title} sort_order={'Desc'}>
+                            Descending
+                        </SortBtn>
+                    ),
+                },
+            ],
+        },
     }));
 
     return [filterItem, sortItem];
@@ -69,27 +101,24 @@ function Header() {
 
     let getDataField = useCallback((location) => {
         let addLink = '';
-        let urlSearch = '';
-        let dispatchFunc = () => {};
         let filterItem, sortItem;
         switch (location) {
             case configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient:
-                dispatchFunc = (data) => dispatch(setListPatient(data));
-                [filterItem, sortItem] = getFilterSortMenu(patientFields, 'doctor/patients/filter', dispatchFunc);
+                [filterItem, sortItem] = getFilterSortMenu(patientSortFilter);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient + configs.doctorRoutes.newPatient;
-                return { filterItem, sortItem, addLink, urlSearch, dispatchFunc };
+                return { filterItem, sortItem, addLink };
 
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:
                 [filterItem, sortItem] = getFilterSortMenu(necessityFields);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem + configs.doctorRoutes.newNecessity;
-                return { filterItem, sortItem, addLink, urlSearch, dispatchFunc };
+                return { filterItem, sortItem, addLink };
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage:
                 [filterItem, sortItem] = getFilterSortMenu(essentialPackageFields);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage + configs.doctorRoutes.newPackage;
-                return { filterItem, sortItem, addLink, urlSearch, dispatchFunc };
+                return { filterItem, sortItem, addLink };
             default:
                 return {};
         }
