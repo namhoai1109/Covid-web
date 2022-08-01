@@ -12,7 +12,7 @@ import { setDelete } from '../redux/deleteSlice';
 import { addFacility } from '../redux/listFacilitySlice';
 import { postAPI } from '~/APIservices/postAPI';
 import { menuFacility, menuManager, formInputDoctor, formInputFacility } from '../staticVar';
-import { initListManager } from '../fetchAPI';
+import { getListFacility, initListManager } from '../fetchAPI';
 import { useState } from 'react';
 const cx = classNames.bind(styles);
 
@@ -84,12 +84,19 @@ function Header() {
             return clearInput;
         } else {
             console.log(inputVals);
-            let nInputVals = {
-                name: inputVals['name'],
-                ['max no. patient']: inputVals['max no. patient'],
-                noPatient: 0,
+            let body = {
+                name: inputVals.name,
+                capacity: Number(inputVals.capacity),
+                province: inputVals['province/city'],
+                district: inputVals['district/county'],
+                ward: inputVals['ward/village'],
             };
-            dispatch(addFacility(nInputVals));
+
+            let token = JSON.parse(localStorage.getItem('Token')).token;
+            let res = await postAPI('facility/create', body, token);
+            if (res.message && res.message === 'Facility created successfully') {
+                getListFacility(dispatch);
+            }
         }
     };
 

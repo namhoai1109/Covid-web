@@ -21,6 +21,20 @@ export const get = async (url, token) => {
     }
 };
 
+export const search = async (url, token, params) => {
+    try {
+        let res = await request.get(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: params,
+        });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export const post = async (url, data, token) => {
     try {
         let res;

@@ -19,8 +19,11 @@ const listPatientSlice = createSlice({
         deletePatient: (state, action) => {
             state.list.splice(action.payload, 1);
         },
+        setListPatient: (state, action) => {
+            state.list = action.payload;
+        },
     },
 });
 
-export const { addPatient, clearList, deletePatient, addCurrentPatient } = listPatientSlice.actions;
+export const { addPatient, clearList, deletePatient, addCurrentPatient, setListPatient } = listPatientSlice.actions;
 export default listPatientSlice.reducer;

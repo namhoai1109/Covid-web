@@ -1,4 +1,5 @@
 import { getAPI } from '~/APIservices/getAPI';
+import { setListFacility } from '../redux/listFacilitySlice';
 import { addManager, clearList } from '../redux/listManagerSlice';
 
 export let initListManager = async (dispatch) => {
@@ -21,4 +22,9 @@ export let initListManager = async (dispatch) => {
     } catch (err) {
         console.log(err);
     }
+};
+
+export let getListFacility = async (dispatch) => {
+    let list = await getAPI('facility/get/all');
+    dispatch(setListFacility(list));
 };

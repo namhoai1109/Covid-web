@@ -1,5 +1,5 @@
 export const menuManager = ['Username', 'Name'];
-export const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
+export const menuFacility = ['Name', 'Capacity', 'Current count'];
 let makeItemForm = (title, type) => {
     return {
         title,
@@ -16,7 +16,7 @@ export const formInputFacility = [
     makeItemForm('District/County', 'select'),
     makeItemForm('Ward/Village', 'select'),
     makeItemForm('Name', 'input'),
-    makeItemForm('Max no. patient', 'input'),
+    makeItemForm('Capacity', 'input'),
 ];
 
 const Province = ['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng'];
