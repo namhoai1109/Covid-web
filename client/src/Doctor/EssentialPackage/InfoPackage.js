@@ -50,6 +50,7 @@ function InfoPackage() {
         if (currentPackage.products) {
             let tmp = {};
             let arr = [];
+            console.log(currentPackage);
             currentPackage.products.forEach((product) => {
                 arr.push(product.product);
                 tmp[product.product._id] = product.quantity;

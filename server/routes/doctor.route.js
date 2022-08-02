@@ -39,5 +39,6 @@ router.delete("/packages/id=:id", packageController.deletePackage);
 
 // Facilities related
 router.get("/facilities", facilityController.readFacilityAll);
+router.get("/facilities/id=:id", facilityController.readFacilityOne);
 
 module.exports = router;
