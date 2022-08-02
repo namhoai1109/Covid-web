@@ -59,12 +59,15 @@ exports.updateFacility = async(req, res) => {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Sending locations
 exports.getProvinces = async(req, res) => {
     try {
         let data = require('./provinces.json');
         res.status(200).send(data);
 =======
+=======
+>>>>>>> main
 // Reading facility's information
 exports.readFacilityAll = async(req, res) => {
     try {
@@ -99,6 +102,9 @@ exports.deleteFacilityAll = async(req, res) => {
     try {
         const facilities = await Facility.remove({});
         res.status(200).send({ message: "Facilities deleted successfully" });
+<<<<<<< HEAD
+>>>>>>> main
+=======
 >>>>>>> main
     } catch (err) {
         res.status(400).send({ message: err.message });
