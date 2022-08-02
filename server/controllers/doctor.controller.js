@@ -75,30 +75,31 @@ exports.getAllPatients = async (req, res) => {
                 .status(500)
                 .send({ message: "Doctor not found in the database" });
         }
-    // Get the patients by doctor's managed list
-    const sortBy = req.query.sort_by || "id_number";
-    const sortOrder = req.query.sort_order || "asc";
-    const patientsID = doctor.patients;
-    const patients = await Patient.find({ _id: { $in: patientsID } })
-      .populate("account", "username role status")
-      .populate("current_facility")
-      .populate({
-        path: "close_contact_list",
-        populate: {
-          path: "current_facility",
-          model: "Facility",
-        },
-        select: "id_number name dob status current_facility",
-      })
-      .sort({
-        [sortBy]: sortOrder,
-      })
-      .exec();
 
-    res.status(200).send(patients);
-  } catch (err) {
-    res.status(400).send({ message: err.message });
-  }
+        // Get the patients by doctor's managed list
+        const sortBy = req.query.sort_by || "id_number";
+        const sortOrder = req.query.sort_order || "asc";
+        const patientsID = doctor.patients;
+        const patients = await Patient.find({ _id: { $in: patientsID } })
+            .populate("account", "username role status")
+            .populate("current_facility")
+            .populate({
+                path: "close_contact_list",
+                populate: {
+                    path: "current_facility",
+                    model: "Facility",
+                },
+                select: "id_number name dob status current_facility",
+            })
+            .sort({
+                [sortBy]: sortOrder,
+            })
+            .exec();
+
+        res.status(200).send(patients);
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
 };
 
 exports.searchPatients = async (req, res) => {
@@ -109,191 +110,130 @@ exports.searchPatients = async (req, res) => {
                 .status(500)
                 .send({ message: "Doctor not found in the database" });
         }
-      },
-      { $unwind: "$close_contact_list" },
-      {
-        $lookup: {
-          from: Facility.collection.name,
-          localField: "close_contact_list.current_facility",
-          foreignField: "_id",
-          as: "close_contact_list.current_facility",
-        }
-      },
-      { $unwind: "$close_contact_list.current_facility" },
-      { $unwind: "$account" },
-      {
-        $group: {
-          _id: "$_id",
-          account: { $first: "$account" },
-          id_number: { $first: "$id_number" },
-          name: { $first: "$name" },
-          dob: { $first: "$dob" },
-          address: { $first: "$address" },
-          status: { $first: "$status" },
-          current_facility: { $first: "$current_facility" },
-          close_contact_list: { $push: "$close_contact_list" },
-        }
-      },
-      {
-        $project: {
-          _id: 1,
-          account: {
-            _id: 1,
-            username: 1,
-            role: 1,
-            status: 1,
-          },
-          id_number: 1,
-          name: 1,
-          address: 1,
-          dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
-          status: 1,
-          close_contact_list: {
-            _id: 1,
-            id_number: 1,
-            name: 1,
-            dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
-            status: 1,
-            current_facility: 1
-          },
-          current_facility: 1,
-        }
-      },
-      {
-        $match: {
-          $or: [
-            { id_number: { $regex: re } },
-            { name: { $regex: re } },
-            { address: { $regex: re } },
-            { status: { $regex: re } },
-            { dob: { $regex: re } },
-          ]
-        }
-      },
-      {
-        $sort: {
-          id_number: 1
-        }
-      }
-    ]).exec();
+        const queryValue = req.query.value;
+        console.log(queryValue);
+        const re = new RegExp(queryValue, "i");
+        console.log(re);
+        const patients = await Patient.aggregate([
+            {
+                $match: {
+                    _id: { $in: doctor.patients },
+                },
+            },
+            {
+                $lookup: {
+                    from: Facility.collection.name,
+                    localField: "current_facility",
+                    foreignField: "_id",
+                    as: "current_facility",
+                },
+            },
+            {
+                $lookup: {
+                    from: Account.collection.name,
+                    localField: "account",
+                    foreignField: "_id",
+                    as: "account",
+                },
+            },
+            {
+                $lookup: {
+                    from: Patient.collection.name,
+                    localField: "close_contact_list",
+                    foreignField: "_id",
+                    as: "close_contact_list",
+                },
+            },
+            { $unwind: "$close_contact_list" },
+            {
+                $lookup: {
+                    from: Facility.collection.name,
+                    localField: "close_contact_list.current_facility",
+                    foreignField: "_id",
+                    as: "close_contact_list.current_facility",
+                },
+            },
+            { $unwind: "$close_contact_list.current_facility" },
+            { $unwind: "$account" },
+            {
+                $group: {
+                    _id: "$_id",
+                    account: { $first: "$account" },
+                    id_number: { $first: "$id_number" },
+                    name: { $first: "$name" },
+                    dob: { $first: "$dob" },
+                    address: { $first: "$address" },
+                    status: { $first: "$status" },
+                    current_facility: { $first: "$current_facility" },
+                    close_contact_list: { $push: "$close_contact_list" },
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    account: {
+                        _id: 1,
+                        username: 1,
+                        role: 1,
+                        status: 1,
+                    },
+                    id_number: 1,
+                    name: 1,
+                    address: 1,
+                    dob: {
+                        $dateToString: {
+                            format: "%Y-%m-%dT%H:%M:%S",
+                            date: "$dob",
+                        },
+                    },
+                    status: 1,
+                    close_contact_list: {
+                        _id: 1,
+                        id_number: 1,
+                        name: 1,
+                        dob: {
+                            $dateToString: {
+                                format: "%Y-%m-%dT%H:%M:%S",
+                                date: "$dob",
+                            },
+                        },
+                        status: 1,
+                        current_facility: 1,
+                    },
+                    current_facility: 1,
+                },
+            },
+            {
+                $match: {
+                    $or: [
+                        { id_number: { $regex: re } },
+                        { name: { $regex: re } },
+                        { address: { $regex: re } },
+                        { status: { $regex: re } },
+                        { dob: { $regex: re } },
+                    ],
+                },
+            },
+            {
+                $sort: {
+                    id_number: 1,
+                },
+            },
+        ]).exec();
 
-    res.status(200).send(patients);
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-}
-
-exports.filterPatients = async (req, res) => {
-  try {
-    const doctor = await Doctor.findOne({ id_number: req.idNumber });
-    if (!doctor) {
-      return res.status(500).send({ message: "Doctor not found in the database" });
+        res.status(200).send(patients);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
     }
 };
 
-    const queryValue = req.query.value;
-    const filterBy = Array.isArray(req.query.filter_by) ? req.query.filter_by : [req.query.filter_by];
-    const filterValues = Array.isArray(queryValue) ? queryValue : [queryValue];
-    values = filterValues.map(value => ({ $regex: new RegExp(value, "i") }));
-    const patients = await Patient.aggregate([
-      {
-        $match: {
-          _id: { $in: doctor.patients },
-        }
-      },
-      {
-        $lookup: {
-          from: Facility.collection.name,
-          localField: "current_facility",
-          foreignField: "_id",
-          as: "current_facility",
-        }
-      },
-      {
-        $lookup: {
-          from: Account.collection.name,
-          localField: "account",
-          foreignField: "_id",
-          as: "account",
-        }
-      },
-      {
-        $lookup: {
-          from: Patient.collection.name,
-          localField: "close_contact_list",
-          foreignField: "_id",
-          as: "close_contact_list",
-        }
-      },
-      {
-        $unwind: "$close_contact_list"
-      },
-      {
-        $lookup: {
-          from: Facility.collection.name,
-          localField: "close_contact_list.current_facility",
-          foreignField: "_id",
-          as: "close_contact_list.current_facility",
-        }
-      },
-      {
-        $unwind: "$close_contact_list.current_facility"
-      },
-      {
-        $unwind: "$account"
-      },
-      {
-        $group: {
-          _id: "$_id",
-          account: { $first: "$account" },
-          id_number: { $first: "$id_number" },
-          name: { $first: "$name" },
-          dob: { $first: "$dob" },
-          address: { $first: "$address" },
-          status: { $first: "$status" },
-          current_facility: { $first: "$current_facility" },
-          close_contact_list: { $push: "$close_contact_list" },
-        }
-      },
-      {
-        $project: {
-          _id: 1,
-          account: {
-            _id: 1,
-            username: 1,
-            role: 1,
-            status: 1,
-          },
-          id_number: 1,
-          name: 1,
-          address: 1,
-          dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
-          status: 1,
-          close_contact_list: {
-            _id: 1,
-            id_number: 1,
-            name: 1,
-            dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
-            status: 1,
-            current_facility: 1
-          },
-          current_facility: 1,
-        }
-      },
-      {
-        $match: {
-          $and: [
-            { [filterBy[0]]: values[0] },
-            { [filterBy[1]]: values[1] },
-            { [filterBy[2]]: values[2] },
-            { [filterBy[3]]: values[3] },
-            { [filterBy[4]]: values[4] },
-          ]
-        }
-      },
-      {
-        $sort: {
-          id_number: 1
+exports.filterPatients = async (req, res) => {
+    try {
+        const doctor = await Doctor.findOne({ id_number: req.idNumber });
+        if (!doctor) {
+            return res
+                .status(500)
+                .send({ message: "Doctor not found in the database" });
         }
 
         const queryValue = req.query.value;
@@ -336,8 +276,36 @@ exports.filterPatients = async (req, res) => {
                     as: "close_contact_list",
                 },
             },
-            { $unwind: "$current_facility" },
-            { $unwind: "$account" },
+            {
+                $unwind: "$close_contact_list",
+            },
+            {
+                $lookup: {
+                    from: Facility.collection.name,
+                    localField: "close_contact_list.current_facility",
+                    foreignField: "_id",
+                    as: "close_contact_list.current_facility",
+                },
+            },
+            {
+                $unwind: "$close_contact_list.current_facility",
+            },
+            {
+                $unwind: "$account",
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    account: { $first: "$account" },
+                    id_number: { $first: "$id_number" },
+                    name: { $first: "$name" },
+                    dob: { $first: "$dob" },
+                    address: { $first: "$address" },
+                    status: { $first: "$status" },
+                    current_facility: { $first: "$current_facility" },
+                    close_contact_list: { $push: "$close_contact_list" },
+                },
+            },
             {
                 $project: {
                     _id: 1,
@@ -370,7 +338,7 @@ exports.filterPatients = async (req, res) => {
                         status: 1,
                         current_facility: 1,
                     },
-                    current_facility: "$current_facility",
+                    current_facility: 1,
                 },
             },
             {
