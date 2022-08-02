@@ -144,7 +144,7 @@ function InputPackage() {
             let products = [];
             Object.keys(listCounting).forEach((key) => {
                 products.push({
-                    product: currentProducts[key],
+                    product: key,
                     quantity: listCounting[key],
                 });
             });

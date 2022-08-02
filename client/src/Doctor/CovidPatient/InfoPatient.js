@@ -12,6 +12,7 @@ import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { add, deleteItem, reset } from '../redux/currentCloseContactList';
 import { putAPI } from '~/APIservices/putAPI';
+import { getAPI } from '~/APIservices/getAPI';
 
 const cx = classNames.bind(styles);
 
@@ -31,6 +32,7 @@ function InfoPatient() {
     let dispatch = useDispatch();
     let closeContactList = useSelector((state) => state.currentCloseContactList.list);
     let patient = useSelector((state) => state.listPatient.currentPatient);
+    console.log(patient);
     let [status, setStatus] = useState(patient.status || '');
 
     let fetchUpdatePatient = async (data) => {
@@ -118,7 +120,6 @@ function InfoPatient() {
                         <div className={cx('col2-4', 'field-info')}>
                             <span className={cx('label')}>Status</span>
                             {Status.map((title, index) => {
-                                let stateDefault = patient.status && patient.status === title;
                                 return (
                                     <label
                                         key={index}

@@ -500,7 +500,7 @@ returns: [
 ]
 
 number: 4
-description: Register a new package
+description: Register a new package -> Called
 route: http://localhost:5000/api/doctor/packages
 method: POST
 headers: {
@@ -530,7 +530,7 @@ returns: {
 }
 
 number: 5
-description: Update a package
+description: Update a package -> Called
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
 method: PUT
@@ -561,7 +561,7 @@ returns: {
 }
 
 number: 6
-description: Delete a package
+description: Delete a package -> Called
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
 method: DELETE
