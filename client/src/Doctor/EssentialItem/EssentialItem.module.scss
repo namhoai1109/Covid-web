@@ -11,6 +11,29 @@
         }
     }
 
+    .filter-state {
+        position: absolute;
+        top: -50px;
+        left: 0;
+        padding: 5px 10px;
+        color: white;
+        background: var(--primary);
+        border-radius: 10px;
+        font-size: 1.6rem;
+        margin-right: 10px;
+        overflow: hidden;
+        z-index: 10px;
+
+        & .delete-state {
+            font-size: 1.7rem;
+            margin-left: 15px;
+            padding: 4px 6px;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
     //info
     .noti {
         text-align: center;

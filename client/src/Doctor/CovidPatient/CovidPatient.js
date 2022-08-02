@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import configs from '~/config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDownWideShort, faFilterCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import { deleteFilter, deleteSort } from '../redux/filterState';
+import { deleteFilter, deleteSort, resetState } from '../redux/filterState';
 import { filterAPI } from '~/APIservices/filterAPI';
 import { searchAPI } from '~/APIservices/searchAPI';
 import { sortAPI } from '~/APIservices/sortAPI';
@@ -39,7 +39,7 @@ function CovidPatient() {
     let dispatch = useDispatch();
     let navigate = useNavigate();
 
-    let getListPatient = async () => {
+    let getListPatient = useCallback(async () => {
         try {
             let listPatient = await getAPI('/doctor/patients');
             //console.log(listPatient);
@@ -52,32 +52,32 @@ function CovidPatient() {
             console.log(err);
             // return err;
         }
-    };
+    });
 
-    let fetchDeletePatient = async (id) => {
+    let fetchDeletePatient = useCallback(async (id) => {
         try {
             let res = await deleteAPI('/doctor/patients/id=' + id);
             console.log(res);
         } catch (err) {
             console.log(err);
         }
-    };
+    });
 
-    let getListFilter = async () => {
+    let getListFilter = useCallback(async () => {
         let res = await filterAPI('doctor/patients/filter', valueFilter);
         dispatch(setListPatient(res));
-    };
+    });
 
-    let getListSearch = async (value) => {
+    let getListSearch = useCallback(async (value) => {
         let res = await searchAPI('doctor/patients/search', value);
         dispatch(setListPatient(res));
-    };
+    });
 
-    let getListSort = async (sortParam) => {
+    let getListSort = useCallback(async (sortParam) => {
         let res = await sortAPI('doctor/patients', sortParam);
         console.log(res);
         dispatch(setListPatient(res));
-    };
+    });
 
     let handleDeletePatient = (index, id) => {
         fetchDeletePatient(id).then(() => {
@@ -92,7 +92,7 @@ function CovidPatient() {
 
     let formatItem = useCallback((item) => {
         return {
-            id: item.id_number,
+            id_number: item.id_number,
             name: item.name,
             dob: item.dob.split('-')[0],
             status: item.status,
@@ -109,11 +109,17 @@ function CovidPatient() {
 
     useEffect(() => {
         getListPatient();
+
+        return () => {
+            dispatch(resetState());
+        };
     }, []);
 
     useEffect(() => {
         if (filterState.length !== 0) {
-            getListFilter();
+            if (valueFilter[filterState[0]] !== '') {
+                getListFilter();
+            }
         }
 
         if (searchValue !== '') {
@@ -144,13 +150,14 @@ function CovidPatient() {
         <div className={cx('wrapper')}>
             <div className={cx('row', 'z1', 'list-item')}>
                 {patientFields.map((field, index) => {
+                    let nField = field.replaceAll(' ', '_');
                     return (
                         <div className={cx('col2-4', 'item', 'flex-center')} key={index}>
                             {field}
-                            {sortParam.sort_by === field.toLowerCase() && (
+                            {sortParam.sort_by === nField.toLowerCase() && (
                                 <SortBtn onClick={() => dispatch(deleteSort())} />
                             )}
-                            {checkinFilter(field) && <FilterBtn onClick={() => dispatch(deleteFilter(field))} />}
+                            {checkinFilter(nField) && <FilterBtn onClick={() => dispatch(deleteFilter(field))} />}
                         </div>
                     );
                 })}

@@ -53,7 +53,7 @@ function InputForm() {
 
     let formatItem = useCallback((item) => {
         return {
-            id: item.id_number,
+            id_number: item.id_number,
             name: item.name,
             dob: item.dob.split('-')[0],
             status: item.status,
