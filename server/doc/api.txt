@@ -293,7 +293,7 @@ number: 1
 description: Create Facility
 route: http://localhost:5000/api/facility/create
 method: POST
-authorization: admin bearer token
+authorization: doctor bearer token
 body:
 {
     "name": "Test12",
@@ -308,7 +308,7 @@ number: 2
 description: update facility
 route: http://localhost:5000/api/facility/update/id=:id
 method: PUT 
-authorization: admin
+authorization: doctor
 body:
 {
   "name": "Test12",
@@ -323,5 +323,32 @@ optional key-value pair
 
 
 
+number: 3
+description: get provinces and stuff
+route: http://localhost:5000/api/facility/provinces
+method: GET
+authorization: doctor
 
-
+returns array of json objects with 3 levels
+[
+    {
+        "name": "Thành phố Hà Nội",
+        "code": 1,
+        "codename": "thanh_pho_ha_noi",
+        "division_type": "thành phố trung ương",
+        "phone_code": 24,
+        "districts": [
+            {
+                "name": "Quận Ba Đình",
+                "code": 1,
+                "codename": "quan_ba_dinh",
+                "division_type": "quận",
+                "short_codename": "ba_dinh",
+                "wards": [
+                    {
+                        "name": "Phường Phúc Xá",
+                        "code": 1,
+                        "codename": "phuong_phuc_xa",
+                        "division_type": "phường",
+                        "short_codename": "phuc_xa"
+                    },

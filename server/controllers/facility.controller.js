@@ -57,3 +57,13 @@ exports.updateFacility = async(req, res) => {
         res.status(400).send({ message: err.message });
     }
 }
+
+// Sending locations
+exports.getProvinces = async(req, res) => {
+    try {
+        let data = require('./provinces.json');
+        res.status(200).send(data);
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
+}
