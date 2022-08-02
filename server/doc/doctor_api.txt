@@ -6,7 +6,7 @@ query: {
   value: String (value of field)
 }
 // Ex: http://localhost:5000/api/doctor/patients/search?&value=Sai%20Gon
-method:GET
+method: GET
 headers: {
   Bearer authorization: {
     type: String (JWT token)
@@ -28,11 +28,22 @@ returns: [
     status: String,
     close_contact_list: [{
       _id: String,
-      name: String,
       id_number: String,
+      name: String,
       dob: String,
       status: String,
-      current_facility: String (database id)
+      current_facility: {
+        _id: String,
+        name: String,
+        capacity: Number,
+        current_count: Number,
+        location: {
+          formattedAddress: String,
+          province: String,
+          district: String,
+          ward: String,
+        }
+    }
     }],
     current_facility: {
       _id: String,
@@ -81,11 +92,22 @@ returns: [
     status: String,
     close_contact_list: [{
       _id: String,
-      name: String,
       id_number: String,
+      name: String,
       dob: String,
       status: String,
-      current_facility: String (database id)
+      current_facility: {
+        _id: String,
+        name: String,
+        capacity: Number,
+        current_count: Number,
+        location: {
+          formattedAddress: String,
+          province: String,
+          district: String,
+          ward: String,
+        }
+    }
     }],
     current_facility: {
       _id: String,
@@ -106,7 +128,7 @@ number: 3 -> Called
 description: Get all patients information of a specific doctor
 route: http://localhost:5000/api/doctor/patients
 query (optional): {
-  sort_by: String (a field of patient),
+  sort_by: String (name, id_number, dob, address, status),
   sort_order: String (asc or desc)
 }
 method: GET
@@ -131,11 +153,22 @@ returns: [
     status: String,
     close_contact_list: [{
       _id: String,
-      name: String,
       id_number: String,
+      name: String,
       dob: String,
       status: String,
-      current_facility: String (database id)
+      current_facility: {
+        _id: String,
+        name: String,
+        capacity: Number,
+        current_count: Number,
+        location: {
+          formattedAddress: String,
+          province: String,
+          district: String,
+          ward: String,
+        }
+    }
     }],
     current_facility: {
       _id: String,
@@ -246,7 +279,7 @@ number: 1 -> Called
 description: Get list of products
 route: http://localhost:5000/api/doctor/products
 query (optional): {
-  sort_by: String (a field of product),
+  sort_by: String (name, price, type),
   sort_order: String (asc or desc)
 }
 method: GET
@@ -384,7 +417,7 @@ number 1:
 description: Get list of packages
 route: http://localhost:5000/api/doctor/packages
 query (optional): {
-  sort_by: String (name)
+  sort_by: String (name, time_limit)
   sort_order: String (asc or desc)
 }
 method: GET
@@ -424,7 +457,7 @@ number: 2
 description: Search packages
 route: localhost:5000/api/doctor/packages/search
 query: {
-  value: String (value of field or value for searching)
+  value: String (value for searching)
 }
 method: GET
 headers: {
