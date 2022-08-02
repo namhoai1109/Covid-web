@@ -32,10 +32,10 @@ returns: [
       id_number: String,
       dob: String,
       status: String,
-      current_facility: String (id of database)
+      current_facility: String (database id)
     }],
     current_facility: {
-      _id: String (database id),
+      _id: String,
       name: String,
       capacity: Number,
       current_count: Number,
@@ -85,10 +85,10 @@ returns: [
       id_number: String,
       dob: String,
       status: String,
-      current_facility: String (id of database)
+      current_facility: String (database id)
     }],
     current_facility: {
-      _id: String (database id),
+      _id: String,
       name: String,
       capacity: Number,
       current_count: Number,
@@ -135,10 +135,10 @@ returns: [
       id_number: String,
       dob: String,
       status: String,
-      current_facility: String (id of database)
+      current_facility: String (database id)
     }],
     current_facility: {
-      _id: String (database id),
+      _id: String,
       name: String,
       capacity: Number,
       current_count: Number,
