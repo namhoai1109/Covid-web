@@ -4,6 +4,8 @@
     --primary: #4c8e9d;
     --green1: #41707a;
     --green2: #2b5058;
+    --green3: #c1f7e2;
+    --green3-1: #66a0ad;
     --font-familly: 'ProximaNova', sans-serif;
     --max-width: 1200px;
     --text-color: #303030;
@@ -52,14 +54,15 @@ body {
 .active {
     position: relative;
     transform: translateX(6px);
+    color: #c1f7e2 !important;
     &::before {
         position: absolute;
         content: '';
-        left: -4px;
+        left: -18px;
         height: 100%;
-        width: 6px;
+        width: 14px;
         border-radius: 50px;
-        background-color: var(--green2);
+        background-color: #c1f7e2;
     }
 }
 

@@ -2,3 +2,9 @@
     display: flex;
     align-items: center;
 }
+
+.sort-btn {
+    &:hover {
+        cursor: pointer;
+    }
+}

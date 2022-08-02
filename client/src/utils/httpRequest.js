@@ -21,6 +21,20 @@ export const get = async (url, token) => {
     }
 };
 
+export const getParam = async (url, token, params) => {
+    try {
+        let res = await request.get(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: params,
+        });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export const post = async (url, data, token) => {
     try {
         let res;
@@ -33,6 +47,20 @@ export const post = async (url, data, token) => {
         } else {
             res = await request.post(url, data);
         }
+        return res.data;
+    } catch (error) {
+        return error.response.data.message;
+    }
+};
+
+export const postForm = async (url, data, token) => {
+    try {
+        let res = await request.post(url, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                ContentType: 'multipart/form-data',
+            },
+        });
         return res.data;
     } catch (error) {
         return error.response.data.message;

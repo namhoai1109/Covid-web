@@ -1,20 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Account = require("../models/Account");
 
-// const isLoggedIn = function (req, res, next) {
-//   const token = req.header("auth-token");
-//   if (!token) {
-//     return res.status(401).send("You are not logged in.");
-//   }
-//   try {
-//     const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-//     req.user = verified;
-//     next();
-//   } catch (err) {
-//     res.status(400).send(err);
-//   }
-// };
-
 const authorizeUser = function (...roles) {
   return async (req, res, next) => {
     // Get the authorization header token
@@ -40,7 +26,7 @@ const authorizeUser = function (...roles) {
             req.idNumber = idNumber;
             next();
           } else {
-            return res.status(401).send({ message: "Account is disabled!" });
+            return res.status(401).send({ message: "Account is disabled, please contact your administrator" });
           }
         } else {
           return res.status(401).send({ message: "Permission denied!" });

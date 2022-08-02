@@ -12,6 +12,10 @@ const logSchema = new mongoose.Schema({
   },
   action: {
     type: String,
+    enum: ['login', 'logout', 'create', 'update', 'delete', 'checkout'],
+  },
+  description: {
+    type: String,
   }
 });
 

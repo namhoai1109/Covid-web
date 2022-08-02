@@ -1,31 +1,32 @@
-import { MaskIcon } from '~/CommonComponent/icons';
+import { faBedPulse, faBoxArchive, faChartPie, faFileInvoiceDollar, faPills } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import configs from '~/config';
 
 let listItem = [
     {
         title: 'Covid Patient',
         path: configs.mainRoutes.doctor + configs.doctorRoutes.covidPatient,
-        icon: <MaskIcon width="5rem" height="5rem" />,
+        icon: <FontAwesomeIcon icon={faBedPulse} />,
     },
     {
-        title: 'Necessity',
+        title: 'Product',
         path: configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem,
-        icon: <MaskIcon width="5rem" height="5rem" />,
+        icon: <FontAwesomeIcon icon={faPills} />,
     },
     {
-        title: 'Necessity Package',
+        title: 'Package',
         path: configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage,
-        icon: <MaskIcon width="5rem" height="5rem" />,
+        icon: <FontAwesomeIcon icon={faBoxArchive} />,
     },
     {
         title: 'Statistics',
         path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics,
-        icon: <MaskIcon width="5rem" height="5rem" />,
+        icon: <FontAwesomeIcon icon={faChartPie} />,
     },
     {
-        title: 'Payment Management',
+        title: 'Payment',
         path: configs.mainRoutes.doctor + configs.doctorRoutes.paymentManagement,
-        icon: <MaskIcon width="5rem" height="5rem" />,
+        icon: <FontAwesomeIcon icon={faFileInvoiceDollar} />,
     },
 ];
 

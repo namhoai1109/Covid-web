@@ -1,0 +1,78 @@
+number: 1
+description: Get info
+route: http://localhost:5000/api/patient/info
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  _id: String (Database ID),
+  id_number: String,
+  name: String,
+  dob: String,
+  address: String,
+  status: String,
+  current_facility: String,
+}
+
+number: 2
+description: Get logs
+route: http://localhost:5000/api/patient/logs
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String (Database ID),
+    account: String (_id of account),
+    action: String,
+    time: String (yyyy-mm-dd hh:mm:ss)
+  }
+]
+
+number: 3
+description: Change password for client
+route: http://localhost:5000/api/patient/password
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  new_password: {
+    type: String
+    minlength: 6,
+    required: true
+  }
+}
+returns: {
+  message: String
+}
+
+number: 4
+description: Buy a package
+route: http://localhost:5000/api/patient/packages/id=:id
+params: Database ID of package
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  products: [
+    {
+      id: String (Database ID of product),
+      quantity: Number
+    }
+  ]
+}
+returns: {
+  message: String
+}

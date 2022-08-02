@@ -5,12 +5,22 @@
     color: white;
     padding: 5px 10px;
     border-radius: 50px;
+
+    &.tiny {
+        width: 100px;
+    }
+
     &:hover {
         cursor: pointer;
     }
 
     &.up::before {
         transform: rotate(180deg);
+    }
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.8;
     }
 
     &:before {
@@ -43,6 +53,7 @@
         transition: all 0.3s ease-in-out;
 
         .option {
+            text-align: start;
             width: 100%;
             padding: 5px 10px;
             transition: 0.2s ease-in;

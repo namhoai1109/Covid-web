@@ -58,11 +58,48 @@ exports.updateFacility = async(req, res) => {
     }
 }
 
+<<<<<<< HEAD
 // Sending locations
 exports.getProvinces = async(req, res) => {
     try {
         let data = require('./provinces.json');
         res.status(200).send(data);
+=======
+// Reading facility's information
+exports.readFacilityAll = async(req, res) => {
+    try {
+        const facilities = await Facility.find();
+        res.status(200).send(facilities);
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
+}
+
+exports.readFacilityOne = async(req, res) => {
+    try {
+        const facility = await Facility.find({ _id: req.params.id });
+        console.log(facility);
+        res.status(200).send(facility);
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
+}
+
+// Delete facility
+exports.deleteFacilityOne = async(req, res) => {
+    try {
+        const facility = await Facility.findOneAndDelete({ _id: req.params.id });
+        res.status(200).send({ message: "Facility deleted successfully" });
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
+}
+
+exports.deleteFacilityAll = async(req, res) => {
+    try {
+        const facilities = await Facility.remove({});
+        res.status(200).send({ message: "Facilities deleted successfully" });
+>>>>>>> main
     } catch (err) {
         res.status(400).send({ message: err.message });
     }

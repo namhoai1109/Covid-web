@@ -32,12 +32,11 @@ app.use("/images", express.static("images"));
 app.use("/api/auth", authRouter);
 app.use("/api/admin", authorizeUser("admin"), adminRouter);
 app.use("/api/doctor", authorizeUser("doctor"), doctorRouter);
-app.use("/api/facility", authorizeUser("doctor"), facilityRouter);
+app.use("/api/facility", authorizeUser("admin"), facilityRouter);
 app.use("/api/patient", authorizeUser("patient"), patientRouter);
 
-
 // Initialize admin account on first setup
-const initAdmin = async() => {
+const initAdmin = async () => {
     try {
         const account = await Account.find();
         if (account.length === 0) {

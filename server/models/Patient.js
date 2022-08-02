@@ -26,7 +26,7 @@ const patientSchema = new mongoose.Schema({
     },
   },
   // Format: YYYY-MM-DD
-  DOB: {
+  dob: {
     type: Date,
     required: true,
     validate: {
@@ -50,15 +50,10 @@ const patientSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Facility",
   },
-  // Haven't figured this out, maybe later
-  // history:
-  // {
-
-  // }
   close_contact_list: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Patient",
-  },
+  }
 });
 
 module.exports = mongoose.model("Patient", patientSchema);

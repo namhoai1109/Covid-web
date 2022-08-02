@@ -9,14 +9,12 @@ import { useLocation } from 'react-router-dom';
 import configs from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDelete } from '../redux/deleteSlice';
-import { addManager } from '../redux/listManagerSlice';
 import { addFacility } from '../redux/listFacilitySlice';
 import { postAPI } from '~/APIservices/postAPI';
-
+import { menuFacility, menuManager, formInputDoctor, formInputFacility } from '../staticVar';
+import { getListFacility, initListManager } from '../fetchAPI';
+import { useState } from 'react';
 const cx = classNames.bind(styles);
-
-const menuManager = ['ID', 'Username'];
-const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
 
 let getFilterSortMenu = (menu) => {
     let filterItem = menu.map((title) => ({
@@ -36,20 +34,17 @@ let registerManager = async (data) => {
     try {
         let token = JSON.parse(localStorage.getItem('Token')).token;
         let res = await postAPI('admin/register', data, token);
-        console.log(res);
+        return res;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 };
-
-const formInputDoctor = ['ID', 'Username', 'Password'];
-const formInputFacility = ['Name', 'Max no. patient'];
 
 function Header() {
     let location = useLocation();
     let dispatch = useDispatch();
     let deleteState = useSelector((state) => state.delete.isShow);
-
+    let [validate, setValidate] = useState('');
     let [filterItem, sortItem] = getFilterSortMenu(
         location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
             ? menuManager
@@ -58,22 +53,82 @@ function Header() {
 
     let handleClick = async (inputVals) => {
         if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
-            await registerManager({
-                username: inputVals.id,
-                password: inputVals.password,
-                name: inputVals.username,
-            });
-            inputVals.status = 'active';
-            dispatch(addManager(inputVals));
+            let readySubmit = true;
+            let clearInput = false;
+            if (inputVals.username === '' || inputVals.password === '') {
+                setValidate('Username, password are required');
+                readySubmit = false;
+            } else if (inputVals.name !== '') {
+                if (/^[a-zA-Z ]{1,50}$/.test(inputVals.name) === false) {
+                    setValidate('Name is invalid');
+                    readySubmit = false;
+                }
+            }
+
+            if (readySubmit) {
+                let res = await registerManager({
+                    username: inputVals.username,
+                    password: inputVals.password,
+                    name: inputVals.name,
+                });
+
+                console.log(res);
+                if (typeof res === 'string' && res.includes('duplicate')) {
+                    setValidate('Username is already exist');
+                } else if (res.message === 'Account created successfully') {
+                    clearInput = true;
+                    initListManager(dispatch);
+                }
+            }
+
+            return clearInput;
         } else {
-            inputVals.noPatient = 0; //tmp
-            dispatch(addFacility(inputVals));
+            console.log(inputVals);
+            let clearInput = false;
+            let readySubmit = true;
+
+            Object.keys(inputVals).forEach((key) => {
+                if (inputVals[key] === '' || inputVals[key] === '--select--') {
+                    setValidate(`These fields are required`);
+                    readySubmit = false;
+                }
+            });
+
+            if (inputVals.capacity !== '') {
+                if (inputVals.capacity <= 0) {
+                    setValidate('Capacity is invalid');
+                    readySubmit = false;
+                }
+            }
+
+            if (readySubmit) {
+                let body = {
+                    name: inputVals.name,
+                    capacity: Number(inputVals.capacity),
+                    province: inputVals['province/city'],
+                    district: inputVals['district/county'],
+                    ward: inputVals['ward/village'],
+                };
+
+                let token = JSON.parse(localStorage.getItem('Token')).token;
+                let res = await postAPI('facility/create', body, token);
+                console.log(res);
+                if (typeof res === 'string' && res.includes('duplicate')) {
+                    setValidate('Username is already exist');
+                } else if (res.message && res.message === 'Facility created successfully') {
+                    getListFacility(dispatch);
+                    clearInput = true;
+                }
+            }
+            return clearInput;
         }
     };
 
     return (
         <HeaderLayout>
             <MenuFormInput
+                validateStr={validate}
+                setValidateStr={setValidate}
                 onClick={handleClick}
                 menu={
                     location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement

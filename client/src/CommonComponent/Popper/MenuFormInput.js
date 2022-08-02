@@ -2,72 +2,80 @@ import TippyHeadless from '@tippyjs/react/headless';
 import Wrapper, { MenuItem } from '../Popper';
 import { PlusIcon } from '../icons';
 import { FormInput } from '../Popper';
-
 import classNames from 'classnames/bind';
 import styles from './Wrapper.module.scss';
-import { useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
+import SelectOption from '../SelectOption';
+import { dataAddress } from '~/Admin/staticVar';
 
 const cx = classNames.bind(styles);
 
-let initDataInput = (menu) => {
-    let data = {};
-    let nMenu = makeLowerCase(menu);
-    for (let i = 0; i < menu.length; i++) {
-        data[nMenu[i]] = '';
-    }
-    return data;
-};
+function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setValidateStr }) {
+    let initDataInput = useCallback((menu) => {
+        let data = {};
+        for (let i = 0; i < menu.length; i++) {
+            if (menu[i].type === 'select') {
+                data[menu[i].title.toLowerCase()] = `--select--`;
+            } else {
+                data[menu[i].title.toLowerCase()] = '';
+            }
+        }
+        return data;
+    });
 
-let makeLowerCase = (menu) => {
-    let nArr = [];
-    for (let i = 0; i < menu.length; i++) {
-        nArr.push(menu[i].toLowerCase());
-    }
-    return nArr;
-};
+    let makePass = useCallback((length) => {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    });
 
-function makePass(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
-
-function MenuFormInput({ menu, onClick = () => {}, children }) {
     let initInputVal = initDataInput(menu);
     let [inputVals, setInputVals] = useState(initInputVal);
 
     useEffect(() => {
-        setInputVals(initDataInput(menu.length));
+        setInputVals(initDataInput(menu));
     }, [menu]);
 
-    let handleOnClick = () => {
-        onClick(inputVals);
-        setInputVals(initInputVal);
-    };
+    let handleOnClick = useCallback(async () => {
+        let clearInput = await onClick(inputVals);
+        if (clearInput) {
+            setInputVals(initInputVal);
+        }
+    });
 
-    let handleHide = () => {
+    let handleHide = useCallback(() => {
         setInputVals(initInputVal);
-    };
+    });
 
-    let handleChange = (e, title) => {
+    let handleChange = useCallback((e, title) => {
         let inputval = e.target.value;
         setInputVals({
             ...inputVals,
             [title]: inputval,
         });
-    };
+        setValidateStr('');
+    });
 
-    let handleRandPass = (title) => {
+    let handleRandPass = useCallback((title) => {
         let randPass = makePass(6);
         setInputVals({
             ...inputVals,
             [title]: randPass,
         });
-    };
+        setValidateStr('');
+    });
+
+    let handleChangeSelect = useCallback((val, title) => {
+        setInputVals({
+            ...inputVals,
+            [title]: val,
+        });
+        setValidateStr('');
+    });
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>
@@ -75,25 +83,37 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
                 <button onClick={handleOnClick} className={cx('submit-btn')}>
                     <PlusIcon />
                 </button>
+                <span className={cx('noti')}>{validateStr}</span>
                 <div className={cx('flex-center')}>
                     <div>
-                        {makeLowerCase(menu).map((title, index) => (
-                            <MenuItem key={index} data={title} className={cx('title')} />
+                        {menu.map((item, index) => (
+                            <MenuItem key={index} data={item.title} className={cx('title')} />
                         ))}
                     </div>
                     <div>
-                        {makeLowerCase(menu).map((title, index) => {
+                        {menu.map((item, index) => {
+                            let nTitle = item.title.toLowerCase();
+                            let dataSelect = dataAddress[item.title.split('/')[0]];
                             return (
                                 <MenuItem
                                     nohover
                                     key={index}
                                     data={
-                                        <FormInput
-                                            passGen={title === 'password'}
-                                            onClick={(e) => handleRandPass(title)}
-                                            inputVal={inputVals[title]}
-                                            onChange={(e) => handleChange(e, title)}
-                                        />
+                                        item.type === 'select' ? (
+                                            <SelectOption
+                                                options={dataSelect}
+                                                value={inputVals[nTitle]}
+                                                onChange={(val) => handleChangeSelect(val, nTitle)}
+                                            />
+                                        ) : (
+                                            <FormInput
+                                                type={item.type === 'number' ? item.type : 'text'}
+                                                passGen={item.type === 'passGen'}
+                                                onClick={(e) => handleRandPass(nTitle)}
+                                                inputVal={inputVals[nTitle]}
+                                                onChange={(e) => handleChange(e, nTitle)}
+                                            />
+                                        )
                                     }
                                 />
                             );
@@ -120,4 +140,4 @@ function MenuFormInput({ menu, onClick = () => {}, children }) {
     );
 }
 
-export default MenuFormInput;
+export default memo(MenuFormInput);

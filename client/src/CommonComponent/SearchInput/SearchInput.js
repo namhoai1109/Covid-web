@@ -1,31 +1,45 @@
 import classNames from 'classnames/bind';
 import styles from './SearchInput.module.scss';
-import { useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { addFilter, setSearchValue, setValue } from '~/Doctor/redux/filterState';
+import { useDispatch } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
-function SearchInput({ stateDynamique, icon }) {
+function SearchInput({ stateDynamique, icon, filter = '' }) {
     let [searchVal, setSearchVal] = useState('');
     let [skrink, setSkrink] = useState(stateDynamique);
+    let dispatch = useDispatch();
 
-    let handleBlur = () => {
+    let handleBlur = useCallback(() => {
         if (stateDynamique) {
             if (searchVal === '') {
                 setSkrink(true);
             }
         }
-    };
+    });
 
-    let handleClick = () => {
+    let handleClick = useCallback(() => {
         if (stateDynamique) {
             setSkrink(!skrink);
         }
 
         if (searchVal !== '') {
-            console.log(searchVal); //call api
             setSkrink(false);
         }
-    };
+    });
+
+    useEffect(() => {
+        if (filter !== '') dispatch(addFilter(filter));
+    }, []);
+
+    useEffect(() => {
+        if (filter !== '') {
+            dispatch(setValue({ filter, value: searchVal }));
+        } else {
+            dispatch(setSearchValue(searchVal));
+        }
+    }, [searchVal]);
 
     return (
         <div className={cx('wrapper')}>
@@ -45,4 +59,4 @@ function SearchInput({ stateDynamique, icon }) {
     );
 }
 
-export default SearchInput;
+export default memo(SearchInput);

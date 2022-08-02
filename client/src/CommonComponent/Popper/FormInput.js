@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { memo } from 'react';
 import styles from './Wrapper.module.scss';
 
 const cx = classNames.bind(styles);
@@ -11,7 +12,9 @@ function FormInput({
     onKeyDown = () => {},
     type = 'text',
     placeholder = '',
+    tiny,
     passGen,
+    readOnly,
 }) {
     return (
         <div className={cx('form-input')}>
@@ -22,8 +25,10 @@ function FormInput({
                 onChange={onChange}
                 onFocus={onFocus}
                 onKeyDown={onKeyDown}
-                className={cx('input')}
-                readOnly={passGen}
+                className={cx('input', {
+                    tiny: tiny,
+                })}
+                readOnly={passGen || readOnly}
             />
             {passGen && (
                 <button onClick={onClick} className={cx('btn')}>
@@ -34,4 +39,4 @@ function FormInput({
     );
 }
 
-export default FormInput;
+export default memo(FormInput);
