@@ -82,7 +82,7 @@ exports.getAllPatients = async (req, res) => {
     const patientsID = doctor.patients;
     const patients = await Patient.find({ _id: { $in: patientsID } })
       .populate("account", "username role status")
-      .populate("current_facility", "name")
+      .populate("current_facility")
       .populate(
         "close_contact_list",
         "_id id_number name dob status current_facility",
@@ -138,13 +138,19 @@ exports.searchPatients = async (req, res) => {
         }
       },
       {
+        $unwind: "$current_facility"
+      },
+      {
+        $unwind: "$account"
+      },
+      {
         $project: {
           _id: 1,
           account: {
-            _id: 1,
-            username: 1,
-            role: 1,
-            status: 1,
+            _id: "$account._id",
+            username: "$account.username",
+            role: "$account.role",
+            status: "$account.status",
           },
           id_number: 1,
           name: 1,
@@ -157,15 +163,9 @@ exports.searchPatients = async (req, res) => {
             name: 1,
             dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
             status: 1,
-            current_facility: {
-              _id: 1,
-              name: 1,
-            },
+            current_facility: 1,
           },
-          current_facility: {
-            _id: 1,
-            name: 1,
-          },
+          current_facility: "$current_facility",
         }
       },
       {
@@ -234,13 +234,19 @@ exports.filterPatients = async (req, res) => {
         }
       },
       {
+        $unwind: "$current_facility"
+      },
+      {
+        $unwind: "$account"
+      },
+      {
         $project: {
           _id: 1,
           account: {
-            _id: 1,
-            username: 1,
-            role: 1,
-            status: 1,
+            _id: "$account._id",
+            username: "$account.username",
+            role: "$account.role",
+            status: "$account.status",
           },
           id_number: 1,
           name: 1,
@@ -253,15 +259,9 @@ exports.filterPatients = async (req, res) => {
             name: 1,
             dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
             status: 1,
-            current_facility: {
-              _id: 1,
-              name: 1,
-            },
+            current_facility: 1
           },
-          current_facility: {
-            _id: 1,
-            name: 1,
-          },
+          current_facility: "$current_facility",
         }
       },
       {

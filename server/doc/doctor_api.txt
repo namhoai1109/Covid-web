@@ -26,8 +26,26 @@ returns: [
     dob: String,
     address: String,
     status: String,
-    close_contact_list: []
-    current_facility: String,
+    close_contact_list: [{
+      _id: String,
+      name: String,
+      id_number: String,
+      dob: String,
+      status: String,
+      current_facility: String (id of database)
+    }],
+    current_facility: {
+      _id: String (database id),
+      name: String,
+      capacity: Number,
+      current_count: Number,
+      location: {
+        formattedAddress: String,
+        province: String,
+        district: String,
+        ward: String,
+      }
+    }
   }
 ]
 
@@ -61,8 +79,26 @@ returns: [
     dob: String,
     address: String,
     status: String,
-    close_contact_list: []
-    current_facility: String,
+    close_contact_list: [{
+      _id: String,
+      name: String,
+      id_number: String,
+      dob: String,
+      status: String,
+      current_facility: String (id of database)
+    }],
+    current_facility: {
+      _id: String (database id),
+      name: String,
+      capacity: Number,
+      current_count: Number,
+      location: {
+        formattedAddress: String,
+        province: String,
+        district: String,
+        ward: String,
+      }
+    }
   }
 ]
 
@@ -93,8 +129,26 @@ returns: [
     dob: String,
     address: String,
     status: String,
-    close_contact_list: []
-    current_facility: String,
+    close_contact_list: [{
+      _id: String,
+      name: String,
+      id_number: String,
+      dob: String,
+      status: String,
+      current_facility: String (id of database)
+    }],
+    current_facility: {
+      _id: String (database id),
+      name: String,
+      capacity: Number,
+      current_count: Number,
+      location: {
+        formattedAddress: String,
+        province: String,
+        district: String,
+        ward: String,
+      }
+    }
   }
 ]
 
@@ -206,6 +260,7 @@ returns: [
     _id: String,
     name: String,
     price: Number,
+    type: String,
     quantity_unit: String,
     images: [
       String
@@ -230,6 +285,7 @@ returns: [
     _id: String,
     name: String,
     price: Number,
+    type: String,
     quantity_unit: String,
     images: [
       String
@@ -262,6 +318,7 @@ returns: [
     _id: String,
     name: String,
     price: Number,
+    type: String,
     quantity_unit: String,
     images: [
       String
