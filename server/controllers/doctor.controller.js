@@ -137,20 +137,16 @@ exports.searchPatients = async (req, res) => {
           as: "close_contact_list",
         }
       },
-      {
-        $unwind: "$current_facility"
-      },
-      {
-        $unwind: "$account"
-      },
+      { $unwind: "$current_facility" },
+      { $unwind: "$account" },
       {
         $project: {
           _id: 1,
           account: {
-            _id: "$account._id",
-            username: "$account.username",
-            role: "$account.role",
-            status: "$account.status",
+            _id: 1,
+            username: 1,
+            role: 1,
+            status: 1,
           },
           id_number: 1,
           name: 1,
@@ -163,7 +159,7 @@ exports.searchPatients = async (req, res) => {
             name: 1,
             dob: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$dob" } },
             status: 1,
-            current_facility: 1,
+            current_facility: 1
           },
           current_facility: "$current_facility",
         }
@@ -233,20 +229,16 @@ exports.filterPatients = async (req, res) => {
           as: "close_contact_list",
         }
       },
-      {
-        $unwind: "$current_facility"
-      },
-      {
-        $unwind: "$account"
-      },
+      { $unwind: "$current_facility" },
+      { $unwind: "$account" },
       {
         $project: {
           _id: 1,
           account: {
-            _id: "$account._id",
-            username: "$account.username",
-            role: "$account.role",
-            status: "$account.status",
+            _id: 1,
+            username: 1,
+            role: 1,
+            status: 1,
           },
           id_number: 1,
           name: 1,
