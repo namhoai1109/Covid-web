@@ -83,14 +83,19 @@ exports.getAllPatients = async (req, res) => {
     const patients = await Patient.find({ _id: { $in: patientsID } })
       .populate("account", "username role status")
       .populate("current_facility")
-      .populate(
-        "close_contact_list",
-        "_id id_number name dob status current_facility",
-      )
+      .populate({
+        path: "close_contact_list",
+        populate: {
+          path: "current_facility",
+          model: "Facility",
+        },
+        select: "id_number name dob status current_facility",
+      })
       .sort({
         [sortBy]: sortOrder,
       })
       .exec();
+
     res.status(200).send(patients);
   } catch (err) {
     res.status(400).send({ message: err.message });
@@ -137,8 +142,30 @@ exports.searchPatients = async (req, res) => {
           as: "close_contact_list",
         }
       },
-      { $unwind: "$current_facility" },
+      { $unwind: "$close_contact_list" },
+      {
+        $lookup: {
+          from: Facility.collection.name,
+          localField: "close_contact_list.current_facility",
+          foreignField: "_id",
+          as: "close_contact_list.current_facility",
+        }
+      },
+      { $unwind: "$close_contact_list.current_facility" },
       { $unwind: "$account" },
+      {
+        $group: {
+          _id: "$_id",
+          account: { $first: "$account" },
+          id_number: { $first: "$id_number" },
+          name: { $first: "$name" },
+          dob: { $first: "$dob" },
+          address: { $first: "$address" },
+          status: { $first: "$status" },
+          current_facility: { $first: "$current_facility" },
+          close_contact_list: { $push: "$close_contact_list" },
+        }
+      },
       {
         $project: {
           _id: 1,
@@ -161,7 +188,7 @@ exports.searchPatients = async (req, res) => {
             status: 1,
             current_facility: 1
           },
-          current_facility: "$current_facility",
+          current_facility: 1,
         }
       },
       {
@@ -229,8 +256,36 @@ exports.filterPatients = async (req, res) => {
           as: "close_contact_list",
         }
       },
-      { $unwind: "$current_facility" },
-      { $unwind: "$account" },
+      {
+        $unwind: "$close_contact_list"
+      },
+      {
+        $lookup: {
+          from: Facility.collection.name,
+          localField: "close_contact_list.current_facility",
+          foreignField: "_id",
+          as: "close_contact_list.current_facility",
+        }
+      },
+      {
+        $unwind: "$close_contact_list.current_facility"
+      },
+      {
+        $unwind: "$account"
+      },
+      {
+        $group: {
+          _id: "$_id",
+          account: { $first: "$account" },
+          id_number: { $first: "$id_number" },
+          name: { $first: "$name" },
+          dob: { $first: "$dob" },
+          address: { $first: "$address" },
+          status: { $first: "$status" },
+          current_facility: { $first: "$current_facility" },
+          close_contact_list: { $push: "$close_contact_list" },
+        }
+      },
       {
         $project: {
           _id: 1,
@@ -253,7 +308,7 @@ exports.filterPatients = async (req, res) => {
             status: 1,
             current_facility: 1
           },
-          current_facility: "$current_facility",
+          current_facility: 1,
         }
       },
       {
