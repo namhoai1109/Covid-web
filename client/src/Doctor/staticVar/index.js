@@ -1,6 +1,23 @@
-export const patientFields = ['ID', 'Name', 'DoB', 'Status', 'Facility'];
-export const patientSortFilter = ['ID', 'Name', 'DoB', 'Status'];
+export const patientFields = ['ID number', 'Name', 'DoB', 'Status', 'Facility'];
+export const patientSortFilter = ['ID number', 'Name', 'DoB', 'Status'];
+
 export const necessityFields = ['Name', 'Price', 'Quantity unit'];
+export const necessitySortFilter = ['Name', 'Price', 'Quantity unit', 'Type'];
+export const filterPrice = [
+    { interface: '< 200k', value: 'lt-200' },
+    { interface: '200k - 500k', value: '200-500' },
+    { interface: '500k - 1M', value: '500-1000' },
+    { interface: '1M - 2M', value: '1000-2000' },
+    { interface: '2M - 5M', value: '2000-5000' },
+    { interface: '> 5M', value: 'gt-5000' },
+];
+
+// - 'lt-200': price < 200000
+// - '200-500': price between 200000 and 500000
+// - '500-1000': price between 500000 and 1000000
+// - '1000-2000': price between 1000000 and 2000000
+// - '2000-5000': price between 2000000 and 5000000
+// - 'gt-5000': price > 5000000
 export const essentialPackageFields = ['Name', 'Type', 'Time limited'];
 export const typeNecessity = ['Drug', 'Supply', 'Food', 'Dietary Supplement', 'Protection', 'Herbal Medicine', 'Other'];
 export const inputField1 = ['Name', 'ID number', 'Year of birth', 'Password'];

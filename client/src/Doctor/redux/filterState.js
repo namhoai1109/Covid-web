@@ -35,12 +35,21 @@ const filterState = createSlice({
         },
         setSort: (state, action) => {
             state.sort = action.payload;
+            state.filter = [];
+            state.valueFilter = {};
         },
         deleteSort: (state) => {
             state.sort = {};
         },
+        resetState: (state) => {
+            state.sort = {};
+            state.search = '';
+            state.filter = [];
+            state.valueFilter = {};
+        },
     },
 });
 
-export const { setValue, addFilter, deleteFilter, setSearchValue, setSort, deleteSort } = filterState.actions;
+export const { setValue, addFilter, deleteFilter, setSearchValue, setSort, deleteSort, resetState } =
+    filterState.actions;
 export default filterState.reducer;

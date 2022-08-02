@@ -1,6 +1,6 @@
 ------------------------PATIENTS RELATED---------------------------
 number: 1
-description: Search patients
+description: Search patients -> Called
 route: localhost:5000/api/doctor/patients/search
 query: {
   value: String (value of field)
@@ -32,7 +32,7 @@ returns: [
 ]
 
 number: 2
-description: Filter patients
+description: Filter patients -> Called
 route: localhost:5000/api/doctor/patients/filter
 query: {
   filter_by: String (name, id_number, dob, address, status),
@@ -214,7 +214,7 @@ returns: [
 ]
 
 number: 2
-description: Search products
+description: Search products -> called
 route: localhost:5000/api/doctor/products/search
 query: {
   value: String (value for searching)
