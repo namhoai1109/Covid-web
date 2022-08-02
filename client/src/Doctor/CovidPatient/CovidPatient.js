@@ -96,11 +96,12 @@ function CovidPatient() {
             name: item.name,
             dob: item.dob.split('-')[0],
             status: item.status,
-            facility: item.current_facility.name,
+            facility: (item.current_facility && item.current_facility.name) || '',
         };
     });
 
     let listPatient = useSelector((state) => state.listPatient.list);
+    console.log(listPatient);
     let filterState = useSelector((state) => state.filterState.filter);
     let valueFilter = useSelector((state) => state.filterState.valueFilter);
     let searchValue = useSelector((state) => state.filterState.search);

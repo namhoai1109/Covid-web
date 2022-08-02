@@ -18,14 +18,14 @@ router.get("/products", productController.getAllProducts);
 router.get("/products/search", productController.searchProducts);
 router.get("/products/filter", productController.filterProducts);
 router.post(
-  "/products",
-  uploadFile("images", "array", 5),
-  productController.registerProduct,
+    "/products",
+    uploadFile("images", "array", 5),
+    productController.registerProduct,
 );
 router.put(
-  "/products/id=:id",
-  uploadFile("images", "array", 5),
-  productController.updateProduct,
+    "/products/id=:id",
+    uploadFile("images", "array", 5),
+    productController.updateProduct,
 );
 router.delete("/products/id=:id", productController.deleteProduct);
 
@@ -40,5 +40,6 @@ router.delete("/packages/id=:id", packageController.deletePackage);
 // Facilities related
 router.get("/facilities", facilityController.readFacilityAll);
 router.get("/facilities/id=:id", facilityController.readFacilityOne);
+router.get("/facilities/provinces", facilityController.getProvinces);
 
 module.exports = router;
