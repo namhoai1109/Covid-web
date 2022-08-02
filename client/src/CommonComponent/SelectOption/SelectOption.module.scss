@@ -18,9 +18,13 @@
         transform: rotate(180deg);
     }
 
+    &.readOnly {
+        cursor: default;
+    }
+
     &.disabled {
         pointer-events: none;
-        opacity: 0.8;
+        opacity: 0.5;
     }
 
     &:before {

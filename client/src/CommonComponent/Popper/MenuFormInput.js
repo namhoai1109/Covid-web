@@ -7,6 +7,7 @@ import styles from './Wrapper.module.scss';
 import { memo, useCallback, useEffect, useState } from 'react';
 import SelectOption from '../SelectOption';
 import { dataAddress } from '~/Admin/staticVar';
+import { getAPI } from '~/APIservices/getAPI';
 
 const cx = classNames.bind(styles);
 
@@ -40,6 +41,51 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
         setInputVals(initDataInput(menu));
     }, [menu]);
 
+    let [stateSelect, setStateSelect] = useState({ listFirst: [], Province: [], District: [], Ward: [] });
+
+    // let handleChangeSel = useCallback((value, key) => {
+    //     if (key === 'Province') {
+    //         stateSelect.listFirst.forEach((item) => {
+    //             if (item.name === value) {
+    //                 let listDistrict = getListAddress(item.districts);
+    //                 setStateSelect({ ...stateSelect, District: listDistrict });
+    //             }
+    //         });
+    //     } else if (key === 'District') {
+    //         stateSelect.listFirst.forEach((item) => {
+    //             if (item.name === selectValue.Province) {
+    //                 item.districts.forEach((district) => {
+    //                     if (district.name === value) {
+    //                         let listWard = getListAddress(district.wards);
+    //                         setStateSelect({ ...stateSelect, Ward: listWard });
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     }
+    //     setSelectValue({ ...selectValue, [key]: value });
+    //     setValidateSelect({ ...validateSelect, [key]: '' });
+    // });
+
+    let getListProvince = useCallback(async () => {
+        let list = await getAPI('facility/provinces');
+        let listProvince = getListAddress(list);
+        setStateSelect({ ...stateSelect, listFirst: list, Province: listProvince });
+    });
+
+    let getListAddress = useCallback((list) => {
+        let tmp = [];
+        for (let i = 0; i < 5; i++) {
+            tmp.push(list[i].name);
+        }
+
+        return tmp;
+    });
+
+    useEffect(() => {
+        getListProvince();
+    }, []);
+
     let handleOnClick = useCallback(async () => {
         let clearInput = await onClick(inputVals);
         if (clearInput) {
@@ -69,7 +115,27 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
         setValidateStr('');
     });
 
-    let handleChangeSelect = useCallback((val, title) => {
+    let handleChangeSelect = useCallback((val, title, typeSelect) => {
+        if (typeSelect === 'Province') {
+            stateSelect.listFirst.forEach((item) => {
+                if (item.name === val) {
+                    let listDistrict = getListAddress(item.districts);
+                    setStateSelect({ ...stateSelect, District: listDistrict });
+                }
+            });
+        } else if (typeSelect === 'District') {
+            stateSelect.listFirst.forEach((item) => {
+                if (item.name === inputVals['province/city']) {
+                    item.districts.forEach((district) => {
+                        if (district.name === val) {
+                            let listWard = getListAddress(district.wards);
+                            setStateSelect({ ...stateSelect, Ward: listWard });
+                        }
+                    });
+                }
+            });
+        }
+
         setInputVals({
             ...inputVals,
             [title]: val,
@@ -93,7 +159,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
                     <div>
                         {menu.map((item, index) => {
                             let nTitle = item.title.toLowerCase();
-                            let dataSelect = dataAddress[item.title.split('/')[0]];
+                            let typeSelect = item.title.split('/')[0];
                             return (
                                 <MenuItem
                                     nohover
@@ -101,9 +167,9 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
                                     data={
                                         item.type === 'select' ? (
                                             <SelectOption
-                                                options={dataSelect}
+                                                options={stateSelect[typeSelect]}
                                                 value={inputVals[nTitle]}
-                                                onChange={(val) => handleChangeSelect(val, nTitle)}
+                                                onChange={(val) => handleChangeSelect(val, nTitle, typeSelect)}
                                             />
                                         ) : (
                                             <FormInput

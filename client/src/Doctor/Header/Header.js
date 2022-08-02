@@ -147,7 +147,6 @@ function Header() {
                 return { filterItem, sortItem, addLink };
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage:
                 [filterItem, sortItem] = getFilterSortMenu(essentialPackageFields);
-                sortItem.splice(1, 1);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage + configs.doctorRoutes.newPackage;
                 return { filterItem, sortItem, addLink };

@@ -144,6 +144,7 @@ exports.searchPatients = async (req, res) => {
                     as: "close_contact_list",
                 },
             },
+            { $unwind: "$current_facility" },
             { $unwind: "$close_contact_list" },
             {
                 $lookup: {
@@ -276,6 +277,7 @@ exports.filterPatients = async (req, res) => {
                     as: "close_contact_list",
                 },
             },
+            { $unwind: "$current_facility" },
             {
                 $unwind: "$close_contact_list",
             },
