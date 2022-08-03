@@ -53,7 +53,7 @@ function InputForm() {
 
     let formatItem = useCallback((item) => {
         return {
-            id: item.id_number,
+            id_number: item.id_number,
             name: item.name,
             dob: item.dob.split('-')[0],
             status: item.status,
@@ -66,8 +66,8 @@ function InputForm() {
     let [inputField, setInputField] = useState(initValue);
     let [validateString, setValidateString] = useState(initValue);
 
-    let initValueSelect = initDataSelect(inputField2, '-- make your choice --');
-    initValueSelect.Facility = '-- make your choice --';
+    let initValueSelect = initDataSelect(inputField2, '-- select --');
+    initValueSelect.Facility = '-- select --';
     let [selectValue, setSelectValue] = useState(initValueSelect);
     let initSelectValidate = initDataSelect(inputField2, '');
     initSelectValidate.Facility = '';
@@ -207,17 +207,12 @@ function InputForm() {
         dispatch(deleteItem(index));
     });
 
-    let handleChangeSelect = useCallback((value, key) => {
-        setSelectValue({ ...selectValue, [key]: value });
-        setValidateSelect({ ...validateSelect, [key]: '' });
-    });
-
     let handleChangeStatus = useCallback((e) => {
         setInputField({ ...inputField, Status: e.target.value });
         setValidateString({ ...validateString, Status: '' });
     });
 
-    let getListFacily = useCallback(async () => {
+    let getListFacility = useCallback(async () => {
         let list = await getAPI('doctor/facilities');
 
         let tmp = [];
@@ -228,8 +223,51 @@ function InputForm() {
 
         setListFacility({ first: list, sec: tmp });
     });
+
+    let [stateSelect, setStateSelect] = useState({ listFirst: [], Province: [], District: [], Ward: [] });
+
+    let handleChangeSelect = useCallback((value, key) => {
+        if (key === 'Province') {
+            stateSelect.listFirst.forEach((item) => {
+                if (item.name === value) {
+                    let listDistrict = getListAddress(item.districts);
+                    setStateSelect({ ...stateSelect, District: listDistrict });
+                }
+            });
+        } else if (key === 'District') {
+            stateSelect.listFirst.forEach((item) => {
+                if (item.name === selectValue.Province) {
+                    item.districts.forEach((district) => {
+                        if (district.name === value) {
+                            let listWard = getListAddress(district.wards);
+                            setStateSelect({ ...stateSelect, Ward: listWard });
+                        }
+                    });
+                }
+            });
+        }
+        setSelectValue({ ...selectValue, [key]: value });
+        setValidateSelect({ ...validateSelect, [key]: '' });
+    });
+
+    let getListProvince = useCallback(async () => {
+        let list = await getAPI('doctor/facilities/provinces');
+        let listProvince = getListAddress(list);
+        setStateSelect({ ...stateSelect, listFirst: list, Province: listProvince });
+    });
+
+    let getListAddress = useCallback((list) => {
+        let tmp = [];
+        for (let i = 0; i < 5; i++) {
+            tmp.push(list[i].name);
+        }
+
+        return tmp;
+    });
+
     useEffect(() => {
-        getListFacily();
+        getListFacility();
+        getListProvince();
     }, []);
 
     return (
@@ -278,7 +316,8 @@ function InputForm() {
                                     <div className={cx('flex-center')}>
                                         <span className={cx('label')}>{title}</span>
                                         <SelectOption
-                                            options={dataAddress[key]}
+                                            // disabled={!checkStateSelectExist(index)}
+                                            options={stateSelect[key]}
                                             value={selectValue[key]}
                                             onChange={(value) => handleChangeSelect(value, key)}
                                         />

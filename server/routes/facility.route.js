@@ -10,5 +10,4 @@ router.get("/get/all", facilityController.readFacilityAll);
 router.delete("/delete/id=:id", facilityController.deleteFacilityOne);
 router.delete("/delete/all", facilityController.deleteFacilityAll);
 
-
 module.exports = router;

@@ -30,12 +30,14 @@ function SearchInput({ stateDynamique, icon, filter = '' }) {
     });
 
     useEffect(() => {
-        if (filter !== '') dispatch(addFilter(filter));
+        let nFilter = filter.replaceAll(' ', '_');
+        if (filter !== '') dispatch(addFilter(nFilter));
     }, []);
 
     useEffect(() => {
         if (filter !== '') {
-            dispatch(setValue({ filter, value: searchVal }));
+            let nFilter = filter.replaceAll(' ', '_');
+            dispatch(setValue({ filter: nFilter, value: searchVal }));
         } else {
             dispatch(setSearchValue(searchVal));
         }

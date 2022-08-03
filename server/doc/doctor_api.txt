@@ -1,12 +1,12 @@
 ------------------------PATIENTS RELATED---------------------------
 number: 1
-description: Search patients
+description: Search patients -> Called
 route: localhost:5000/api/doctor/patients/search
 query: {
   value: String (value of field)
 }
 // Ex: http://localhost:5000/api/doctor/patients/search?&value=Sai%20Gon
-method:GET
+method: GET
 headers: {
   Bearer authorization: {
     type: String (JWT token)
@@ -26,13 +26,42 @@ returns: [
     dob: String,
     address: String,
     status: String,
-    close_contact_list: []
-    current_facility: String,
+    close_contact_list: [{
+      _id: String,
+      id_number: String,
+      name: String,
+      dob: String,
+      status: String,
+      current_facility: {
+        _id: String,
+        name: String,
+        capacity: Number,
+        current_count: Number,
+        location: {
+          formattedAddress: String,
+          province: String,
+          district: String,
+          ward: String,
+        }
+    }
+    }],
+    current_facility: {
+      _id: String,
+      name: String,
+      capacity: Number,
+      current_count: Number,
+      location: {
+        formattedAddress: String,
+        province: String,
+        district: String,
+        ward: String,
+      }
+    }
   }
 ]
 
 number: 2
-description: Filter patients
+description: Filter patients -> Called
 route: localhost:5000/api/doctor/patients/filter
 query: {
   filter_by: String (name, id_number, dob, address, status),
@@ -61,8 +90,37 @@ returns: [
     dob: String,
     address: String,
     status: String,
-    close_contact_list: []
-    current_facility: String,
+    close_contact_list: [{
+      _id: String,
+      id_number: String,
+      name: String,
+      dob: String,
+      status: String,
+      current_facility: {
+        _id: String,
+        name: String,
+        capacity: Number,
+        current_count: Number,
+        location: {
+          formattedAddress: String,
+          province: String,
+          district: String,
+          ward: String,
+        }
+    }
+    }],
+    current_facility: {
+      _id: String,
+      name: String,
+      capacity: Number,
+      current_count: Number,
+      location: {
+        formattedAddress: String,
+        province: String,
+        district: String,
+        ward: String,
+      }
+    }
   }
 ]
 
@@ -70,7 +128,7 @@ number: 3 -> Called
 description: Get all patients information of a specific doctor
 route: http://localhost:5000/api/doctor/patients
 query (optional): {
-  sort_by: String (a field of patient),
+  sort_by: String (name, id_number, dob, address, status),
   sort_order: String (asc or desc)
 }
 method: GET
@@ -93,8 +151,37 @@ returns: [
     dob: String,
     address: String,
     status: String,
-    close_contact_list: []
-    current_facility: String,
+    close_contact_list: [{
+      _id: String,
+      id_number: String,
+      name: String,
+      dob: String,
+      status: String,
+      current_facility: {
+        _id: String,
+        name: String,
+        capacity: Number,
+        current_count: Number,
+        location: {
+          formattedAddress: String,
+          province: String,
+          district: String,
+          ward: String,
+        }
+    }
+    }],
+    current_facility: {
+      _id: String,
+      name: String,
+      capacity: Number,
+      current_count: Number,
+      location: {
+        formattedAddress: String,
+        province: String,
+        district: String,
+        ward: String,
+      }
+    }
   }
 ]
 
@@ -192,7 +279,7 @@ number: 1 -> Called
 description: Get list of products
 route: http://localhost:5000/api/doctor/products
 query (optional): {
-  sort_by: String (a field of product),
+  sort_by: String (name, price, type),
   sort_order: String (asc or desc)
 }
 method: GET
@@ -206,6 +293,7 @@ returns: [
     _id: String,
     name: String,
     price: Number,
+    type: String,
     quantity_unit: String,
     images: [
       String
@@ -214,7 +302,7 @@ returns: [
 ]
 
 number: 2
-description: Search products
+description: Search products -> called
 route: localhost:5000/api/doctor/products/search
 query: {
   value: String (value for searching)
@@ -230,6 +318,7 @@ returns: [
     _id: String,
     name: String,
     price: Number,
+    type: String,
     quantity_unit: String,
     images: [
       String
@@ -238,7 +327,7 @@ returns: [
 ]
 
 number: 3
-description: Filter products
+description: Filter products -> Called
 route: localhost:5000/api/doctor/products/filter
 query: {
   filter_by: String (name, price, quantity_unit, type),
@@ -262,6 +351,7 @@ returns: [
     _id: String,
     name: String,
     price: Number,
+    type: String,
     quantity_unit: String,
     images: [
       String
@@ -324,10 +414,10 @@ returns: {
 
 -----------------------------------PACKAGES RELATED--------------------------------------
 number 1:
-description: Get list of packages
+description: Get list of packages -> Called
 route: http://localhost:5000/api/doctor/packages
 query (optional): {
-  sort_by: String (name)
+  sort_by: String (name, time_limit)
   sort_order: String (asc or desc)
 }
 method: GET
@@ -364,10 +454,10 @@ returns: [
 ]
 
 number: 2
-description: Search packages
+description: Search packages -> Called
 route: localhost:5000/api/doctor/packages/search
 query: {
-  value: String (value of field or value for searching)
+  value: String (value for searching)
 }
 method: GET
 headers: {
@@ -403,7 +493,7 @@ returns: [
 ]
 
 number: 3
-description: Filter packages
+description: Filter packages -> Called
 route: localhost:5000/api/doctor/packages/filter
 query: {
   filter_by: String (name, time_limit, limit_per_patient),
@@ -443,7 +533,7 @@ returns: [
 ]
 
 number: 4
-description: Register a new package
+description: Register a new package -> Called
 route: http://localhost:5000/api/doctor/packages
 method: POST
 headers: {
@@ -473,7 +563,7 @@ returns: {
 }
 
 number: 5
-description: Update a package
+description: Update a package -> Called
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
 method: PUT
@@ -504,7 +594,7 @@ returns: {
 }
 
 number: 6
-description: Delete a package
+description: Delete a package -> Called
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
 method: DELETE

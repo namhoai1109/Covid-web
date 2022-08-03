@@ -63,7 +63,7 @@ function InfoNecessity({ viewOnly }) {
 
     //input field
     let initData = setFirstValue(necessityFields);
-    initData.Type = '--choose type--';
+    initData.Type = infoNecessity.type;
     let [dataInput, setDataInput] = useState(initData);
 
     //validate

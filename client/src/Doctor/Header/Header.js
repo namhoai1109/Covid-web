@@ -5,28 +5,44 @@ import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu } from '~/CommonComponent/Popper';
-import { patientFields, necessityFields, essentialPackageFields, patientSortFilter } from '../staticVar';
+import { essentialPackageFields, patientSortFilter, necessitySortFilter, filterPrice } from '../staticVar';
 import configs from '~/config';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDelete } from '../redux/deleteStateSlice';
-import { setSort } from '../redux/filterState';
+import { addFilter, setSort, setValue } from '../redux/filterState';
 
 const cx = classNames.bind(styles);
 
 let SortBtn = ({ sort_by, sort_order, children }) => {
     let dispatch = useDispatch();
+    let nSort_by = sort_by.replaceAll(' ', '_');
     let handleSortState = () => {
         dispatch(
             setSort({
-                sort_by: sort_by.toLowerCase(),
+                sort_by: nSort_by.toLowerCase(),
                 sort_order: sort_order.toLowerCase(),
             }),
         );
     };
     return (
-        <div className={cx('sort-btn')} onClick={handleSortState}>
+        <div className={cx('sub-btn')} onClick={handleSortState}>
+            {children}
+        </div>
+    );
+};
+
+let PriceBtn = ({ data, children }) => {
+    let dispatch = useDispatch();
+    let handleClick = () => {
+        console.log(data);
+        dispatch(addFilter('Price'));
+        dispatch(setValue({ filter: 'Price', value: data }));
+    };
+
+    return (
+        <div onClick={handleClick} className={cx('sub-btn')}>
             {children}
         </div>
     );
@@ -62,6 +78,21 @@ let getFilterSortMenu = (menu) => {
         },
     }));
 
+    return [filterItem, sortItem];
+};
+
+let getFilterSortProduct = (menu) => {
+    let [filterItem, sortItem] = getFilterSortMenu(menu);
+    filterItem.forEach((item) => {
+        if (item.data === 'Price') {
+            item.child.data = filterPrice.map((price) => {
+                return {
+                    data: <PriceBtn data={price.value}>{price.interface}</PriceBtn>,
+                };
+            });
+        }
+    });
+    sortItem.splice(2, 2);
     return [filterItem, sortItem];
 };
 
@@ -110,7 +141,7 @@ function Header() {
                 return { filterItem, sortItem, addLink };
 
             case configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem:
-                [filterItem, sortItem] = getFilterSortMenu(necessityFields);
+                [filterItem, sortItem] = getFilterSortProduct(necessitySortFilter);
                 addLink =
                     configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem + configs.doctorRoutes.newNecessity;
                 return { filterItem, sortItem, addLink };
