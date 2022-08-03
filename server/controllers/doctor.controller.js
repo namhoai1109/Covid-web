@@ -142,6 +142,7 @@ exports.searchPatients = async (req, res) => {
           as: "close_contact_list",
         }
       },
+      { $unwind: "$current_facility" },
       { $unwind: "$close_contact_list" },
       {
         $lookup: {
@@ -256,9 +257,8 @@ exports.filterPatients = async (req, res) => {
           as: "close_contact_list",
         }
       },
-      {
-        $unwind: "$close_contact_list"
-      },
+      { $unwind: "$current_facility" },
+      { $unwind: "$close_contact_list" },
       {
         $lookup: {
           from: Facility.collection.name,
@@ -267,12 +267,8 @@ exports.filterPatients = async (req, res) => {
           as: "close_contact_list.current_facility",
         }
       },
-      {
-        $unwind: "$close_contact_list.current_facility"
-      },
-      {
-        $unwind: "$account"
-      },
+      { $unwind: "$close_contact_list.current_facility" },
+      { $unwind: "$account" },
       {
         $group: {
           _id: "$_id",
