@@ -42,4 +42,7 @@ router.get("/facilities", facilityController.readFacilityAll);
 router.get("/facilities/id=:id", facilityController.readFacilityOne);
 router.get("/facilities/provinces", facilityController.getProvinces);
 
+// Log related
+router.get("/logs/id=:id", patientController.getLogs);
+
 module.exports = router;

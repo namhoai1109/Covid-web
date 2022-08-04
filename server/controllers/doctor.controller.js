@@ -6,7 +6,7 @@ const Log = require("../models/Log");
 const bcrypt = require("bcryptjs");
 
 // Register a new patient
-exports.registerAccount = async (req, res) => {
+exports.registerAccount = async(req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const account = new Account({
         username: req.body.username,
@@ -66,7 +66,7 @@ exports.registerAccount = async (req, res) => {
 };
 
 // Get lists of patients
-exports.getAllPatients = async (req, res) => {
+exports.getAllPatients = async(req, res) => {
     try {
         // Get the doctor by id number
         const doctor = await Doctor.findOne({ id_number: req.idNumber });
@@ -102,7 +102,7 @@ exports.getAllPatients = async (req, res) => {
     }
 };
 
-exports.searchPatients = async (req, res) => {
+exports.searchPatients = async(req, res) => {
     try {
         const doctor = await Doctor.findOne({ id_number: req.idNumber });
         if (!doctor) {
@@ -114,8 +114,7 @@ exports.searchPatients = async (req, res) => {
         console.log(queryValue);
         const re = new RegExp(queryValue, "i");
         console.log(re);
-        const patients = await Patient.aggregate([
-            {
+        const patients = await Patient.aggregate([{
                 $match: {
                     _id: { $in: doctor.patients },
                 },
@@ -228,7 +227,7 @@ exports.searchPatients = async (req, res) => {
     }
 };
 
-exports.filterPatients = async (req, res) => {
+exports.filterPatients = async(req, res) => {
     try {
         const doctor = await Doctor.findOne({ id_number: req.idNumber });
         if (!doctor) {
@@ -238,17 +237,14 @@ exports.filterPatients = async (req, res) => {
         }
 
         const queryValue = req.query.value;
-        const filterBy = Array.isArray(req.query.filter_by)
-            ? req.query.filter_by
-            : [req.query.filter_by];
-        const filterValues = Array.isArray(queryValue)
-            ? queryValue
-            : [queryValue];
+        const filterBy = Array.isArray(req.query.filter_by) ?
+            req.query.filter_by : [req.query.filter_by];
+        const filterValues = Array.isArray(queryValue) ?
+            queryValue : [queryValue];
         values = filterValues.map((value) => ({
             $regex: new RegExp(value, "i"),
         }));
-        const patients = await Patient.aggregate([
-            {
+        const patients = await Patient.aggregate([{
                 $match: {
                     _id: { $in: doctor.patients },
                 },
@@ -345,12 +341,21 @@ exports.filterPatients = async (req, res) => {
             },
             {
                 $match: {
-                    $and: [
-                        { [filterBy[0]]: values[0] },
-                        { [filterBy[1]]: values[1] },
-                        { [filterBy[2]]: values[2] },
-                        { [filterBy[3]]: values[3] },
-                        { [filterBy[4]]: values[4] },
+                    $and: [{
+                            [filterBy[0]]: values[0]
+                        },
+                        {
+                            [filterBy[1]]: values[1]
+                        },
+                        {
+                            [filterBy[2]]: values[2]
+                        },
+                        {
+                            [filterBy[3]]: values[3]
+                        },
+                        {
+                            [filterBy[4]]: values[4]
+                        },
                     ],
                 },
             },
@@ -368,7 +373,7 @@ exports.filterPatients = async (req, res) => {
 };
 
 // Update patient's information
-exports.updatePatient = async (req, res) => {
+exports.updatePatient = async(req, res) => {
     try {
         // Check if the patient is in the doctor's list
         const isBelong = await isBelongToDoctor(req.idNumber, req.params.id);
@@ -383,9 +388,9 @@ exports.updatePatient = async (req, res) => {
 
         // Variables needed to update close contact list status
         const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
-        const newStatusNumber = req.body.status
-            ? Number(req.body.status[1])
-            : statusNumber; //0, 1, 2, 3
+        const newStatusNumber = req.body.status ?
+            Number(req.body.status[1]) :
+            statusNumber; //0, 1, 2, 3
         const step = newStatusNumber - statusNumber;
 
         // Update patient's status
@@ -394,9 +399,9 @@ exports.updatePatient = async (req, res) => {
             logString += `Status changed to ${patient.status}\n`;
         }
         // Update patient's contact list
-        patient.close_contact_list = req.body.close_contact_list
-            ? req.body.close_contact_list
-            : patient.close_contact_list;
+        patient.close_contact_list = req.body.close_contact_list ?
+            req.body.close_contact_list :
+            patient.close_contact_list;
 
         // Change patient's current facility
         if (req.body.current_facility) {
@@ -423,7 +428,7 @@ exports.updatePatient = async (req, res) => {
         // Update each patient's status in contact list
         const contactListID = patient.close_contact_list;
         const contactList = await Patient.find().where("_id").in(contactListID);
-        contactList.forEach(async (patient) => {
+        contactList.forEach(async(patient) => {
             if (patient.status !== "F0") {
                 const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
                 let newStatusNumber = statusNumber + step;
@@ -469,7 +474,7 @@ exports.updatePatient = async (req, res) => {
     }
 };
 
-exports.deletePatient = async (req, res) => {
+exports.deletePatient = async(req, res) => {
     try {
         // Check if the patient is in the doctor's list
         const isBelong = await isBelongToDoctor(req.idNumber, req.params.id);
@@ -513,7 +518,7 @@ exports.deletePatient = async (req, res) => {
 };
 
 // Helper function to check if the patient is in the doctor's list
-const isBelongToDoctor = async (doctorID, patientID) => {
+const isBelongToDoctor = async(doctorID, patientID) => {
     const currentDoctor = await Doctor.findOne({
         id_number: doctorID,
     }).populate("patients", "id_number");
@@ -551,12 +556,31 @@ const isBelongToDoctor = async (doctorID, patientID) => {
 };
 
 // Helper function for clearing up trashID in every patient's contact list after deletion a patient
-const clearContactListTrashID = async (trashID) => {
+const clearContactListTrashID = async(trashID) => {
     const patients = await Patient.find();
-    patients.forEach(async (patient) => {
+    patients.forEach(async(patient) => {
         if (patient.close_contact_list.includes(trashID)) {
             patient.close_contact_list.pull(trashID);
             await patient.save();
         }
     });
 };
+
+
+// Getting account log
+
+exports.getLogs = async(req, res) => {
+    try {
+        const account = await Account.findOne({ _id: req.params.id });
+        if (!account) {
+            return res.status(500).send({ message: "Account not found" });
+        }
+        const logs = await Log.find({ account: account._id });
+        if (!logs) {
+            return res.status(500).send({ message: "No logs for this account" });
+        }
+        res.status(200).send(logs);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+}
