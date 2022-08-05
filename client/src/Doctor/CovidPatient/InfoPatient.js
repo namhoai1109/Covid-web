@@ -12,6 +12,8 @@ import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { add, deleteItem, reset } from '../redux/currentCloseContactList';
 import { putAPI } from '~/APIservices/putAPI';
+import { getAPI } from '~/APIservices/getAPI';
+import SelectOption from '~/CommonComponent/SelectOption';
 
 const cx = classNames.bind(styles);
 
@@ -31,28 +33,55 @@ function InfoPatient() {
     let dispatch = useDispatch();
     let closeContactList = useSelector((state) => state.currentCloseContactList.list);
     let patient = useSelector((state) => state.listPatient.currentPatient);
+    //console.log(patient);
     let [status, setStatus] = useState(patient.status || '');
+    let [facility, setFacility] = useState(
+        (patient.current_facility && patient.current_facility.name) || 'no facility',
+    );
 
-    let fetchUpdatePatient = async (data) => {
+    let [listFacility, setListFacility] = useState({
+        first: [],
+        sec: [],
+    });
+    console.log(listFacility.first);
+    let getListFacility = useCallback(async () => {
+        let list = await getAPI('doctor/facilities');
+
+        let tmp = [];
+        list.forEach((item) => {
+            let str = item.name + '-' + item.location.province;
+            tmp.push(str);
+        });
+
+        setListFacility({ first: list, sec: tmp });
+    });
+
+    let fetchUpdatePatient = useCallback(async (data) => {
         try {
             let res = await putAPI('/doctor/patients/id=' + patient._id, data);
             console.log(res);
         } catch (err) {
             console.log(err);
         }
-    };
+    });
 
-    let handleUpdateMode = () => {
+    let handleUpdateMode = useCallback(() => {
+        let id_facility = '';
+        listFacility.first.forEach((item) => {
+            if (item.name === facility.split('-')[0]) {
+                id_facility = item._id;
+            }
+        });
         if (updateMode) {
             let formUpdate = {
                 status: status,
-                current_facility: '',
+                current_facility: id_facility,
                 close_contact_list: closeContactList.map((item) => item._id),
             };
             fetchUpdatePatient(formUpdate);
         }
         setUpdateMode(!updateMode);
-    };
+    });
 
     useEffect(() => {
         if (patient.close_contact_list) {
@@ -60,7 +89,7 @@ function InfoPatient() {
                 dispatch(add(item));
             });
         }
-
+        getListFacility();
         return () => {
             dispatch(reset());
         };
@@ -102,15 +131,21 @@ function InfoPatient() {
                     </div>
 
                     <div className={cx('row', 'field-input')}>
-                        <div className={cx('col3', 'field-info')}>
+                        <div className={cx('col4', 'field-info')}>
                             <span className={cx('label')}>Address:</span>
                             <span>{patient.address || ''}</span>
                         </div>
                     </div>
                     <div className={cx('row', 'field-input')}>
-                        <div className={cx('col2', 'field-info')}>
+                        <div className={cx('col2-4', 'field-info', 'flex-center')}>
                             <span className={cx('label')}>Facility:</span>
-                            <span>{(patient.current_facility && patient.current_facility.name) || ''}</span>
+                            {/* <span>{(patient.current_facility && patient.current_facility.name) || ''}</span> */}
+                            <SelectOption
+                                readOnly={!updateMode}
+                                options={listFacility.sec}
+                                value={facility}
+                                onChange={(val) => setFacility(val)}
+                            />
                         </div>
                     </div>
 
@@ -118,7 +153,6 @@ function InfoPatient() {
                         <div className={cx('col2-4', 'field-info')}>
                             <span className={cx('label')}>Status</span>
                             {Status.map((title, index) => {
-                                let stateDefault = patient.status && patient.status === title;
                                 return (
                                     <label
                                         key={index}

@@ -18,7 +18,7 @@ export const filterPrice = [
 // - '1000-2000': price between 1000000 and 2000000
 // - '2000-5000': price between 2000000 and 5000000
 // - 'gt-5000': price > 5000000
-export const essentialPackageFields = ['Name', 'Type', 'Time limited'];
+export const essentialPackageFields = ['Name', 'Time limit'];
 export const typeNecessity = ['Drug', 'Supply', 'Food', 'Dietary Supplement', 'Protection', 'Herbal Medicine', 'Other'];
 export const inputField1 = ['Name', 'ID number', 'Year of birth', 'Password'];
 export const inputField2 = ['Province/City', 'District/County', 'Ward/Village'];

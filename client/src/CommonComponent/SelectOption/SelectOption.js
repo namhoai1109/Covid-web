@@ -27,7 +27,7 @@ function SelectOption({ readOnly, options, value, onChange, tiny, disabled }) {
     return (
         <div
             onClick={handleShowOption}
-            className={cx('custom-select', { up: showOptions, tiny: tiny, disabled: disabled })}
+            className={cx('custom-select', { up: showOptions, tiny: tiny, disabled: disabled, readOnly: readOnly })}
         >
             <div onClick={handleShowOption} className={cx('curr-option')}>
                 {option}

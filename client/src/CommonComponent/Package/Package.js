@@ -20,6 +20,9 @@ function Package({ infos, deleteState, clickDelete, onClick }) {
                     <FontAwesomeIcon icon={faBoxArchive} />
                 </div>
                 <span className={cx('title', 'flex-center')}>{infos.name}</span>
+                <span
+                    className={cx('sub-title', 'flex-center')}
+                >{`${infos.limit_per_patient} pack(s)/${infos.time_limit.value} ${infos.time_limit.unit}`}</span>
             </div>
         </div>
     );

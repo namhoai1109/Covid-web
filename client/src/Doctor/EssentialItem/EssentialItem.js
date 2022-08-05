@@ -15,6 +15,7 @@ import { resetState } from '../redux/filterState';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDownWideShort, faFilterCircleXmark, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { sortAPI } from '~/APIservices/sortAPI';
+import StateWidget from '~/CommonComponent/StateWidget';
 
 const cx = classNames.bind(styles);
 
@@ -28,11 +29,6 @@ function EssentialItem() {
     let searchValue = useSelector((state) => state.filterState.search);
     let sortParam = useSelector((state) => state.filterState.sort);
 
-    let getListSearch = useCallback(async (value) => {
-        let res = await searchAPI('doctor/products/search', value);
-        setListProduct(res);
-    });
-
     let getListFilter = useCallback(async () => {
         let nFilterState = filterState[filterState.length - 1];
         let tmp = {
@@ -42,6 +38,11 @@ function EssentialItem() {
             let res = await filterAPI('doctor/products/filter', tmp);
             setListProduct(res);
         }
+    });
+
+    let getListSearch = useCallback(async (value) => {
+        let res = await searchAPI('doctor/products/search', value);
+        setListProduct(res);
     });
 
     let getListSort = useCallback(async () => {
@@ -100,26 +101,18 @@ function EssentialItem() {
     return (
         <div className={cx('wrapper')}>
             {filterState.length !== 0 && (
-                <div className={cx('filter-state', 'flex-center')}>
-                    <span>filtering</span>
-                    <span>
-                        <FontAwesomeIcon icon={faFilterCircleXmark} />
-                    </span>
-                    <span onClick={handleDeleteState} className={cx('delete-state', 'flex-center')}>
-                        <FontAwesomeIcon icon={faXmark} />
-                    </span>
-                </div>
+                <StateWidget
+                    title={'filtering'}
+                    icon={<FontAwesomeIcon icon={faFilterCircleXmark} />}
+                    onClick={handleDeleteState}
+                />
             )}
             {sortParam.sort_by && (
-                <div className={cx('filter-state', 'flex-center')}>
-                    <span>sorting</span>
-                    <span>
-                        <FontAwesomeIcon icon={faArrowDownWideShort} />
-                    </span>
-                    <span onClick={handleDeleteState} className={cx('delete-state', 'flex-center')}>
-                        <FontAwesomeIcon icon={faXmark} />
-                    </span>
-                </div>
+                <StateWidget
+                    title={'sorting'}
+                    icon={<FontAwesomeIcon icon={faArrowDownWideShort} />}
+                    onClick={handleDeleteState}
+                />
             )}
             <WrapContent>
                 <div className={cx('row', 'wrap-list')}>

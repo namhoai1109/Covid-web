@@ -327,7 +327,7 @@ returns: [
 ]
 
 number: 3
-description: Filter products
+description: Filter products -> Called
 route: localhost:5000/api/doctor/products/filter
 query: {
   filter_by: String (name, price, quantity_unit, type),
@@ -414,7 +414,7 @@ returns: {
 
 -----------------------------------PACKAGES RELATED--------------------------------------
 number 1:
-description: Get list of packages
+description: Get list of packages -> Called
 route: http://localhost:5000/api/doctor/packages
 query (optional): {
   sort_by: String (name, time_limit)
@@ -454,7 +454,7 @@ returns: [
 ]
 
 number: 2
-description: Search packages
+description: Search packages -> Called
 route: localhost:5000/api/doctor/packages/search
 query: {
   value: String (value for searching)
@@ -493,7 +493,7 @@ returns: [
 ]
 
 number: 3
-description: Filter packages
+description: Filter packages -> Called
 route: localhost:5000/api/doctor/packages/filter
 query: {
   filter_by: String (name, time_limit, limit_per_patient),
@@ -533,7 +533,7 @@ returns: [
 ]
 
 number: 4
-description: Register a new package
+description: Register a new package -> Called
 route: http://localhost:5000/api/doctor/packages
 method: POST
 headers: {
@@ -563,7 +563,7 @@ returns: {
 }
 
 number: 5
-description: Update a package
+description: Update a package -> Called
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
 method: PUT
@@ -594,7 +594,7 @@ returns: {
 }
 
 number: 6
-description: Delete a package
+description: Delete a package -> Called
 route: http://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
 method: DELETE
