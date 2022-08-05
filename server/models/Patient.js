@@ -27,12 +27,9 @@ const patientSchema = new mongoose.Schema({
   },
   // Format: YYYY-MM-DD
   dob: {
-    type: Date,
+    type: String,
     required: true,
-    validate: {
-      validator: (v) => v.getFullYear() > 1900 && v.getFullYear() <= new Date().getFullYear(),
-      message: (props) => ({ message: `${props.value} is not a valid date` }),
-    },
+
   },
   address: {
     type: String,
