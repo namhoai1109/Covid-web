@@ -43,30 +43,6 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
 
     let [stateSelect, setStateSelect] = useState({ listFirst: [], Province: [], District: [], Ward: [] });
 
-    // let handleChangeSel = useCallback((value, key) => {
-    //     if (key === 'Province') {
-    //         stateSelect.listFirst.forEach((item) => {
-    //             if (item.name === value) {
-    //                 let listDistrict = getListAddress(item.districts);
-    //                 setStateSelect({ ...stateSelect, District: listDistrict });
-    //             }
-    //         });
-    //     } else if (key === 'District') {
-    //         stateSelect.listFirst.forEach((item) => {
-    //             if (item.name === selectValue.Province) {
-    //                 item.districts.forEach((district) => {
-    //                     if (district.name === value) {
-    //                         let listWard = getListAddress(district.wards);
-    //                         setStateSelect({ ...stateSelect, Ward: listWard });
-    //                     }
-    //                 });
-    //             }
-    //         });
-    //     }
-    //     setSelectValue({ ...selectValue, [key]: value });
-    //     setValidateSelect({ ...validateSelect, [key]: '' });
-    // });
-
     let getListProvince = useCallback(async () => {
         let list = await getAPI('facility/provinces');
         let listProvince = getListAddress(list);

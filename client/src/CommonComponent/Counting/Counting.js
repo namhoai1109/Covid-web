@@ -4,13 +4,13 @@ import classNames from 'classnames/bind';
 import styles from './Counting.module.scss';
 const cx = classNames.bind(styles);
 
-function Counting({ value, increasing, decreasing, hideBtn }) {
+function Counting({ value, increasing, decreasing, hideBtn, minValue = 1, maxValue = 10000 }) {
     return (
         <div className={cx('wrapper', 'flex-center')}>
             <button
-                onClick={value > 1 ? decreasing : () => {}}
+                onClick={value > minValue ? decreasing : () => {}}
                 className={cx('btn', 'flex-center', {
-                    disabled: value <= 1,
+                    disabled: value <= minValue,
                     hide: hideBtn,
                 })}
             >
@@ -18,9 +18,10 @@ function Counting({ value, increasing, decreasing, hideBtn }) {
             </button>
             <span className={cx('value')}>{value}</span>
             <button
-                onClick={increasing}
+                onClick={value < maxValue ? increasing : () => {}}
                 className={cx('btn', 'flex-center', {
                     hide: hideBtn,
+                    disabled: value >= maxValue,
                 })}
             >
                 <FontAwesomeIcon icon={faPlus} />

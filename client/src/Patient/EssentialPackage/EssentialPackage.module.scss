@@ -1,0 +1,72 @@
+.wrapper {
+    width: 80%;
+    height: 90%;
+
+    .packages {
+        padding: 0 10px;
+        .package {
+            padding: 0 5px;
+            margin: 5px 0;
+        }
+    }
+
+    .submit-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 8px;
+        color: var(--primary);
+        font-size: 2.5rem;
+        padding: 6px 12px;
+        border-radius: 50px;
+        border: 2px solid var(--primary);
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: var(--primary);
+            color: white;
+        }
+    }
+
+    .input-field {
+        justify-content: start;
+        margin-top: 15px;
+        padding-left: 20px;
+        font-size: 1.7rem;
+        .label {
+            margin-right: 15px;
+        }
+
+        .ml {
+            margin-left: 15px;
+        }
+
+        .color-primary {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+    }
+
+    .list-product {
+        .details {
+            color: var(--green2);
+            font-size: 1.5rem;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
