@@ -165,7 +165,7 @@ function Header() {
 
     return (
         <HeaderLayout>
-            {!showHeader && <TaskBtn title="Back" to={paramHeader.addLink || ''} onClick={handleBack} />}
+            {!showHeader && <TaskBtn title="Back" onClick={handleBack} />}
             {showHeader && (
                 <>
                     <TaskBtn

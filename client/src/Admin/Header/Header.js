@@ -9,26 +9,11 @@ import { useLocation } from 'react-router-dom';
 import configs from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDelete } from '../redux/deleteSlice';
-import { addFacility } from '../redux/listFacilitySlice';
 import { postAPI } from '~/APIservices/postAPI';
-import { menuFacility, menuManager, formInputDoctor, formInputFacility } from '../staticVar';
+import { formInputDoctor, formInputFacility } from '../staticVar';
 import { getListFacility, initListManager } from '../fetchAPI';
 import { useState } from 'react';
 const cx = classNames.bind(styles);
-
-let getFilterSortMenu = (menu) => {
-    let filterItem = menu.map((title) => ({
-        data: title,
-        child: { data: [{ data: <SearchInput icon={<SearchIcon />} /> }] },
-    }));
-
-    let sortItem = menu.map((title) => ({
-        data: title,
-        child: { data: [{ data: 'Ascending' }, { data: 'Descending' }] },
-    }));
-
-    return [filterItem, sortItem];
-};
 
 let registerManager = async (data) => {
     try {
@@ -45,11 +30,6 @@ function Header() {
     let dispatch = useDispatch();
     let deleteState = useSelector((state) => state.delete.isShow);
     let [validate, setValidate] = useState('');
-    let [filterItem, sortItem] = getFilterSortMenu(
-        location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
-            ? menuManager
-            : menuFacility,
-    );
 
     let handleClick = async (inputVals) => {
         if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
@@ -146,13 +126,6 @@ function Header() {
                         dispatch(setDelete(!deleteState));
                     }}
                 />
-                <Menu menu={filterItem}>
-                    <TaskBtn title="Filter" />
-                </Menu>
-                <Menu menu={sortItem}>
-                    <TaskBtn title="Sort" />
-                </Menu>
-                <SearchInput stateDynamique={true} icon={<SearchIcon />} />
             </div>
         </HeaderLayout>
     );

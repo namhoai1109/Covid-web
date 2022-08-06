@@ -28,7 +28,9 @@ export const doctorRoutes = {
 
 export const patientRoutes = {
     essentialPackage: '/essentialpackage',
-    personalInformation: '/personalinformation',
+    infoPackage: '/info',
+    infoProduct: '/infoproduct',
+    personalInformation: '/information',
     managementHistory: '/managementhistory',
     paymentHistory: '/paymenthistory',
     bankAccount: '/bankaccount',
