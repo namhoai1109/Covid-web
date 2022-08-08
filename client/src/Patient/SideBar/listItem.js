@@ -1,6 +1,5 @@
 import { faBoxArchive, faUserGear } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { MaskIcon } from '~/CommonComponent/icons';
 import configs from '~/config';
 
 let listItem = [
