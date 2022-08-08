@@ -9,7 +9,6 @@ import ListItem from '~/CommonComponent/ListItem';
 import WrapContent from '~/CommonComponent/WrapContent';
 import configs from '~/config';
 import { setCurr } from '../redux/currentNecessity';
-import { deleteCurrentPackage } from '../redux/currentPackage';
 import { packageFields } from '../staticVar';
 import styles from './EssentialPackage.module.scss';
 
@@ -72,10 +71,10 @@ function InfoPackage() {
     return (
         <div className={cx('wrapper')}>
             <WrapContent>
-                <button className={cx('submit-btn', 'flex-center')}>
+                <a href="http://localhost:2000/" target="_blank" className={cx('submit-btn', 'flex-center')}>
                     <span className={cx('title')}>Pay</span>
                     <FontAwesomeIcon icon={faCashRegister} />
-                </button>
+                </a>
 
                 <div className={cx('input-field', 'flex-center')}>
                     <span className={cx('label')}>Name: </span>
