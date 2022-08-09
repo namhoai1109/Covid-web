@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const MONGO_URI = process.env.MANAGEMENT_DB_URI;
+const MONGO_URI = process.env.PAYMENT_SYSTEM_DB_URI;
 
 const connectDB = async () => {
   try {
