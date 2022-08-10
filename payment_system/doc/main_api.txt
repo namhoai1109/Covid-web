@@ -1,6 +1,6 @@
 number: 1
 description: login
-route: http://localhost:9000/api/login
+route: http://localhost:9000/api/auth/login
 method: POST
 body: {
   username: String,
@@ -12,7 +12,7 @@ returns: {
 
 number: 2
 description: Get account information
-route: http://localhost:9000/api/info/id=:id
+route: http://localhost:9000/api/main/info/id=:id
 method: GET
 returns: {
   linked: Boolean,
@@ -24,7 +24,7 @@ returns: {
 
 number: 3
 description: Make deposit
-route: http://localhost:9000/api/deposit/id=:id
+route: http://localhost:9000/api/main/deposit/id=:id
 method: POST
 body: {
   amount: Number

@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const controller = require('../controllers/main.controller');
 
-router.post('/login', controller.login);
 router.get('/info/id=:id', controller.getAccountInfo);
 router.post('/deposit/id=:id', controller.makeDeposit);
 router.post('/pay/id=:id', controller.makePayment);
