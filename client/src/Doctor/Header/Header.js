@@ -106,7 +106,22 @@ let checkRoute = (location) => {
             return true;
         case configs.mainRoutes.doctor + configs.doctorRoutes.paymentManagement:
             return true;
-        case configs.mainRoutes.doctor + configs.doctorRoutes.statistics:
+        default:
+            return false;
+    }
+};
+
+let noBack = (location) => {
+    switch (location) {
+        case configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.covidPatient:
+            return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.product:
+            return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.package:
+            return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.status:
+            return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.payment:
             return true;
         default:
             return false;
@@ -118,9 +133,9 @@ function Header() {
     let navigate = useNavigate();
     let dispatch = useDispatch();
     let deleteState = useSelector((state) => state.deleteState);
-    //let [urlSearch, setUrlSearch] = useState('');
     let [paramHeader, setParamHeader] = useState({});
 
+    let [hideBack, setHideBack] = useState();
     let [showHeader, setShowHeader] = useState();
     useEffect(() => {
         if (checkRoute(location.pathname)) {
@@ -128,6 +143,8 @@ function Header() {
         } else {
             setShowHeader(false);
         }
+
+        setHideBack(noBack(location.pathname));
     }, [location.pathname]);
 
     let getDataField = useCallback((location) => {
@@ -165,7 +182,7 @@ function Header() {
 
     return (
         <HeaderLayout>
-            {!showHeader && <TaskBtn title="Back" onClick={handleBack} />}
+            {!showHeader && !hideBack && <TaskBtn title="Back" onClick={handleBack} />}
             {showHeader && (
                 <>
                     <TaskBtn
