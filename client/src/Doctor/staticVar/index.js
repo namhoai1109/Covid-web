@@ -1,3 +1,5 @@
+import configs from '~/config';
+
 export const patientFields = ['ID number', 'Name', 'DoB', 'Status', 'Facility'];
 export const patientSortFilter = ['ID number', 'Name', 'DoB', 'Status'];
 
@@ -37,3 +39,26 @@ export const dataAddress = {
 };
 
 export const Status = ['F0', 'F1', 'F2', 'F3'];
+
+export const NavStatistic = [
+    {
+        name: 'Patient',
+        path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.covidPatient,
+    },
+    {
+        name: 'Product',
+        path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.product,
+    },
+    {
+        name: 'Package',
+        path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.package,
+    },
+    {
+        name: 'Status',
+        path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.status,
+    },
+    {
+        name: 'Payment',
+        path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.payment,
+    },
+];

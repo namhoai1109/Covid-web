@@ -35,3 +35,11 @@ export const patientRoutes = {
     paymentHistory: '/paymenthistory',
     bankAccount: '/bankaccount',
 };
+
+export const statisticsRoutes = {
+    covidPatient: '/covidpatient',
+    status: '/status',
+    product: '/product',
+    package: '/package',
+    payment: '/payment',
+};
