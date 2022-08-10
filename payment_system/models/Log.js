@@ -11,7 +11,7 @@ const logSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["deposit", "payment"],
+    enum: ["login", "deposit", "payment"],
   },
   description: {
     type: String,

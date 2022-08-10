@@ -6,6 +6,7 @@ const cors = require("cors");
 // Models
 const Account = require("./models/Account");
 // Routers
+const authRouter = require("./routes/auth.route");
 const mainRouter = require("./routes/main.route");
 
 // Connect to database
@@ -17,7 +18,8 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api', mainRouter);
+app.use("/api/auth", authRouter);
+app.use('/api/main', mainRouter);
 
 // Initialize admin account on first setup
 const initAdmin = async () => {
