@@ -1,39 +1,122 @@
 import { faIdCardClip, faLock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
+import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { postAPI } from '~/APIservices/postAPI';
 import InputWidget from '~/CommonComponent/InputWidget';
 import styles from './Login.module.scss';
 
 const cx = classNames.bind(styles);
 
 function Login() {
+    let [showPassword, setShowPassword] = useState([false, false]);
+    let [inputVals, setInputVals] = useState({
+        username: '',
+        password: '',
+        password_again: '',
+    });
+    let [error, setError] = useState('');
+    let [isValidAccount, setIsValidAccount] = useState(false);
+    let navigate = useNavigate();
+
+    let checkUsername = useCallback(async () => {
+        let res = await postAPI('auth/check', {
+            username: inputVals.username,
+        });
+
+        console.log(res);
+        if (res === 'Invalid username') {
+            setError(res);
+            setIsValidAccount(false);
+        } else {
+            if (res.message) {
+                setShowPassword([true, false]);
+            } else {
+                setShowPassword([true, true]);
+            }
+            setIsValidAccount(true);
+        }
+    });
+
+    let handleChangeID = useCallback((e) => {
+        setError('');
+        setShowPassword([false, false]);
+        setInputVals((prev) => ({
+            ...prev,
+            username: e.target.value,
+        }));
+    });
+
+    let handleSubmit = useCallback(async () => {
+        if (!isValidAccount) {
+            checkUsername();
+        } else {
+            let isSuccess = false;
+            if (!showPassword[1]) {
+                let res = await postAPI('auth/login', {
+                    username: inputVals.username,
+                    password: inputVals.password,
+                });
+                console.log(res);
+                if (res === 'Invalid username or password') {
+                    setError(res);
+                    isSuccess = false;
+                } else if (res.message === 'Logged in successfully') {
+                    localStorage.setItem('ID', JSON.stringify(inputVals.username));
+                    navigate('/dashboard', { replace: true });
+                }
+            }
+        }
+    });
+
+    let handlePass = useCallback((e) => {
+        setError('');
+        setInputVals((prev) => ({
+            ...prev,
+            password: e.target.value,
+        }));
+    });
+
+    let handleKeyDown = useCallback((e) => {
+        if (e.key === 'Enter') handleSubmit();
+    });
+
     return (
         <div className={cx('fit-screen', 'flex-center')}>
             <div className={cx('login-box', 'flex-center')}>
                 <span className={cx('title')}>PAYMENT SYSTEM</span>
-                <div className={cx('input-field')}>
-                    <div className={cx('flex-center')}>
-                        <FontAwesomeIcon className={cx('icon')} icon={faIdCardClip} />
-                        <InputWidget placeholder="enter ID number" />
-                    </div>
-                    <span className={cx('validate')}></span>
+                <div className={cx('input-field', 'flex-center')}>
+                    <FontAwesomeIcon className={cx('icon')} icon={faIdCardClip} />
+                    <InputWidget
+                        value={inputVals.username}
+                        onKeyDown={handleKeyDown}
+                        onChange={handleChangeID}
+                        placeholder="enter ID number"
+                    />
                 </div>
-                <div className={cx('input-field')}>
-                    <div className={cx('flex-center')}>
+                {showPassword[0] && (
+                    <div className={cx('input-field', 'flex-center')}>
                         <FontAwesomeIcon className={cx('icon')} icon={faLock} />
-                        <InputWidget placeholder="enter password" />
+                        <InputWidget
+                            onChange={handlePass}
+                            value={inputVals.password}
+                            type="password"
+                            placeholder="enter password"
+                            onKeyDown={handleKeyDown}
+                        />
                     </div>
-                    <span className={cx('validate')}></span>
-                </div>
-                <div className={cx('input-field')}>
-                    <div className={cx('flex-center')}>
+                )}
+                {showPassword[1] && (
+                    <div className={cx('input-field', 'flex-center')}>
                         <FontAwesomeIcon className={cx('icon')} icon={faLock} />
                         <InputWidget placeholder="enter password again" />
                     </div>
-                    <span className={cx('validate')}></span>
-                </div>
-
-                <button className={cx('submit-btn')}>Sign In</button>
+                )}
+                <span className={cx('error', 'flex-center')}>{error}</span>
+                <button onClick={handleSubmit} className={cx('submit-btn')}>
+                    Sign In
+                </button>
             </div>
         </div>
     );
