@@ -1,3 +1,4 @@
+require("dotenv").config();
 const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
 const Facility = require("../models/Facility");
@@ -6,6 +7,7 @@ const Account = require("../models/Account");
 const Package = require("../models/Package");
 const PackageOrder = require("../models/PackageOrder");
 const bcrypt = require("bcryptjs");
+const axios = require("axios");
 
 exports.getLogs = async (req, res) => {
   try {
@@ -120,6 +122,41 @@ exports.buyPackage = async (req, res) => {
     await packageOrder.save();
 
     res.status(200).send({ message: "Package ordered successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
+exports.linkAccount = async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.idNumber });
+    if (!account) {
+      return res.status(500).send({ message: "Account not found in the database" });
+    }
+
+    const PSURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`
+    axios({
+      method: 'POST',
+      url: PSURL,
+      headers: {},
+      data: {
+        username: account.username,
+        password: 'placeholder',
+      }
+    })
+      .then(function (response) {
+        console.log(response.data);
+        res.status(200).send({ message: "Account linked successfully" });
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.status(500).send({ message: error.message });
+      });
+
+    // Update account linked state
+    account.linked = true;
+    await account.save();
+
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

@@ -20,7 +20,7 @@ const accountSchema = new mongoose.Schema({
   },
   linked: {
     type: Boolean,
-    default: false,
+    default: true,
   }
 });
 

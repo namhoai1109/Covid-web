@@ -76,3 +76,16 @@ body: {
 returns: {
   message: String
 }
+
+number: 5
+description: Link account to payment system
+route: http://localhost:5000/api/patient/link
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}

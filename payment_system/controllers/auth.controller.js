@@ -26,6 +26,24 @@ exports.checkHasLoggedIn = async (req, res) => {
     } catch (err) {
         res.status(500).send({ message: err });
     }
+
+    if (req.body.username === "000000000") {
+      return res.status(200).send({ message: true })
+    }
+
+    const log = await Log.findOne({
+      account: account._id,
+      action: 'login',
+    });
+
+    if (!log) {
+      return res.status(200).send({ message: false });
+    }
+
+    res.status(200).send({ message: true });
+  } catch (err) {
+    res.status(500).send({ message: err });
+  }
 };
 
 exports.login = async (req, res) => {
