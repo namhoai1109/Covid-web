@@ -3,8 +3,17 @@ import styles from './InputWidget.module.scss';
 
 const cx = classNames.bind(styles);
 
-function InputWidget({ type = 'text', placeholder = '', value = '', onChange = () => {} }) {
-    return <input className={cx('input')} type={type} placeholder={placeholder} value={value} onChange={onChange} />;
+function InputWidget({ type = 'text', placeholder = '', value = '', onKeyDown = () => {}, onChange = () => {} }) {
+    return (
+        <input
+            onKeyDown={onKeyDown}
+            className={cx('input')}
+            type={type}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+        />
+    );
 }
 
 export default InputWidget;

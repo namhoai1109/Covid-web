@@ -1,4 +1,4 @@
-import { mainRoutes, adminRoutes, subRoute, doctorRoutes, patientRoutes } from './routes';
+import { mainRoutes, adminRoutes, subRoute, doctorRoutes, patientRoutes, statisticsRoutes } from './routes';
 
 const configs = {
     mainRoutes,
@@ -6,6 +6,7 @@ const configs = {
     doctorRoutes,
     patientRoutes,
     subRoute,
+    statisticsRoutes,
 };
 
 export default configs;

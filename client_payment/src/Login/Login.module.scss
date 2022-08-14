@@ -35,4 +35,8 @@
             cursor: pointer;
         }
     }
+
+    .error {
+        color: var(--attention-color);
+    }
 }
