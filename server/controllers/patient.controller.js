@@ -83,7 +83,7 @@ exports.buyPackage = async (req, res) => {
       }
     }
 
-    // Check limit per patient
+    // Check quantity limit per patient
     const packageLimit = package.limit_per_patient;
     const orders = await PackageOrder.find({
       buyer: patient._id,
@@ -113,6 +113,7 @@ exports.buyPackage = async (req, res) => {
       });
     })
 
+    // Create a new package order
     const packageOrder = new PackageOrder({
       buyer: patient._id,
       package: package._id,
