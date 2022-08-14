@@ -3,6 +3,9 @@ const express = require("express");
 const connectDB = require("./database/database");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
+const path = require("path");
+const fs = require("fs");
+const https = require("https");
 // Import routes
 const authRouter = require("./routes/auth.route");
 const adminRouter = require("./routes/admin.route");
@@ -20,6 +23,12 @@ const Admin = require("./models/Admin");
 const app = express();
 app.use(cors());
 
+// SSL certificate
+const httpsOptions = {
+  cert: fs.readFileSync(path.join(__dirname, 'ssl', 'cert.pem')),
+  key: fs.readFileSync(path.join(__dirname, 'ssl', 'key.pem')),
+}
+
 connectDB();
 
 // Middleware
@@ -34,6 +43,10 @@ app.use("/api/admin", authorizeUser("admin"), adminRouter);
 app.use("/api/doctor", authorizeUser("doctor"), doctorRouter);
 app.use("/api/facility", authorizeUser("admin"), facilityRouter);
 app.use("/api/patient", authorizeUser("patient"), patientRouter);
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+})
 
 // Initialize admin account on first setup
 const initAdmin = async () => {
@@ -68,3 +81,10 @@ app.listen(PORT, () => {
   initAdmin();
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+// https.createServer(httpsOptions, app).listen(PORT, () => {
+//   initAdmin();
+//   console.log(`Server is running on https://localhost:${PORT}`);
+// });
+
+

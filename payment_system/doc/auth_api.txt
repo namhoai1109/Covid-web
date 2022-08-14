@@ -1,0 +1,23 @@
+number: 1
+description: login
+route: https://localhost:9000/api/auth/login
+method: POST
+body: {
+  username: String,
+  password: String
+}
+returns: {
+  message: String,
+}
+
+number: 2
+description: check has logged in before
+route: https://localhost:9000/api/auth/check
+method: POST
+body: {
+  username: String
+}
+returns: {
+  message: Boolean
+  (if username is not found, returns String)
+}

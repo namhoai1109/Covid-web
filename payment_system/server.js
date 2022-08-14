@@ -3,6 +3,8 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const connectDB = require("./database/database");
 const cors = require("cors");
+const https = require("https");
+const fs = require("fs");
 // Models
 const Account = require("./models/Account");
 // Routers
@@ -40,9 +42,18 @@ const initAdmin = async () => {
   }
 }
 
+const httpsOptions = {
+  key: fs.readFileSync("./ssl/key.pem"),
+  cert: fs.readFileSync("./ssl/cert.pem"),
+}
 
 const PORT = process.env.PAYMENT_SYSTEM_PORT || 9000;
-app.listen(PORT, () => {
+https.createServer(httpsOptions, app).listen(PORT, () => {
   initAdmin();
-  console.log(`Server is running on port http://localhost:${PORT}`);
-})
+  console.log(`Server is running on https://localhost:${PORT}`);
+});
+
+// app.listen(PORT, () => {
+//   initAdmin();
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// })

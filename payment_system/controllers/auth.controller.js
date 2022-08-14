@@ -15,7 +15,7 @@ exports.checkHasLoggedIn = async (req, res) => {
 
     const log = await Log.findOne({
       account: account._id,
-      action: `login`,
+      action: 'login',
     });
 
     if (!log) {

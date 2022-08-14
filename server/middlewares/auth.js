@@ -35,9 +35,73 @@ const authorizeUser = function (...roles) {
         res.status(400).send({ message: "Invalid authorization header" });
       }
     } catch (err) {
-      res.status(400).send(err);
+      res.status(500).send({ message: err.message });
     }
   };
 };
 
-module.exports = { authorizeUser };
+// If account is not linked to payment system, return 401, to prevent user from buying without linking
+const checkLinkedAccount = async function (req, res, next) {
+  try {
+    if (req.headers?.authorization?.startsWith("Bearer ")) {
+      // Compare the token with the secret
+      const token = req.headers.authorization.split("Bearer ")[1];
+      const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+      const idNumber = verified._id;
+      const account = await Account.findOne({ username: idNumber });
+
+      // If the id in the token is not found in the database, return 401
+      if (!account) {
+        return res
+          .status(401)
+          .send({ message: "Requesting account not exist!" });
+      }
+
+      if (!account.linked) {
+        return res.status(401).send({
+          message: "Your account is not linked to payment system, please link your account to payment system",
+        })
+      }
+
+      req.idNumber = idNumber;
+      next();
+    }
+  }
+  catch (err) {
+    res.status(400).send(err);
+  }
+}
+
+// If account is linked to payment system, return 401, to prevent user from linking again
+const checkPaymentAccountExist = async function (req, res, next) {
+  try {
+    if (req.headers?.authorization?.startsWith("Bearer ")) {
+      // Compare the token with the secret
+      const token = req.headers.authorization.split("Bearer ")[1];
+      const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+      const idNumber = verified._id;
+      const account = await Account.findOne({ username: idNumber });
+
+      // If the id in the token is not found in the database, return 401
+      if (!account) {
+        return res
+          .status(401)
+          .send({ message: "Requesting account not exist!" });
+      }
+
+      if (account.linked) {
+        return res.status(400).send({
+          message: "Your account is already linked to payment system",
+        })
+      }
+
+      req.idNumber = idNumber;
+      next();
+    }
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
+
+module.exports = { authorizeUser, checkLinkedAccount, checkPaymentAccountExist };
