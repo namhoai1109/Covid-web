@@ -17,16 +17,8 @@ router.delete("/patients/id=:id", patientController.deletePatient);
 router.get("/products", productController.getAllProducts);
 router.get("/products/search", productController.searchProducts);
 router.get("/products/filter", productController.filterProducts);
-router.post(
-    "/products",
-    uploadFile("images", "array", 5),
-    productController.registerProduct,
-);
-router.put(
-    "/products/id=:id",
-    uploadFile("images", "array", 5),
-    productController.updateProduct,
-);
+router.post("/products", uploadFile("images", "array", 5), productController.registerProduct);
+router.put("/products/id=:id", uploadFile("images", "array", 5), productController.updateProduct);
 router.delete("/products/id=:id", productController.deleteProduct);
 
 // Packages related

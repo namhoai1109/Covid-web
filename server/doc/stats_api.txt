@@ -1,0 +1,19 @@
+number: 1
+description: Get status stats
+route: https://localhost:5000/api/stats/status
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    date: String
+    F0: Number,
+    F1: Number,
+    F2: Number,
+    F3: Number,
+  }
+]

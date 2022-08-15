@@ -61,8 +61,7 @@ exports.registerAccount = async (req, res) => {
     // Update status statistic
     await StatusStats.updateOne(
       {
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
+        date: new Date().toISOString().slice(0, 10)
       },
       {
         $inc: { [patient.status]: 1 },
@@ -239,8 +238,7 @@ exports.updatePatient = async (req, res) => {
     if (step !== 0) {
       await StatusStats.updateOne(
         {
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
+          date: new Date().toISOString().slice(0, 10),
         },
         {
           $inc: {
@@ -300,8 +298,7 @@ exports.updatePatient = async (req, res) => {
         if (newStatusNumber !== statusNumber) {
           await StatusStats.updateOne(
             {
-              month: new Date().getMonth() + 1,
-              year: new Date().getFullYear(),
+              date: new Date().toISOString().slice(0, 10),
             },
             {
               $inc: {
@@ -376,8 +373,7 @@ exports.deletePatient = async (req, res) => {
     // Decrement current count of status statistics
     await StatusStats.updateOne(
       {
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
+        date: new Date().toISOString().slice(0, 10),
       },
       {
         $inc: {
