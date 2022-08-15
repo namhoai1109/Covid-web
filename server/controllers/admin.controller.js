@@ -1,5 +1,6 @@
 const Account = require("../models/Account");
 const Doctor = require("../models/Doctor");
+const Log = require("../models/Log");
 const bcrypt = require("bcryptjs");
 
 // Register doctors
@@ -71,3 +72,15 @@ exports.deleteAccount = async (req, res) => {
     res.status(400).send({ message: err.message });
   }
 };
+
+// Get doctor logs
+exports.getLogs = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    const logs = await Log.find({ account: doctor.account }).sort({ time: -1 });
+
+    res.send(logs);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
