@@ -32,7 +32,7 @@ function NecessityItem({ infos, showDelete, clickDelete = () => {}, onClick = ()
                     {infos.images.map((linkImg, index) => {
                         return (
                             <div key={index} className={cx('img')}>
-                                <img src={`http://localhost:5000/${linkImg}`} />
+                                <img src={`https://localhost:5000/${linkImg}`} />
                             </div>
                         );
                     })}

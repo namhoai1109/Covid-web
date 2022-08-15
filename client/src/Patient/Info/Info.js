@@ -3,15 +3,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useCallback, useEffect, useState } from 'react';
 import { getAPI } from '~/APIservices/getAPI';
+import { putNoDataAPI } from '~/APIservices/putAPI';
 import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './Info.module.scss';
 const cx = classNames.bind(styles);
 
 function Info() {
     let [info, setInfo] = useState(null);
+    let [linkState, setLinkState] = useState(false);
 
     let getInfo = useCallback(async () => {
         let info = await getAPI('patient/info');
+        console.log(info);
         let tmp = null;
         if (info) {
             tmp = {
@@ -24,11 +27,19 @@ function Info() {
             };
         }
         setInfo(tmp);
+        setLinkState(info.account.linked);
     });
 
     useEffect(() => {
         getInfo();
     }, []);
+
+    let handleLink = useCallback(async () => {
+        if (!linkState) {
+            let res = await putNoDataAPI('patient/link');
+            console.log(res);
+        }
+    });
 
     return (
         <div className={cx('wrapper')}>
@@ -43,8 +54,9 @@ function Info() {
                         );
                     })}
                 <div className={cx('link-payment', 'flex-center')}>
-                    <a href="http://localhost:2000/" target="_blank" className={cx('title')}>
-                        Link to payment system
+                    {/* href="http://localhost:2000/" target="_blank" */}
+                    <a onClick={handleLink} className={cx('title')}>
+                        {linkState ? 'Your account is linked to payment system' : 'Link to payment system'}
                     </a>
                     <FontAwesomeIcon className={cx('icon')} icon={faAnglesRight} />
                 </div>

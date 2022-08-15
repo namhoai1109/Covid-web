@@ -8,21 +8,25 @@ import PackageRoutes from './EssentialPackage';
 import configs from '~/config';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Patient() {
     let navigate = useNavigate();
-    let localtion = useLocation();
 
     useEffect(() => {
         let Token = JSON.parse(localStorage.getItem('Token'));
         if (Token === null || Token.role !== 'patient') {
             navigate(-1, { replace: true });
         }
+
+        toast.warn('Nap tien di con di lon!!!');
     }, []);
 
     return (
         <Provider store={store}>
             <Layout Header={Header} Sidebar={SideBar}>
+                <ToastContainer />
                 <Routes>
                     <Route
                         index

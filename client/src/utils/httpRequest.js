@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const request = axios.create({
-    baseURL: 'http://localhost:5000/api/',
+    baseURL: 'https://localhost:5000/api/',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -87,6 +87,23 @@ export const put = async (url, data, token) => {
                 Authorization: `Bearer ${token}`,
             },
         });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const putNoData = async (url, token) => {
+    try {
+        let res = await request.put(
+            url,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        );
         return res.data;
     } catch (error) {
         return error;

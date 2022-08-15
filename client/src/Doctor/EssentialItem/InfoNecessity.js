@@ -216,7 +216,7 @@ function InfoNecessity({ viewOnly }) {
                 </div>
                 <div className={cx('flex-center', 'list-img')}>
                     {imgs.map((img, index) => {
-                        let url = typeof img === 'string' ? `http://localhost:5000/${img}` : URL.createObjectURL(img);
+                        let url = typeof img === 'string' ? `https://localhost:5000/${img}` : URL.createObjectURL(img);
                         return (
                             <div key={index} className={cx('img-item')}>
                                 <div className={cx('img')}>
