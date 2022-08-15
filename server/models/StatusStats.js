@@ -9,7 +9,10 @@ const statusSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
+  date: {
+    type: String,
+    required: true,
+  },
   F0: {
     type: Number,
     required: true,

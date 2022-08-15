@@ -12,6 +12,7 @@ const adminRouter = require("./routes/admin.route");
 const doctorRouter = require("./routes/doctor.route");
 const facilityRouter = require("./routes/facility.route");
 const patientRouter = require("./routes/patient.route");
+const statsRouter = require("./routes/stats.route");
 
 // Middlewares
 const { authorizeUser } = require("./middlewares/auth");
@@ -43,6 +44,7 @@ app.use("/api/admin", authorizeUser("admin"), adminRouter);
 app.use("/api/doctor", authorizeUser("doctor"), doctorRouter);
 app.use("/api/facility", authorizeUser("admin"), facilityRouter);
 app.use("/api/patient", authorizeUser("patient"), patientRouter);
+app.use("/api/stats", authorizeUser("doctor"), statsRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
