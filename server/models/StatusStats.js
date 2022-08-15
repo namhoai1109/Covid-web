@@ -1,14 +1,6 @@
 const mongoose = require("mongoose");
 
 const statusSchema = new mongoose.Schema({
-  month: {
-    type: String,
-    required: true,
-  },
-  year: {
-    type: String,
-    required: true,
-  },
   date: {
     type: String,
     required: true,
