@@ -79,14 +79,14 @@ const initAdmin = async () => {
 
 // Start the server
 const PORT = process.env.MANAGEMENT_SERVER_PORT || 5000;
-app.listen(PORT, () => {
-  initAdmin();
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-
-// https.createServer(httpsOptions, app).listen(PORT, () => {
+// app.listen(PORT, () => {
 //   initAdmin();
-//   console.log(`Server is running on https://localhost:${PORT}`);
+//   console.log(`Server is running on http://localhost:${PORT}`);
 // });
+
+https.createServer(httpsOptions, app).listen(PORT, () => {
+  initAdmin();
+  console.log(`Server is running on https://localhost:${PORT}`);
+});
 
 

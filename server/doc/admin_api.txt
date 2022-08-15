@@ -74,6 +74,20 @@ return {
   message: String
 }
 
+number: 5
+description: Get doctors log
+route: localhost:5000/api/admin/doctors/id=:id/logs
+params: database id of doctor
+eg: localhost:5000/api/admin/doctors/id=62d624944ba3d2fc45b2e894/logs
+method: GET
+returns: [
+  _id: String,
+  account: String,
+  action: String,
+  description: String,
+  time: String
+]
+
 ------------------------------FACILITIES RELATED------------------------------------
 number: 1
 description: Create Facility -> Called
