@@ -26,8 +26,8 @@ app.use(cors());
 
 // SSL certificate
 const httpsOptions = {
-    cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem")),
-    key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem")),
+  key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
 };
 
 connectDB();
@@ -47,33 +47,33 @@ app.use("/api/patient", authorizeUser("patient"), patientRouter);
 app.use("/api/stats", authorizeUser("doctor"), statsRouter);
 
 app.get("/", (req, res) => {
-    res.send("Hello World!");
+  res.send("Hello World!");
 });
 
 // Initialize admin account on first setup
 const initAdmin = async () => {
-    try {
-        const account = await Account.find();
-        if (account.length === 0) {
-            // Create admin acount
-            const password = "admin";
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const adminAccount = new Account({
-                username: "000000000",
-                password: hashedPassword,
-                role: "admin",
-            });
-            await adminAccount.save();
+  try {
+    const account = await Account.find();
+    if (account.length === 0) {
+      // Create admin acount
+      const password = "admin";
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const adminAccount = new Account({
+        username: "000000000",
+        password: hashedPassword,
+        role: "admin",
+      });
+      await adminAccount.save();
 
-            // Create admin
-            const admin = new Admin({
-                account: adminAccount._id,
-            });
-            await admin.save();
-        }
-    } catch (err) {
-        console.log(err.message);
+      // Create admin
+      const admin = new Admin({
+        account: adminAccount._id,
+      });
+      await admin.save();
     }
+  } catch (err) {
+    console.log(err.message);
+  }
 };
 
 // Start the server
@@ -84,6 +84,6 @@ const PORT = process.env.MANAGEMENT_SERVER_PORT || 5000;
 // });
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 https.createServer(httpsOptions, app).listen(PORT, () => {
-    initAdmin();
-    console.log(`Server is running on https://localhost:${PORT}`);
+  initAdmin();
+  console.log(`Server is running on https://localhost:${PORT}`);
 });
