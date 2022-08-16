@@ -10,13 +10,13 @@ import store from './redux/store';
 
 function Admin() {
     let navigate = useNavigate();
-    
+
     useEffect(() => {
-        let Token = JSON.parse(localStorage.getItem('Token'))
+        let Token = JSON.parse(localStorage.getItem('Token'));
         if (Token === null || Token.role !== 'admin') {
             navigate(-1, { replace: true });
         }
-    }, [])
+    }, []);
 
     return (
         <Provider store={store}>
@@ -28,7 +28,9 @@ function Admin() {
                     })}
                     <Route
                         path="/"
-                        element={<Navigate to={configs.mainRoutes.admin + configs.adminRoutes.doctorManagement} replace />}
+                        element={
+                            <Navigate to={configs.mainRoutes.admin + configs.adminRoutes.doctorManagement} replace />
+                        }
                     />
                 </Routes>
             </Layout>

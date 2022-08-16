@@ -39,21 +39,18 @@ function Login() {
         }
     });
 
-    let handleChangeID = useCallback((e) => {
-        setError('');
-        setShowPassword([false, false]);
-        setInputVals((prev) => ({
-            ...prev,
-            username: e.target.value,
-        }));
-    });
-
     let handleSubmit = useCallback(async () => {
         if (!isValidAccount) {
             checkUsername();
         } else {
             let isSuccess = false;
-            if (!showPassword[1]) {
+            if (showPassword[1]) {
+                if (inputVals.password !== inputVals.password_again) {
+                    setError('Password not match');
+                }
+            }
+
+            if (!showPassword[1] || isSuccess) {
                 let res = await postAPI('auth/login', {
                     username: inputVals.username,
                     password: inputVals.password,
@@ -61,7 +58,6 @@ function Login() {
                 console.log(res);
                 if (res === 'Invalid username or password') {
                     setError(res);
-                    isSuccess = false;
                 } else if (res.message === 'Logged in successfully') {
                     localStorage.setItem('ID', JSON.stringify(inputVals.username));
                     navigate('/dashboard', { replace: true });
@@ -70,11 +66,29 @@ function Login() {
         }
     });
 
+    let handleChangeID = useCallback((e) => {
+        setError('');
+        setShowPassword([false, false]);
+        setInputVals((prev) => ({
+            ...prev,
+            username: e.target.value,
+        }));
+        setIsValidAccount(false);
+    });
+
     let handlePass = useCallback((e) => {
         setError('');
         setInputVals((prev) => ({
             ...prev,
             password: e.target.value,
+        }));
+    });
+
+    let handlePassAgain = useCallback((e) => {
+        setError('');
+        setInputVals((prev) => ({
+            ...prev,
+            password_again: e.target.value,
         }));
     });
 
@@ -110,7 +124,13 @@ function Login() {
                 {showPassword[1] && (
                     <div className={cx('input-field', 'flex-center')}>
                         <FontAwesomeIcon className={cx('icon')} icon={faLock} />
-                        <InputWidget placeholder="enter password again" />
+                        <InputWidget
+                            value={inputVals.password_again}
+                            onChange={handlePassAgain}
+                            type="password"
+                            onKeyDown={handleKeyDown}
+                            placeholder="enter password again"
+                        />
                     </div>
                 )}
                 <span className={cx('error', 'flex-center')}>{error}</span>

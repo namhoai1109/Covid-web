@@ -9,6 +9,7 @@ export const subRoute = '/*';
 
 export const adminRoutes = {
     doctorManagement: '/doctormanagement',
+    historyDoctor: '/history',
     facilityManagement: '/facilitymanagement',
 };
 
@@ -31,8 +32,9 @@ export const patientRoutes = {
     infoPackage: '/info',
     infoProduct: '/infoproduct',
     personalInformation: '/information',
-    managementHistory: '/managementhistory',
-    paymentHistory: '/paymenthistory',
+    history: '/history',
+    managementHistory: '/management',
+    paymentHistory: '/payment',
     bankAccount: '/bankaccount',
 };
 
