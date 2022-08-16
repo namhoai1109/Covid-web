@@ -6,7 +6,6 @@ import classNames from 'classnames/bind';
 import styles from './Wrapper.module.scss';
 import { memo, useCallback, useEffect, useState } from 'react';
 import SelectOption from '../SelectOption';
-import { dataAddress } from '~/Admin/staticVar';
 import { getAPI } from '~/APIservices/getAPI';
 
 const cx = classNames.bind(styles);

@@ -11,9 +11,6 @@ import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-const menuManager = ['ID', 'Name', 'Year of Birth'];
-const menuFacility = ['Name', 'Max no. patient', 'no. patient'];
-
 let getFilterSortMenu = (menu) => {
     let filterItem = menu.map((title) => ({
         data: title,
@@ -28,27 +25,30 @@ let getFilterSortMenu = (menu) => {
     return [filterItem, sortItem];
 };
 
-let checkRoute = (location) => {
-    switch (location) {
-        case configs.mainRoutes.patient + configs.patientRoutes.essentialPackage:
-            return true;
-        case configs.mainRoutes.patient + configs.patientRoutes.personalInformation:
-            return true;
-        default:
-            return false;
-    }
-};
-
 function Header() {
     let location = useLocation();
     let navigate = useNavigate();
     let [showHeader, setShowHeader] = useState();
+    let [showBack, setShowBack] = useState();
 
     useEffect(() => {
-        if (checkRoute(location.pathname)) {
+        if (location.pathname === configs.mainRoutes.patient + configs.patientRoutes.essentialPackage) {
             setShowHeader(true);
         } else {
             setShowHeader(false);
+        }
+
+        if (
+            location.pathname ===
+                configs.mainRoutes.patient +
+                    configs.patientRoutes.essentialPackage +
+                    configs.patientRoutes.infoPackage ||
+            location.pathname ===
+                configs.mainRoutes.patient + configs.patientRoutes.essentialPackage + configs.patientRoutes.infoProduct
+        ) {
+            setShowBack(true);
+        } else {
+            setShowBack(false);
         }
     }, [location.pathname]);
 
@@ -58,7 +58,7 @@ function Header() {
 
     return (
         <HeaderLayout>
-            {!showHeader ? <TaskBtn title="Back" onClick={handleBack} /> : <span></span>}
+            {!showHeader && showBack ? <TaskBtn title="Back" onClick={handleBack} /> : <span></span>}
             {showHeader && (
                 <div className={cx('list_btn')}>
                     <Menu menu={[]}>

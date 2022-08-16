@@ -6,6 +6,8 @@ import listItem from './listItem';
 import classNames from 'classnames/bind';
 import styles from './SideBar.module.scss';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -31,7 +33,7 @@ function SideBar() {
                 </div>
                 <SidebarItem
                     title={'Sign out'}
-                    icon={<SignOutIcon width="3rem" height="3rem" />}
+                    icon={<FontAwesomeIcon icon={faRightFromBracket} />}
                     onClick={handleSignOut}
                 />
             </div>
