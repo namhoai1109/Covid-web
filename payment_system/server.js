@@ -47,6 +47,7 @@ const httpsOptions = {
   cert: fs.readFileSync("./ssl/cert.pem"),
 }
 
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const PORT = process.env.PAYMENT_SYSTEM_PORT || 9000;
 https.createServer(httpsOptions, app).listen(PORT, () => {
   initAdmin();

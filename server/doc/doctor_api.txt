@@ -274,6 +274,22 @@ returns: {
   message: String
 }
 
+number: 7
+description: Change patient's credit limit
+route: http://localhost:5000/api/doctor/patients/credit-limit
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  credit_limit: Number
+}
+returns: {
+  message: String
+}
+
 ---------------------------------PRODUCTS RELATED----------------------------
 number: 1 -> Called
 description: Get list of products

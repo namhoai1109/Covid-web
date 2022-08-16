@@ -21,3 +21,15 @@ returns: {
   message: Boolean
   (if username is not found, returns String)
 }
+
+number: 3
+description: Update password for new user that never logged in
+route: https://localhost:9000/api/auth/update-password
+method: POST
+body: {
+  username: String,
+  password: String
+}
+returns: {
+  message: String
+}

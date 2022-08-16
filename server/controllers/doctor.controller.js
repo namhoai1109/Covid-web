@@ -417,6 +417,31 @@ exports.deletePatient = async (req, res) => {
   }
 };
 
+exports.updateCreditLimit = async (req, res) => {
+  try {
+    const doctor = await Doctor.findOne({ username: req.idNumber });
+    if (!doctor) {
+      return res.status(500).send({ message: "Doctor not found" });
+    }
+
+    // Check if the credit limit is valid
+    if (req.body.credit_limit < 0 || req.body.credit_limit > 1) {
+      return res.status(400).send({ message: "Credit limit must be positive and/or smaller than 100%" });
+    }
+
+    // Update credit limit for patient in list
+    const patients = await Patient.find().where("_id").in(doctor.patients);
+    patients.forEach((patient) => {
+      patient.credit_limit = req.body.credit_limit;
+      patient.save();
+    });
+
+    res.status(200).send({ message: "Credit limit updated successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
 // Helper function to check if the patient is in the doctor's list
 const isBelongToDoctor = async (doctorID, patientID) => {
   const currentDoctor = await Doctor.findOne({

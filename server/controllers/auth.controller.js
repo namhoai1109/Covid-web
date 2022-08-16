@@ -88,7 +88,7 @@ exports.updatePassword = async (req, res) => {
     account.password = newPassword;
     await account.save();
 
-    res.status(200).send({ message: "Password changed" });
+    res.status(200).send({ message: "Password changed successfully" });
   } catch (err) {
     res.status(500).send({ message: err });
   }

@@ -50,6 +50,10 @@ const patientSchema = new mongoose.Schema({
   close_contact_list: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Patient",
+  },
+  credit_limit: {
+    type: Number,
+    default: 0.1,
   }
 });
 

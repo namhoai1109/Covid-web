@@ -59,3 +59,20 @@ exports.login = async (req, res) => {
     return res.status(500).send({ message: err.message });
   }
 };
+
+// Set new password for new patient account that has never logged in
+exports.updatePassword = async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.body.username });
+    if (!account) {
+      return res.status(404).send({ message: "Invalid username" });
+    }
+    const newPassword = await bcrypt.hash(req.body.password, 10);
+    account.password = newPassword;
+    await account.save();
+
+    res.status(200).send({ message: "Password changed successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err });
+  }
+};
