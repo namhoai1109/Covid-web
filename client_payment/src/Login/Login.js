@@ -47,6 +47,14 @@ function Login() {
             if (showPassword[1]) {
                 if (inputVals.password !== inputVals.password_again) {
                     setError('Password not match');
+                } else {
+                    let res = await postAPI('auth/update-password', {
+                        username: inputVals.username,
+                        password: inputVals.password,
+                    });
+                    if (res.message && res.message === 'Password changed successfully') {
+                        isSuccess = true;
+                    }
                 }
             }
 
