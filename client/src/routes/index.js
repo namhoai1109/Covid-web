@@ -1,10 +1,10 @@
 import Admin from '~/Admin';
 import Doctor from '~/Doctor';
 import Patient from '~/Patient';
-import ManagerPage from '~/Admin/ManagerPage';
 import FacilityPage from '~/Admin/FacilityPage';
 import Login from '~/Login';
 import configs from '~/config';
+import ManagerRoutes from '~/Admin/ManagerPage/ManagerRoutes';
 import CovidPatientRoutes from '~/Doctor/CovidPatient/covidPatientRoutes';
 import NecessityRoutes from '~/Doctor/EssentialItem/necessityRoutes';
 import EssentialPackageRoutes from '~/Doctor/EssentialPackage/EssentialPackageRoutes';
@@ -36,8 +36,8 @@ export const mainRoutes = [
 
 export const adminRoutes = [
     {
-        path: configs.adminRoutes.doctorManagement,
-        element: ManagerPage,
+        path: configs.adminRoutes.doctorManagement + configs.subRoute,
+        element: ManagerRoutes,
     },
     {
         path: configs.adminRoutes.facilityManagement,

@@ -82,7 +82,7 @@ const PORT = process.env.MANAGEMENT_SERVER_PORT || 5000;
 //   initAdmin();
 //   console.log(`Server is running on http://localhost:${PORT}`);
 // });
-
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 https.createServer(httpsOptions, app).listen(PORT, () => {
     initAdmin();
     console.log(`Server is running on https://localhost:${PORT}`);

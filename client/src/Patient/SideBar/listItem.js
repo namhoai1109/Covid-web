@@ -1,4 +1,4 @@
-import { faBoxArchive, faUserGear } from '@fortawesome/free-solid-svg-icons';
+import { faBoxArchive, faHistory, faUserGear } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import configs from '~/config';
 
@@ -13,11 +13,11 @@ let listItem = [
         path: configs.mainRoutes.patient + configs.patientRoutes.personalInformation,
         icon: <FontAwesomeIcon icon={faUserGear} />,
     },
-    // {
-    //     title: 'Management History',
-    //     path: configs.mainRoutes.patient + configs.patientRoutes.managementHistory,
-    //     icon: <MaskIcon width="5rem" height="5rem" />,
-    // },
+    {
+        title: ' History',
+        path: configs.mainRoutes.patient + configs.patientRoutes.history,
+        icon: <FontAwesomeIcon icon={faHistory} />,
+    },
     // {
     //     title: 'Payment History',
     //     path: configs.mainRoutes.patient + configs.patientRoutes.paymentHistory,
