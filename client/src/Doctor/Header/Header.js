@@ -104,8 +104,6 @@ let checkRoute = (location) => {
             return true;
         case configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage:
             return true;
-        case configs.mainRoutes.doctor + configs.doctorRoutes.paymentManagement:
-            return true;
         default:
             return false;
     }
@@ -122,6 +120,8 @@ let noBack = (location) => {
         case configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.status:
             return true;
         case configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.payment:
+            return true;
+        case configs.mainRoutes.doctor + configs.doctorRoutes.paymentManagement:
             return true;
         default:
             return false;
