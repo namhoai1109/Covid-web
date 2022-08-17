@@ -29,6 +29,10 @@ const doctorSchema = new mongoose.Schema({
       ref: "Patient",
     },
   ],
+  credit_limit: {
+    type: Number,
+    default: 0.1
+  }
 });
 
 module.exports = mongoose.model("Doctor", doctorSchema);
