@@ -1,0 +1,14 @@
+.wrapper {
+    width: 80%;
+    height: 90%;
+
+    .field {
+        margin: 10px 0px 0px 30px;
+        font-size: 1.7rem;
+        justify-content: start;
+        .label {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+    }
+}
