@@ -5,7 +5,7 @@ route: localhost:5000/api/doctor/patients/search
 query: {
   value: String (value of field)
 }
-// Ex: http://localhost:5000/api/doctor/patients/search?&value=Sai%20Gon
+// Ex: https://localhost:5000/api/doctor/patients/search?&value=Sai%20Gon
 method: GET
 headers: {
   Bearer authorization: {
@@ -69,7 +69,7 @@ query: {
 }
 // Remember to encode query value. Ex: encodeURI(value): Sai Gon => Sai%20Gon
 // Filtered field must be followed by a value
-// Ex: http://localhost:5000/api/doctor/patients/filter?filter_by=address&value=Sai%20Gon&filter_by=status&value=f1
+// Ex: https://localhost:5000/api/doctor/patients/filter?filter_by=address&value=Sai%20Gon&filter_by=status&value=f1
 method: GET
 headers: {
   Bearer authorization: {
@@ -126,7 +126,7 @@ returns: [
 
 number: 3 -> Called
 description: Get all patients information of a specific doctor
-route: http://localhost:5000/api/doctor/patients
+route: https://localhost:5000/api/doctor/patients
 query (optional): {
   sort_by: String (name, id_number, dob, address, status),
   sort_order: String (asc or desc)
@@ -187,7 +187,7 @@ returns: [
 
 number: 4 -> Called
 description: Register new patient to a specific doctor
-route: http://localhost:5000/api/doctor/patients
+route: https://localhost:5000/api/doctor/patients
 method: POST
 headers: {
   Bearer authorization: {
@@ -236,7 +236,7 @@ returns: {
 
 number: 5 -> Called
 description: Update patient information of a specific doctor
-route: http://localhost:5000/api/doctor/patients/id=:id
+route: https://localhost:5000/api/doctor/patients/id=:id
 params: _id of database
 method: PUT
 headers: {
@@ -262,7 +262,7 @@ body: {
 
 number: 6 -> Called
 description: Delete a patient of a specific doctor
-route: http://localhost:5000/api/doctor/patients/id=:id
+route: https://localhost:5000/api/doctor/patients/id=:id
 params: _id of database
 method: DELETE
 headers: {
@@ -276,7 +276,7 @@ returns: {
 
 number: 7
 description: Change patient's credit limit
-route: http://localhost:5000/api/doctor/patients/credit-limit
+route: https://localhost:5000/api/doctor/patients/credit-limit
 method: PUT
 headers: {
   Bearer authorization: {
@@ -290,10 +290,81 @@ returns: {
   message: String
 }
 
+number: 8
+description: Get current credit limit
+route: https://localhost:5000/api/doctor/patients/credit-limit
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  credit_limit: Number
+}
+
+number: 9
+description: Get patients with payment system account
+route: https://localhost:5000/api/doctor/patients/with-ps-account
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    account: {
+      _id: String,
+      username: String,
+      role: String,
+      status: String,
+    },
+    id_number: String,
+    name: String,
+    dob: String,
+    address: String,
+    status: String,
+    close_contact_list: [{
+      _id: String,
+      id_number: String,
+      name: String,
+      dob: String,
+      status: String,
+      current_facility: {
+        _id: String,
+        name: String,
+        capacity: Number,
+        current_count: Number,
+        location: {
+          formattedAddress: String,
+          province: String,
+          district: String,
+          ward: String,
+        }
+    }
+    }],
+    current_facility: {
+      _id: String,
+      name: String,
+      capacity: Number,
+      current_count: Number,
+      location: {
+        formattedAddress: String,
+        province: String,
+        district: String,
+        ward: String,
+      }
+    }
+  }
+]
+
+
 ---------------------------------PRODUCTS RELATED----------------------------
 number: 1 -> Called
 description: Get list of products
-route: http://localhost:5000/api/doctor/products
+route: https://localhost:5000/api/doctor/products
 query (optional): {
   sort_by: String (name, price, type),
   sort_order: String (asc or desc)
@@ -380,7 +451,7 @@ description: Register a new product
 form: enctype="multipart/form-data"
 // Create a new formData() and append data to it
 // Make sure to append each file in the files array to the formData() with field name is 'images'
-route: http://localhost:5000/api/doctor/products
+route: https://localhost:5000/api/doctor/products
 method: POST
 headers: {
   Content-Type: 'multipart/form-data',
@@ -395,7 +466,7 @@ returns: {
 
 number: 5 -> Called
 description: Update a product
-route: http://localhost:5000/api/doctor/products/id=:id
+route: https://localhost:5000/api/doctor/products/id=:id
 params: Database ID of product
 // Create a formData() and append fields to it
 // If delete a image, append the field 'deletions' and value is the want-to-delete image's path
@@ -415,7 +486,7 @@ returns: {
 
 number: 6 -> Called
 description: Delete a product
-route: http://localhost:5000/api/doctor/products/id=:id
+route: https://localhost:5000/api/doctor/products/id=:id
 form: enctype="multipart/form-data"
 params: Database ID of product
 method: DELETE
@@ -431,7 +502,7 @@ returns: {
 -----------------------------------PACKAGES RELATED--------------------------------------
 number 1:
 description: Get list of packages -> Called
-route: http://localhost:5000/api/doctor/packages
+route: https://localhost:5000/api/doctor/packages
 query (optional): {
   sort_by: String (name, time_limit)
   sort_order: String (asc or desc)
@@ -550,7 +621,7 @@ returns: [
 
 number: 4
 description: Register a new package -> Called
-route: http://localhost:5000/api/doctor/packages
+route: https://localhost:5000/api/doctor/packages
 method: POST
 headers: {
   Bearer authorization: {
@@ -580,7 +651,7 @@ returns: {
 
 number: 5
 description: Update a package -> Called
-route: http://localhost:5000/api/doctor/packages/id=:id
+route: https://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
 method: PUT
 headers: {
@@ -611,7 +682,7 @@ returns: {
 
 number: 6
 description: Delete a package -> Called
-route: http://localhost:5000/api/doctor/packages/id=:id
+route: https://localhost:5000/api/doctor/packages/id=:id
 params: Database ID of package
 method: DELETE
 headers: {

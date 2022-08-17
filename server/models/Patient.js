@@ -29,7 +29,6 @@ const patientSchema = new mongoose.Schema({
   dob: {
     type: String,
     required: true,
-
   },
   address: {
     type: String,
@@ -42,7 +41,6 @@ const patientSchema = new mongoose.Schema({
     enum: ["F0", "F1", "F2", "F3"],
     required: true,
   },
-
   current_facility: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Facility",
@@ -53,7 +51,6 @@ const patientSchema = new mongoose.Schema({
   },
   credit_limit: {
     type: Number,
-    default: 0.1,
   }
 });
 

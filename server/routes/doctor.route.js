@@ -12,7 +12,9 @@ router.get("/patients/filter", patientController.filterPatients);
 router.post("/patients", patientController.registerAccount);
 router.put("/patients/id=:id", patientController.updatePatient);
 router.delete("/patients/id=:id", patientController.deletePatient);
+router.get("/patients/credit-limit", patientController.getCurrentCreditLimit);
 router.put("/patients/credit-limit", patientController.updateCreditLimit);
+router.get("/patients/with-ps-account", patientController.getPatientsWithPSAccount);
 
 // Necessities related
 router.get("/products", productController.getAllProducts);

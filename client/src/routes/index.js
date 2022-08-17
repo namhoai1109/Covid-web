@@ -14,6 +14,7 @@ import ProductChart from '~/Doctor/Statistics/ProductChart';
 import PackageChart from '~/Doctor/Statistics/PackageChart';
 import StatusChart from '~/Doctor/Statistics/StatusChart';
 import PaymentChart from '~/Doctor/Statistics/PaymentChart';
+import Payment from '~/Doctor/Payment';
 
 export const mainRoutes = [
     {
@@ -61,6 +62,10 @@ export const doctorRoutes = [
     {
         path: configs.doctorRoutes.statistics + configs.subRoute,
         element: StatisticsRoutes,
+    },
+    {
+        path: configs.doctorRoutes.paymentManagement,
+        element: Payment,
     },
 ];
 
