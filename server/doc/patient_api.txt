@@ -1,5 +1,5 @@
 number: 1
-description: Get info
+description: Get info -> Called
 route: http://localhost:5000/api/patient/info
 method: GET
 headers: {
@@ -18,7 +18,7 @@ returns: {
 }
 
 number: 2
-description: Get logs
+description: Get logs -> Called
 route: http://localhost:5000/api/patient/logs
 method: GET
 headers: {
@@ -36,7 +36,7 @@ returns: [
 ]
 
 number: 3
-description: Change password for client
+description: Change password for client -> Called
 route: http://localhost:5000/api/patient/password
 method: PUT
 headers: {
@@ -72,6 +72,19 @@ body: {
       quantity: Number
     }
   ]
+}
+returns: {
+  message: String
+}
+
+number: 5
+description: Link account to payment system -> Error
+route: http://localhost:5000/api/patient/link
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
 }
 returns: {
   message: String

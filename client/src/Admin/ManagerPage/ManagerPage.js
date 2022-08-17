@@ -11,6 +11,8 @@ import { menuManager } from '../staticVar';
 import { deleteAPI } from '~/APIservices/deleteAPI';
 import { initListManager } from '../fetchAPI';
 import { putAPI } from '~/APIservices/putAPI';
+import configs from '~/config';
+import { setId } from '../redux/hisDoctor';
 
 const cx = classNames.bind(styles);
 
@@ -30,6 +32,10 @@ function ManagerPage() {
                     }),
                 );
             }
+        };
+
+        let handleViewHistory = async (id) => {
+            dispatch(setId(id));
         };
 
         return {
@@ -57,7 +63,12 @@ function ManagerPage() {
                     className={cx('btn-item', {
                         inactive: item.status === 'inactive',
                     })}
-                    to=""
+                    onClick={() => handleViewHistory(item._id)}
+                    to={
+                        configs.mainRoutes.admin +
+                        configs.adminRoutes.doctorManagement +
+                        configs.adminRoutes.historyDoctor
+                    }
                 >
                     view history
                 </Link>

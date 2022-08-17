@@ -1,34 +1,18 @@
 import HeaderLayout from '~/Layout/Header';
 import TaskBtn from '~/CommonComponent/TaskBtn';
-import { PlusIcon, SearchIcon } from '~/CommonComponent/icons';
+import { PlusIcon } from '~/CommonComponent/icons';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
-import SearchInput from '~/CommonComponent/SearchInput';
 import { Menu, MenuFormInput } from '~/CommonComponent/Popper';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import configs from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDelete } from '../redux/deleteSlice';
-import { addFacility } from '../redux/listFacilitySlice';
 import { postAPI } from '~/APIservices/postAPI';
-import { menuFacility, menuManager, formInputDoctor, formInputFacility } from '../staticVar';
+import { formInputDoctor, formInputFacility } from '../staticVar';
 import { getListFacility, initListManager } from '../fetchAPI';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const cx = classNames.bind(styles);
-
-let getFilterSortMenu = (menu) => {
-    let filterItem = menu.map((title) => ({
-        data: title,
-        child: { data: [{ data: <SearchInput icon={<SearchIcon />} /> }] },
-    }));
-
-    let sortItem = menu.map((title) => ({
-        data: title,
-        child: { data: [{ data: 'Ascending' }, { data: 'Descending' }] },
-    }));
-
-    return [filterItem, sortItem];
-};
 
 let registerManager = async (data) => {
     try {
@@ -43,13 +27,11 @@ let registerManager = async (data) => {
 function Header() {
     let location = useLocation();
     let dispatch = useDispatch();
+    let navigate = useNavigate();
     let deleteState = useSelector((state) => state.delete.isShow);
     let [validate, setValidate] = useState('');
-    let [filterItem, sortItem] = getFilterSortMenu(
-        location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
-            ? menuManager
-            : menuFacility,
-    );
+
+    let [showBack, setShowBack] = useState(false);
 
     let handleClick = async (inputVals) => {
         if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
@@ -124,36 +106,51 @@ function Header() {
         }
     };
 
+    useEffect(() => {
+        if (
+            location.pathname ===
+            configs.mainRoutes.admin + configs.adminRoutes.doctorManagement + configs.adminRoutes.historyDoctor
+        ) {
+            setShowBack(true);
+        } else {
+            setShowBack(false);
+        }
+    }, [location.pathname]);
+
     return (
         <HeaderLayout>
-            <MenuFormInput
-                validateStr={validate}
-                setValidateStr={setValidate}
-                onClick={handleClick}
-                menu={
-                    location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
-                        ? formInputDoctor
-                        : formInputFacility
-                }
-            >
-                <TaskBtn title="Add" icon={<PlusIcon />} />
-            </MenuFormInput>
-            <div className={cx('list_btn')}>
+            {showBack ? (
                 <TaskBtn
-                    title="Delete"
-                    active={deleteState}
+                    title="Back"
                     onClick={() => {
-                        dispatch(setDelete(!deleteState));
+                        navigate(-1, { replace: true });
                     }}
                 />
-                <Menu menu={filterItem}>
-                    <TaskBtn title="Filter" />
-                </Menu>
-                <Menu menu={sortItem}>
-                    <TaskBtn title="Sort" />
-                </Menu>
-                <SearchInput stateDynamique={true} icon={<SearchIcon />} />
-            </div>
+            ) : (
+                <>
+                    <MenuFormInput
+                        validateStr={validate}
+                        setValidateStr={setValidate}
+                        onClick={handleClick}
+                        menu={
+                            location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
+                                ? formInputDoctor
+                                : formInputFacility
+                        }
+                    >
+                        <TaskBtn title="Add" icon={<PlusIcon />} />
+                    </MenuFormInput>
+                    <div className={cx('list_btn')}>
+                        <TaskBtn
+                            title="Delete"
+                            active={deleteState}
+                            onClick={() => {
+                                dispatch(setDelete(!deleteState));
+                            }}
+                        />
+                    </div>
+                </>
+            )}
         </HeaderLayout>
     );
 }

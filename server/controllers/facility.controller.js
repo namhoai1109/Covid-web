@@ -58,7 +58,6 @@ exports.updateFacility = async (req, res) => {
   }
 }
 
-
 // Sending locations
 exports.getProvinces = async (req, res) => {
   try {

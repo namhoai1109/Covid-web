@@ -1,0 +1,125 @@
+.wrapper {
+    width: 80%;
+    height: 90%;
+    position: relative;
+
+    .change-pass-btn {
+        position: absolute;
+        bottom: 0;
+        left: 30px;
+        font-size: 1.6rem;
+        color: var(--green2);
+        padding: 4px 10px;
+        margin: 30px 10px;
+        border-radius: 50px;
+        border: 2px solid var(--green2);
+
+        &:hover {
+            background-color: var(--green2);
+            color: white;
+            cursor: pointer;
+        }
+    }
+
+    .wrap-popper {
+        padding: 20px;
+        background-color: var(--green2);
+        border-radius: 10px;
+        flex-direction: column;
+        position: relative;
+
+        .noti-success {
+            color: var(--green3);
+            margin-bottom: 4px;
+        }
+
+        .save-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            margin: 10px;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .wrap-input {
+            margin-bottom: 15px;
+            flex-direction: column;
+            .input {
+                padding: 8px 12px;
+                background-color: white;
+                border-radius: 50px;
+                font-size: 1.6rem;
+
+                &::placeholder {
+                    font-size: 1.4rem;
+                }
+            }
+
+            .validation {
+                color: var(--attention-color);
+            }
+        }
+    }
+
+    .info-field {
+        justify-content: start;
+        padding-left: 40px;
+        margin-top: 20px;
+
+        .label {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .value {
+            font-size: 1.7rem;
+        }
+    }
+
+    .link-payment {
+        justify-content: start;
+        color: var(--green2);
+        font-size: 2rem;
+        margin-top: 40px;
+        padding-left: 40px;
+
+        .icon {
+            margin-left: 10px;
+        }
+
+        .title {
+            position: relative;
+            color: var(--green2);
+
+            &.disabled {
+                pointer-events: none;
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+
+            &:hover:before {
+                width: 70%;
+            }
+        }
+
+        .title::before {
+            position: absolute;
+            content: '';
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 4px;
+            border-radius: 10px;
+            background-color: var(--green2);
+            transition: all 0.2s ease-in-out;
+        }
+    }
+}

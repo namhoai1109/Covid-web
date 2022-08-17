@@ -9,6 +9,7 @@ export const subRoute = '/*';
 
 export const adminRoutes = {
     doctorManagement: '/doctormanagement',
+    historyDoctor: '/history',
     facilityManagement: '/facilitymanagement',
 };
 
@@ -28,8 +29,19 @@ export const doctorRoutes = {
 
 export const patientRoutes = {
     essentialPackage: '/essentialpackage',
-    personalInformation: '/personalinformation',
-    managementHistory: '/managementhistory',
-    paymentHistory: '/paymenthistory',
+    infoPackage: '/info',
+    infoProduct: '/infoproduct',
+    personalInformation: '/information',
+    history: '/history',
+    managementHistory: '/management',
+    paymentHistory: '/payment',
     bankAccount: '/bankaccount',
+};
+
+export const statisticsRoutes = {
+    covidPatient: '/covidpatient',
+    status: '/status',
+    product: '/product',
+    package: '/package',
+    payment: '/payment',
 };

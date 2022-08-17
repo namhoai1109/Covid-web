@@ -1,0 +1,26 @@
+number: 2
+description: Get account information
+route: https://localhost:9000/api/main/info/id=:id
+method: GET
+returns: {
+  linked: Boolean,
+  _id: String,
+  username: String,
+  password: String,
+  balance: 0,
+}
+
+number: 3
+description: Make deposit
+route: https://localhost:9000/api/main/deposit/id=:id
+method: POST
+body: {
+  amount: Number
+}
+returns: {
+  message: String,
+}
+
+
+
+

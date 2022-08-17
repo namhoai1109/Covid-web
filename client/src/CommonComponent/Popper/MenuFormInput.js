@@ -6,7 +6,10 @@ import classNames from 'classnames/bind';
 import styles from './Wrapper.module.scss';
 import { memo, useCallback, useEffect, useState } from 'react';
 import SelectOption from '../SelectOption';
+<<<<<<< HEAD
 import { dataAddress } from '~/Admin/staticVar';
+=======
+>>>>>>> main
 import { getAPI } from '~/APIservices/getAPI';
 
 const cx = classNames.bind(styles);
@@ -43,6 +46,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
 
     let [stateSelect, setStateSelect] = useState({ listFirst: [], Province: [], District: [], Ward: [] });
 
+<<<<<<< HEAD
     // let handleChangeSel = useCallback((value, key) => {
     //     if (key === 'Province') {
     //         stateSelect.listFirst.forEach((item) => {
@@ -67,6 +71,8 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
     //     setValidateSelect({ ...validateSelect, [key]: '' });
     // });
 
+=======
+>>>>>>> main
     let getListProvince = useCallback(async () => {
         let list = await getAPI('facility/provinces');
         let listProvince = getListAddress(list);

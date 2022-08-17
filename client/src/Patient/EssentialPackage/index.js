@@ -1,5 +1,1 @@
-function EssentialPackage() {
-    return ( <h1>Essential Package</h1> );
-}
-
-export default EssentialPackage;
+export { default } from './PackageRoutes';

@@ -110,6 +110,7 @@ function InfoPackage() {
     });
 
     let formatedProducts = useCallback((product) => {
+        console.log(product);
         let id = product._id;
         let increasing = () => {
             setListCounting((prev) => ({ ...prev, [id]: prev[id] + 1 }));

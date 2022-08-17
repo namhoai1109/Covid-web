@@ -1,13 +1,19 @@
 import Admin from '~/Admin';
 import Doctor from '~/Doctor';
 import Patient from '~/Patient';
-import ManagerPage from '~/Admin/ManagerPage';
 import FacilityPage from '~/Admin/FacilityPage';
 import Login from '~/Login';
 import configs from '~/config';
+import ManagerRoutes from '~/Admin/ManagerPage/ManagerRoutes';
 import CovidPatientRoutes from '~/Doctor/CovidPatient/covidPatientRoutes';
 import NecessityRoutes from '~/Doctor/EssentialItem/necessityRoutes';
 import EssentialPackageRoutes from '~/Doctor/EssentialPackage/EssentialPackageRoutes';
+import StatisticsRoutes from '~/Doctor/Statistics/StatisticsRoutes';
+import PatientChart from '~/Doctor/Statistics/PatientChart';
+import ProductChart from '~/Doctor/Statistics/ProductChart';
+import PackageChart from '~/Doctor/Statistics/PackageChart';
+import StatusChart from '~/Doctor/Statistics/StatusChart';
+import PaymentChart from '~/Doctor/Statistics/PaymentChart';
 
 export const mainRoutes = [
     {
@@ -30,8 +36,8 @@ export const mainRoutes = [
 
 export const adminRoutes = [
     {
-        path: configs.adminRoutes.doctorManagement,
-        element: ManagerPage,
+        path: configs.adminRoutes.doctorManagement + configs.subRoute,
+        element: ManagerRoutes,
     },
     {
         path: configs.adminRoutes.facilityManagement,
@@ -51,5 +57,32 @@ export const doctorRoutes = [
     {
         path: configs.doctorRoutes.essentialPackage + configs.subRoute,
         element: EssentialPackageRoutes,
+    },
+    {
+        path: configs.doctorRoutes.statistics + configs.subRoute,
+        element: StatisticsRoutes,
+    },
+];
+
+export const statisticsRoutes = [
+    {
+        path: configs.statisticsRoutes.covidPatient,
+        element: PatientChart,
+    },
+    {
+        path: configs.statisticsRoutes.product,
+        element: ProductChart,
+    },
+    {
+        path: configs.statisticsRoutes.package,
+        element: PackageChart,
+    },
+    {
+        path: configs.statisticsRoutes.status,
+        element: StatusChart,
+    },
+    {
+        path: configs.statisticsRoutes.payment,
+        element: PaymentChart,
     },
 ];

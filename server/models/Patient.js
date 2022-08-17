@@ -27,12 +27,9 @@ const patientSchema = new mongoose.Schema({
   },
   // Format: YYYY-MM-DD
   dob: {
-    type: Date,
+    type: String,
     required: true,
-    validate: {
-      validator: (v) => v.getFullYear() > 1900 && v.getFullYear() <= new Date().getFullYear(),
-      message: (props) => ({ message: `${props.value} is not a valid date` }),
-    },
+
   },
   address: {
     type: String,
@@ -53,6 +50,10 @@ const patientSchema = new mongoose.Schema({
   close_contact_list: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Patient",
+  },
+  credit_limit: {
+    type: Number,
+    default: 0.1,
   }
 });
 

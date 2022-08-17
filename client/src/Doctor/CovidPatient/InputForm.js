@@ -284,7 +284,12 @@ function InputForm() {
                         {inputField1.map((title, index) => {
                             let formatedTitle = removeSpace(title);
                             let randPass = title === 'Password';
-                            let type = formatedTitle === 'Name' || formatedTitle === 'Password' ? 'text' : 'number';
+                            let type =
+                                formatedTitle === 'Year of birth' ||
+                                formatedTitle === 'Name' ||
+                                formatedTitle === 'Password'
+                                    ? 'text'
+                                    : 'number';
                             return (
                                 <div key={index} className={cx('col3')}>
                                     <label className={cx('flex-center')}>
