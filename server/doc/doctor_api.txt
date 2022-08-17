@@ -275,7 +275,7 @@ returns: {
 }
 
 number: 7
-description: Change patient's credit limit
+description: Change patient's credit limit -> Called
 route: https://localhost:5000/api/doctor/patients/credit-limit
 method: PUT
 headers: {
@@ -291,7 +291,7 @@ returns: {
 }
 
 number: 8
-description: Get current credit limit
+description: Get current credit limit -> Called
 route: https://localhost:5000/api/doctor/patients/credit-limit
 method: GET
 headers: {
@@ -304,7 +304,7 @@ returns: {
 }
 
 number: 9
-description: Get patients with payment system account
+description: Get patients with payment system account 
 route: https://localhost:5000/api/doctor/patients/with-ps-account
 method: GET
 headers: {

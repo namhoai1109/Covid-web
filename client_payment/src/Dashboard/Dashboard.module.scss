@@ -4,4 +4,40 @@
     border: 4px solid var(--primary);
     border-radius: 20px;
     padding: 20px;
+
+    .field {
+        justify-content: start;
+        font-size: 2.2rem;
+
+        .label {
+            font-size: 2.3rem;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .input {
+            padding: 6px 10px;
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            font-size: 1.8rem;
+            margin-right: 10px;
+        }
+
+        .button {
+            color: var(--primary);
+            font-size: 2.2rem;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .validate {
+        color: var(--attention-color);
+    }
+}
+.logo {
+    position: absolute;
+    bottom: 80px;
+    width: 500px;
 }
