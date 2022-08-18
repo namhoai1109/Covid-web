@@ -59,17 +59,34 @@ exports.registerAccount = async (req, res) => {
     await patientLog.save();
 
     // Update status statistic
-    await StatusStats.updateOne(
-      {
-        date: new Date().toISOString().slice(0, 10)
-      },
-      {
-        $inc: { [patient.status]: 1 },
-      },
-      {
-        upsert: true,
+    // Find the latest recent status stats
+    const recentStatusStats = await StatusStats.find().sort({ date: -1 }).limit(1);
+    const todayStatusStats = await StatusStats.findOne({ date: new Date().toISOString().slice(0, 10) })
+    if (recentStatusStats.length > 0) {
+      if (todayStatusStats) {
+        // Increment the patient status
+        todayStatusStats[patient.status] += 1;
+        await todayStatusStats.save()
       }
-    )
+      else {
+        const newStatusStats = new StatusStats({
+          date: new Date().toISOString().slice(0, 10)
+        })
+        newStatusStats[patient.status] += 1;
+        newStatusStats["F0"] += recentStatusStats[0]["F0"];
+        newStatusStats["F1"] += recentStatusStats[0]["F1"];
+        newStatusStats["F2"] += recentStatusStats[0]["F2"];
+        newStatusStats["F3"] += recentStatusStats[0]["F3"];
+
+        await newStatusStats.save();
+      }
+    }
+    // If there is no status stats record, create one
+    else {
+      const newStatusStats = new StatusStats({ date: new Date().toISOString().slice(0, 10) });
+      newStatusStats[patient.status] += 1;
+      await newStatusStats.save();
+    }
 
     res.status(200).send({
       message: "Patient account created and save successfully",
@@ -216,8 +233,8 @@ exports.updatePatient = async (req, res) => {
     if (!isBelong.result) {
       return res.status(500).send({ message: isBelong.message });
     }
-    patient = isBelong.patient;
-    doctor = isBelong.doctor;
+    const patient = isBelong.patient;
+    const doctor = isBelong.doctor;
 
     // Declare a log string variable for history record
     let logString = "";
@@ -234,20 +251,25 @@ exports.updatePatient = async (req, res) => {
     }
 
     // Update status statistics
-    // Step !== 0 means the status has changed
-    if (step !== 0) {
-      await StatusStats.updateOne(
-        {
-          date: new Date().toISOString().slice(0, 10),
-        },
-        {
-          $inc: {
-            [`F${newStatusNumber}`]: 1,
-            [`F${statusNumber}`]: -1,
-          },
-        },
-        { upsert: true }
-      )
+    const recentStatusStats = await StatusStats.find().sort({ date: -1 }).limit(1);
+    let todayStatusStats = await StatusStats.findOne({ date: new Date().toISOString().slice(0, 10) })
+
+    if (todayStatusStats) {
+      // Increment the patient status
+      todayStatusStats[`F${newStatusNumber}`] += 1;
+      todayStatusStats[`F${statusNumber}`] -= 1;
+    }
+    else {
+      todayStatusStats = new StatusStats({
+        date: new Date().toISOString().slice(0, 10)
+      })
+      todayStatusStats[`F${newStatusNumber}`] += 1;
+      todayStatusStats[`F${statusNumber}`] -= 1;
+      todayStatusStats["F0"] += recentStatusStats[0]["F0"];
+      todayStatusStats["F1"] += recentStatusStats[0]["F1"];
+      todayStatusStats["F2"] += recentStatusStats[0]["F2"];
+      todayStatusStats["F3"] += recentStatusStats[0]["F3"];
+      await todayStatusStats.save();
     }
 
     // Update patient's contact list
@@ -280,7 +302,7 @@ exports.updatePatient = async (req, res) => {
     // Update each patient's status in contact list
     const contactListID = patient.close_contact_list;
     const contactList = await Patient.find().where("_id").in(contactListID);
-    contactList.forEach(async (patient) => {
+    contactList.forEach((patient) => {
       if (patient.status !== "F0") {
         const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
         let newStatusNumber = statusNumber + step;
@@ -292,23 +314,11 @@ exports.updatePatient = async (req, res) => {
         }
 
         patient.status = `F${newStatusNumber}`;
-        await patient.save();
+        patient.save();
 
         // Update status statistics only if the status has changed
-        if (newStatusNumber !== statusNumber) {
-          await StatusStats.updateOne(
-            {
-              date: new Date().toISOString().slice(0, 10),
-            },
-            {
-              $inc: {
-                [`F${newStatusNumber}`]: 1,
-                [`F${statusNumber}`]: -1,
-              },
-            },
-            { upsert: true }
-          )
-        }
+        todayStatusStats[patient.status] += 1;
+        todayStatusStats[`F${statusNumber}`] -= 1;
 
         // Create history record for patients in contact list
         const patientLog = new Log({
@@ -316,9 +326,10 @@ exports.updatePatient = async (req, res) => {
           action: "update",
           description: `Status changed to ${patient.status} due to close contact`,
         });
-        await patientLog.save();
+        patientLog.save();
       }
-    });
+    })
+    await todayStatusStats.save();
 
     // Create history record for patient
     if (logString) {
@@ -350,8 +361,8 @@ exports.deletePatient = async (req, res) => {
     if (!isBelong.result) {
       return res.status(500).send({ message: isBelong.message });
     }
-    patient = isBelong.patient;
-    doctor = isBelong.doctor;
+    const patient = isBelong.patient;
+    const doctor = isBelong.doctor;
 
     // Create history record for doctor
     const doctorLog = new Log({
@@ -370,17 +381,25 @@ exports.deletePatient = async (req, res) => {
     }
     await account.remove();
 
-    // Decrement current count of status statistics
-    await StatusStats.updateOne(
-      {
-        date: new Date().toISOString().slice(0, 10),
-      },
-      {
-        $inc: {
-          [`F${patient.status[1]}`]: -1,
-        },
-      }
-    );
+    // Update status statistic
+    // Find the latest recent status stats
+    const recentStatusStats = await StatusStats.find().sort({ date: -1 }).limit(1);
+    let todayStatusStats = await StatusStats.findOne({ date: new Date().toISOString().slice(0, 10) })
+    if (todayStatusStats) {
+      // Decrement the patient status
+      todayStatusStats[patient.status] -= 1;
+    }
+    else {
+      todayStatusStats = new StatusStats({
+        date: new Date().toISOString().slice(0, 10)
+      })
+      todayStatusStats[patient.status] -= 1;
+      todayStatusStats["F0"] += recentStatusStats[0]["F0"];
+      todayStatusStats["F1"] += recentStatusStats[0]["F1"];
+      todayStatusStats["F2"] += recentStatusStats[0]["F2"];
+      todayStatusStats["F3"] += recentStatusStats[0]["F3"];
+    }
+    await todayStatusStats.save();
 
     // Delete the patient from database and from doctor's managed list
     const trashID = patient._id;

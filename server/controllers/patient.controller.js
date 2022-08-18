@@ -25,7 +25,7 @@ exports.getLogs = async (req, res) => {
 
 exports.getInfo = async (req, res) => {
   try {
-    const patient = await Patient.findOne({ id_number: req.idNumber }, { account: 0, close_contact_list: 0 }).populate("current_facility");
+    const patient = await Patient.findOne({ id_number: req.idNumber }, { close_contact_list: 0 }).populate("current_facility").populate("account");
     if (!patient) {
       return res.status(500).send({ message: "Patient not found in the database" });
     }
@@ -145,18 +145,17 @@ exports.linkAccount = async (req, res) => {
         password: 'placeholder',
       }
     })
-      .then(function (response) {
+      .then(async function (response) {
         console.log(response.data);
+        // Update account linked state
+        account.linked = true;
+        await account.save();
         res.status(200).send({ message: "Account linked successfully" });
       })
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ message: error.message });
       });
-
-    // Update account linked state
-    account.linked = true;
-    await account.save();
 
   } catch (err) {
     res.status(500).send({ message: err.message });
