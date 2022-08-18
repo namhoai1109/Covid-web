@@ -434,7 +434,7 @@ exports.deletePatient = async (req, res) => {
 // Get the current credit limit
 exports.getCurrentCreditLimit = async (req, res) => {
   try {
-    const doctor = await Doctor.findOne({ username: req.idNumber });
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
     if (!doctor) {
       return res.status(500).send({ message: "Doctor not found" });
     }
@@ -448,7 +448,7 @@ exports.getCurrentCreditLimit = async (req, res) => {
 // Update the credit limit
 exports.updateCreditLimit = async (req, res) => {
   try {
-    const doctor = await Doctor.findOne({ username: req.idNumber });
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
     if (!doctor) {
       return res.status(500).send({ message: "Doctor not found" });
     }
@@ -479,7 +479,7 @@ exports.updateCreditLimit = async (req, res) => {
 // TODO: Get money of patients in the list
 exports.getPatientsWithPSAccount = async (req, res) => {
   try {
-    const doctor = await Doctor.findOne({ username: req.idNumber });
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
     if (!doctor) {
       return res.status(500).send({ message: "Doctor not found" });
     }

@@ -138,6 +138,7 @@ exports.buyPackage = async (req, res) => {
 
     // TODO: Call api to payment system to buy products
 
+
     // Create a new package order
     const packageOrder = new PackageOrder({
       buyer: patient._id,
