@@ -26,7 +26,7 @@ function InfoPatient() {
             status: item.status,
             facility: (item.current_facility && item.current_facility.name) || '',
         };
-    });
+    }, []);
 
     let [showList, setShowList] = useState(false);
     let [updateMode, setUpdateMode] = useState(false);
@@ -54,7 +54,7 @@ function InfoPatient() {
         });
 
         setListFacility({ first: list, sec: tmp });
-    });
+    }, []);
 
     let fetchUpdatePatient = useCallback(async (data) => {
         try {
@@ -63,7 +63,7 @@ function InfoPatient() {
         } catch (err) {
             console.log(err);
         }
-    });
+    }, []);
 
     let handleUpdateMode = useCallback(() => {
         let id_facility = '';
@@ -81,7 +81,7 @@ function InfoPatient() {
             fetchUpdatePatient(formUpdate);
         }
         setUpdateMode(!updateMode);
-    });
+    }, []);
 
     useEffect(() => {
         if (patient.close_contact_list) {

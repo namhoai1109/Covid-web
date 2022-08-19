@@ -1,4 +1,4 @@
-import { Avatar, SignOutIcon } from '~/CommonComponent/icons';
+import { Avatar } from '~/CommonComponent/icons';
 import SidebarItem, { AvatarItem } from '~/CommonComponent/SidebarItem';
 import SidebarLayout from '~/Layout/Sidebar';
 import listItem from './listItem';

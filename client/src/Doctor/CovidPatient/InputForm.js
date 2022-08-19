@@ -23,7 +23,7 @@ function InputForm() {
         }
 
         return data;
-    });
+    }, []);
 
     let initDataSelect = useCallback((menu, dataInit) => {
         let data = {};
@@ -31,15 +31,15 @@ function InputForm() {
             data[menu[i].split('/')[0]] = dataInit;
         }
         return data;
-    });
+    }, []);
 
     let removeSpace = useCallback((title) => {
         return title.replaceAll(' ', '_');
-    });
+    }, []);
 
     let returnSpace = useCallback((title) => {
         return title.replaceAll('_', ' ');
-    });
+    }, []);
 
     let makePass = useCallback((length) => {
         var result = '';
@@ -49,7 +49,7 @@ function InputForm() {
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
-    });
+    }, []);
 
     let formatItem = useCallback((item) => {
         return {
@@ -59,7 +59,7 @@ function InputForm() {
             status: item.status,
             facility: '',
         };
-    });
+    }, []);
 
     let initValue = initDataInput(inputField1);
     initValue.Status = '';
@@ -98,7 +98,7 @@ function InputForm() {
             [formatedTitle]: randPass,
         });
         setValidateString({ ...validateString, [formatedTitle]: '' });
-    });
+    }, []);
 
     let registerPatient = useCallback(async (data) => {
         try {
@@ -121,7 +121,7 @@ function InputForm() {
         } catch (err) {
             console.log(err);
         }
-    });
+    }, []);
 
     let validateForm = useCallback((inputField, selectValue) => {
         let validateStr = {};
@@ -175,7 +175,7 @@ function InputForm() {
         } else {
             return isOke;
         }
-    });
+    }, []);
 
     let handleSubmit = useCallback(() => {
         let contact_list = contactList.map((item) => item._id);
@@ -201,16 +201,16 @@ function InputForm() {
 
             registerPatient(dataSubmit);
         }
-    });
+    }, []);
 
     let handleDeleteContact = useCallback((index) => {
         dispatch(deleteItem(index));
-    });
+    }, []);
 
     let handleChangeStatus = useCallback((e) => {
         setInputField({ ...inputField, Status: e.target.value });
         setValidateString({ ...validateString, Status: '' });
-    });
+    }, []);
 
     let getListFacility = useCallback(async () => {
         let list = await getAPI('doctor/facilities');
@@ -222,7 +222,7 @@ function InputForm() {
         });
 
         setListFacility({ first: list, sec: tmp });
-    });
+    }, []);
 
     let [stateSelect, setStateSelect] = useState({ listFirst: [], Province: [], District: [], Ward: [] });
 
@@ -248,13 +248,13 @@ function InputForm() {
         }
         setSelectValue({ ...selectValue, [key]: value });
         setValidateSelect({ ...validateSelect, [key]: '' });
-    });
+    }, []);
 
     let getListProvince = useCallback(async () => {
         let list = await getAPI('doctor/facilities/provinces');
         let listProvince = getListAddress(list);
         setStateSelect({ ...stateSelect, listFirst: list, Province: listProvince });
-    });
+    }, []);
 
     let getListAddress = useCallback((list) => {
         let tmp = [];
@@ -263,7 +263,7 @@ function InputForm() {
         }
 
         return tmp;
-    });
+    }, []);
 
     useEffect(() => {
         getListFacility();

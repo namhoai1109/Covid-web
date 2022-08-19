@@ -10,5 +10,46 @@
             color: var(--primary);
             margin-right: 10px;
         }
+
+        .submit-btn {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-left: 10px;
+            padding: 2px 6px;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .wrap-list {
+        margin: 20px 30px 0;
+
+        .title-list {
+            color: var(--primary);
+            font-size: 2.1rem;
+            margin-bottom: 10px;
+        }
+
+        .item {
+            width: 100%;
+            justify-content: space-between;
+            padding: 0 100px;
+            margin-bottom: 10px;
+
+            .title {
+                font-size: 1.9rem;
+                color: var(--primary);
+            }
+
+            .id {
+                margin-right: 100px;
+            }
+
+            .credit {
+                margin-right: 120px;
+            }
+        }
     }
 }

@@ -25,7 +25,7 @@ function HistoryDoctor() {
             });
             setLogs(tmp);
         }
-    });
+    }, []);
 
     useEffect(() => {
         getHis();

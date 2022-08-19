@@ -1,7 +1,6 @@
 import classNames from 'classnames/bind';
 import { useCallback, useEffect, useState } from 'react';
 import { getAPI } from '~/APIservices/getAPI';
-import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './History.module.scss';
 const cx = classNames.bind(styles);
 
