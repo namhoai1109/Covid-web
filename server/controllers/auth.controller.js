@@ -92,5 +92,33 @@ exports.updatePassword = async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err });
   }
-
 };
+
+// Check if account is valid with jwt (used with PaySys)
+exports.checkValidAccount = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split("Bearer ")[1];
+    const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+    const idNumber = verified._id;
+    const account = await Account.findOne({ username: idNumber });
+
+    if (!account) {
+      return res.status(404).send({ message: "Invalid username" });
+    }
+
+    if (account.role !== "patient") {
+      return res.status(401).send({ message: "Unauthorized" });
+    }
+
+    if (account.status === "inactive") {
+      return res.status(401).send({
+        message:
+          "Account is disabled, please contact your administrator",
+      });
+    }
+
+    res.status(200).send({ message: "Valid account" });
+  } catch (err) {
+    res.status(500).send({ message: err });
+  }
+}

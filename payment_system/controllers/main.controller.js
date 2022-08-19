@@ -1,6 +1,7 @@
 const Account = require('../models/Account');
 const Log = require('../models/Log');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 
 exports.login = async (req, res) => {
   try {
@@ -28,8 +29,6 @@ exports.getAccountInfo = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 }
-
-// 
 
 // Make a deposit (nap tien)
 exports.makeDeposit = async (req, res) => {
@@ -87,16 +86,38 @@ exports.changePassword = async (req, res) => {
 }
 
 exports.registerAccount = async (req, res) => {
-  const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  const account = new Account({
-    username: req.body.username,
-    password: hashedPassword,
-    balance: 0
-  });
-
   try {
-    await account.save();
-    res.status(200).send({ message: "Account created successfully" });
+    if (req.headers?.authorization?.startsWith("Bearer ")) {
+      const token = req.headers.authorization;
+      const covidSysURL = 'https://localhost:5000/api/auth/is-valid-account'
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const username = req.body.username;
+
+      console.log("Received token " + token);
+      axios({
+        method: 'POST',
+        url: covidSysURL,
+        headers: {
+          'Authorization': token
+        }
+      })
+        .then(async (response) => {
+          const hashedPassword = await bcrypt.hash(req.body.password, 10);
+          const account = new Account({
+            username: username,
+            password: hashedPassword,
+            balance: 0
+          });
+          await account.save();
+          console.log("Valid account");
+          res.status(200).send({ message: "Account linked successfully" });
+        })
+        .catch(err => {
+          res.status(500).send({ message: "Unauthorized" });
+        })
+    } else {
+      res.status(401).send({ message: "Unauthorized" });
+    }
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }

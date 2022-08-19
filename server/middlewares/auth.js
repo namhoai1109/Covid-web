@@ -103,5 +103,4 @@ const checkPaymentAccountExist = async function (req, res, next) {
   }
 }
 
-
 module.exports = { authorizeUser, checkLinkedAccount, checkPaymentAccountExist };
