@@ -6,6 +6,10 @@ const billSchema = new mongoose.Schema({
         ref: 'Patient',
         required: true,
     },
+    buyer_username: {
+        type: String,
+        required: true,
+    },
     time_buy: {
         type: Date,
         immutable: true,
@@ -25,6 +29,9 @@ const billSchema = new mongoose.Schema({
     credit_limit: {
         type: Number,
         required: true,
+    },
+    total_price: {
+        type: Number,
     },
     paid: {
         type: Boolean,

@@ -111,6 +111,7 @@ exports.buyPackage = async(req, res) => {
         }
 
         // Save order information
+        let total_price = 0;
         const productsInPackage = package.products;
         const productsToBuy = req.body.products;
         const productsToBuyInfo = [];
@@ -131,6 +132,9 @@ exports.buyPackage = async(req, res) => {
                 product: product.product._id,
                 quantity: productToBuy.quantity,
             });
+
+            total_price += productToBuy.quantity * product.product.price;
+
         });
 
         // TODO: Call api to payment system to buy products
@@ -144,14 +148,15 @@ exports.buyPackage = async(req, res) => {
         // });
         // await packageOrder.save();
         const credit_limit = patient.credit_limit;
-
         const order_bill = new Bill({
             buyer: patient._id,
+            buyer_username: patient.id_number,
             package: package._id,
             time_buy: Date.now(),
             products_info: productsToBuyInfo,
             credit_limit: credit_limit,
-        });;
+            total_price: total_price,
+        });
         let bill_id;
         await order_bill.save()
             .then(bill => {
@@ -185,14 +190,16 @@ exports.payBill = async(req, res) => {
     if (!bill) {
         return res.status(500).send({ message: "Bill not found" });
     }
-    axios.post(PSURL, {
-        payload: bill
-    }).then(response => {
-        //TODO: Save bill as paid and history of package usage
-        console.log(response);
-    }).catch(err => {
-        res.status(500).send(err);
-    })
+    axios.post(PSURL, bill)
+        .then(response => {
+            //TODO: Save bill as paid and history of package usage
+            bill.paid = true;
+            await bill.save();
+
+            res.status(200).send({ message: "Bill paid, order successful, package usage saved" });
+        }).catch(err => {
+            res.status(500).send(err);
+        })
 }
 
 exports.linkAccount = async(req, res) => {
