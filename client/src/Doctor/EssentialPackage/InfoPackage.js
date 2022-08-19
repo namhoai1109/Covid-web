@@ -6,12 +6,11 @@ import ListItem from '~/CommonComponent/ListItem';
 import { FormInput } from '~/CommonComponent/Popper';
 import SelectOption from '~/CommonComponent/SelectOption';
 import WrapContent from '~/CommonComponent/WrapContent';
-import { addProduct, deleteProduct, resetList, setList } from '../redux/currentListProduct';
+import { deleteProduct, resetList, setList } from '../redux/currentListProduct';
 import { packageFields, unitTime } from '../staticVar';
 import styles from './EssentialPackage.module.scss';
 import ListProduct from './ListProduct';
 import Counting from '~/CommonComponent/Counting';
-import { postAPI } from '~/APIservices/postAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
@@ -47,10 +46,24 @@ function InfoPackage() {
     let [updateMode, setUpdateMode] = useState(false);
 
     useEffect(() => {
+        if (currentPackage.products && updateMode) {
+            // console.log(currentProducts);
+            let tmp = { ...listCounting };
+            currentProducts.forEach((item) => {
+                if (tmp[item._id] === undefined) {
+                    tmp[item._id] = 1;
+                }
+            });
+            setListCounting(tmp);
+            if (currentProducts.length > currentPackage.products.length) {
+            }
+        }
+    }, [currentProducts]);
+
+    useEffect(() => {
         if (currentPackage.products) {
             let tmp = {};
             let arr = [];
-            console.log(currentPackage);
             currentPackage.products.forEach((product) => {
                 arr.push(product.product);
                 tmp[product.product._id] = product.quantity;
@@ -58,25 +71,10 @@ function InfoPackage() {
             setListCounting(tmp);
             dispatch(setList(arr));
         }
-
         return () => {
             dispatch(resetList());
         };
     }, []);
-
-    useEffect(() => {
-        if (currentPackage.products) {
-            if (currentProducts.length > currentPackage.products.length) {
-                let tmp = { ...listCounting };
-                currentProducts.forEach((item) => {
-                    if (tmp[item._id] === undefined) {
-                        tmp[item._id] = 1;
-                    }
-                });
-                setListCounting(tmp);
-            }
-        }
-    }, [currentProducts]);
 
     let handleInputName = useCallback((e) => {
         let val = e.target.value;
@@ -109,48 +107,50 @@ function InfoPackage() {
         });
     }, []);
 
-    let formatedProducts = useCallback((product) => {
-        console.log(product);
-        let id = product._id;
-        let increasing = () => {
-            setListCounting((prev) => ({ ...prev, [id]: prev[id] + 1 }));
-        };
+    let formatedProducts = useCallback(
+        (product) => {
+            let id = product._id;
+            let increasing = () => {
+                setListCounting((prev) => ({ ...prev, [id]: prev[id] + 1 }));
+            };
 
-        let decreasing = () => {
-            setListCounting((prev) => ({ ...prev, [id]: prev[id] - 1 }));
-        };
+            let decreasing = () => {
+                setListCounting((prev) => ({ ...prev, [id]: prev[id] - 1 }));
+            };
 
-        let handleShowDetails = () => {
-            dispatch(setCurr(product));
-            navigate(
-                configs.mainRoutes.doctor +
-                    configs.doctorRoutes.essentialPackage +
-                    configs.doctorRoutes.infoPackage +
-                    configs.doctorRoutes.infoNecessity,
-            );
-        };
+            let handleShowDetails = () => {
+                dispatch(setCurr(product));
+                navigate(
+                    configs.mainRoutes.doctor +
+                        configs.doctorRoutes.essentialPackage +
+                        configs.doctorRoutes.infoPackage +
+                        configs.doctorRoutes.infoNecessity,
+                );
+            };
 
-        let nProduct = {
-            name: product.name,
-            price: product.price,
-            quantity_unit: product.quantity_unit,
-            counting: (
-                <Counting
-                    hideBtn={!updateMode}
-                    value={listCounting[id]}
-                    increasing={increasing}
-                    decreasing={decreasing}
-                />
-            ),
-            details: !updateMode && (
-                <button className={cx('details')} onClick={handleShowDetails}>
-                    details
-                </button>
-            ),
-        };
+            let nProduct = {
+                name: product.name,
+                price: product.price,
+                quantity_unit: product.quantity_unit,
+                counting: (
+                    <Counting
+                        hideBtn={!updateMode}
+                        value={listCounting[id]}
+                        increasing={increasing}
+                        decreasing={decreasing}
+                    />
+                ),
+                details: !updateMode && (
+                    <button className={cx('details')} onClick={handleShowDetails}>
+                        details
+                    </button>
+                ),
+            };
 
-        return nProduct;
-    }, []);
+            return nProduct;
+        },
+        [listCounting, updateMode],
+    );
 
     let validateInput = useCallback(() => {
         let validateStr = {};
@@ -191,7 +191,7 @@ function InfoPackage() {
         } else {
             return isOke;
         }
-    }, []);
+    }, [inputFields, currentProducts]);
 
     let handleSubmit = useCallback(async () => {
         let readySubmit = true;
@@ -220,7 +220,7 @@ function InfoPackage() {
         }
 
         if (readySubmit) setUpdateMode(!updateMode);
-    }, []);
+    }, [inputFields, listCounting, updateMode, currentPackage]);
 
     return (
         <div className={cx('wrapper')}>

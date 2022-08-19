@@ -38,6 +38,13 @@ let SortBtn = ({ onClick }) => {
 function CovidPatient() {
     let dispatch = useDispatch();
     let navigate = useNavigate();
+    let listPatient = useSelector((state) => state.listPatient.list);
+    console.log(listPatient);
+    let filterState = useSelector((state) => state.filterState.filter);
+    let valueFilter = useSelector((state) => state.filterState.valueFilter);
+    let searchValue = useSelector((state) => state.filterState.search);
+    let sortParam = useSelector((state) => state.filterState.sort);
+    let deleteState = useSelector((state) => state.deleteState);
 
     let getListPatient = useCallback(async () => {
         try {
@@ -52,7 +59,7 @@ function CovidPatient() {
             console.log(err);
             // return err;
         }
-    }, []);
+    }, [dispatch]);
 
     let fetchDeletePatient = useCallback(async (id) => {
         try {
@@ -66,7 +73,7 @@ function CovidPatient() {
     let getListFilter = useCallback(async () => {
         let res = await filterAPI('doctor/patients/filter', valueFilter);
         dispatch(setListPatient(res));
-    }, []);
+    }, [valueFilter]);
 
     let getListSearch = useCallback(async (value) => {
         let res = await searchAPI('doctor/patients/search', value);
@@ -79,7 +86,7 @@ function CovidPatient() {
         dispatch(setListPatient(res));
     }, []);
 
-    let handleDeletePatient = (index, id) => {
+    let handleDeletePatient = (id) => {
         fetchDeletePatient(id).then(() => {
             getListPatient();
         });
@@ -99,14 +106,6 @@ function CovidPatient() {
             facility: (item.current_facility && item.current_facility.name) || '',
         };
     }, []);
-
-    let listPatient = useSelector((state) => state.listPatient.list);
-    console.log(listPatient);
-    let filterState = useSelector((state) => state.filterState.filter);
-    let valueFilter = useSelector((state) => state.filterState.valueFilter);
-    let searchValue = useSelector((state) => state.filterState.search);
-    let sortParam = useSelector((state) => state.filterState.sort);
-    let deleteState = useSelector((state) => state.deleteState);
 
     useEffect(() => {
         getListPatient();
@@ -178,7 +177,7 @@ function CovidPatient() {
                             <ListItem
                                 infos={nPatient}
                                 showDelete={deleteState.state}
-                                clickDelete={() => handleDeletePatient(index, idDelete)}
+                                clickDelete={() => handleDeletePatient(idDelete)}
                             />
                         </div>
                     );

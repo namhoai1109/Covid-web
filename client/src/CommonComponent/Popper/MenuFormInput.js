@@ -66,57 +66,66 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
         if (clearInput) {
             setInputVals(initInputVal);
         }
-    }, []);
+    }, [inputVals]);
 
     let handleHide = useCallback(() => {
         setInputVals(initInputVal);
-    }, []);
+    }, [initInputVal]);
 
-    let handleChange = useCallback((e, title) => {
-        let inputval = e.target.value;
-        setInputVals({
-            ...inputVals,
-            [title]: inputval,
-        });
-        setValidateStr('');
-    }, []);
-
-    let handleRandPass = useCallback((title) => {
-        let randPass = makePass(6);
-        setInputVals({
-            ...inputVals,
-            [title]: randPass,
-        });
-        setValidateStr('');
-    }, []);
-
-    let handleChangeSelect = useCallback((val, title, typeSelect) => {
-        if (typeSelect === 'Province') {
-            stateSelect.listFirst.forEach((item) => {
-                if (item.name === val) {
-                    let listDistrict = getListAddress(item.districts);
-                    setStateSelect({ ...stateSelect, District: listDistrict });
-                }
+    let handleChange = useCallback(
+        (e, title) => {
+            let inputval = e.target.value;
+            setInputVals({
+                ...inputVals,
+                [title]: inputval,
             });
-        } else if (typeSelect === 'District') {
-            stateSelect.listFirst.forEach((item) => {
-                if (item.name === inputVals['province/city']) {
-                    item.districts.forEach((district) => {
-                        if (district.name === val) {
-                            let listWard = getListAddress(district.wards);
-                            setStateSelect({ ...stateSelect, Ward: listWard });
-                        }
-                    });
-                }
-            });
-        }
+            setValidateStr('');
+        },
+        [inputVals],
+    );
 
-        setInputVals({
-            ...inputVals,
-            [title]: val,
-        });
-        setValidateStr('');
-    }, []);
+    let handleRandPass = useCallback(
+        (title) => {
+            let randPass = makePass(6);
+            setInputVals({
+                ...inputVals,
+                [title]: randPass,
+            });
+            setValidateStr('');
+        },
+        [inputVals],
+    );
+
+    let handleChangeSelect = useCallback(
+        (val, title, typeSelect) => {
+            if (typeSelect === 'Province') {
+                stateSelect.listFirst.forEach((item) => {
+                    if (item.name === val) {
+                        let listDistrict = getListAddress(item.districts);
+                        setStateSelect({ ...stateSelect, District: listDistrict });
+                    }
+                });
+            } else if (typeSelect === 'District') {
+                stateSelect.listFirst.forEach((item) => {
+                    if (item.name === inputVals['province/city']) {
+                        item.districts.forEach((district) => {
+                            if (district.name === val) {
+                                let listWard = getListAddress(district.wards);
+                                setStateSelect({ ...stateSelect, Ward: listWard });
+                            }
+                        });
+                    }
+                });
+            }
+
+            setInputVals({
+                ...inputVals,
+                [title]: val,
+            });
+            setValidateStr('');
+        },
+        [inputVals],
+    );
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>

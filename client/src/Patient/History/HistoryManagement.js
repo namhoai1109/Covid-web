@@ -20,7 +20,8 @@ function HistoryManagement() {
             console.log(tmp);
             setLogs(tmp);
         }
-    });
+    }, []);
+
     useEffect(() => {
         getLogs();
     }, []);

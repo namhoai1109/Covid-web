@@ -21,6 +21,7 @@ function Login() {
     let navigate = useNavigate();
 
     let checkUsername = useCallback(async () => {
+        console.log(inputVals);
         let res = await postAPI('auth/check', {
             username: inputVals.username,
         });
@@ -37,7 +38,7 @@ function Login() {
             }
             setIsValidAccount(true);
         }
-    }, []);
+    }, [inputVals.username]);
 
     let handleSubmit = useCallback(async () => {
         if (!isValidAccount) {
@@ -72,7 +73,7 @@ function Login() {
                 }
             }
         }
-    }, []);
+    }, [inputVals.username, inputVals.password, inputVals.password_again, isValidAccount, showPassword]);
 
     let handleChangeID = useCallback((e) => {
         setError('');
@@ -100,9 +101,12 @@ function Login() {
         }));
     }, []);
 
-    let handleKeyDown = useCallback((e) => {
-        if (e.key === 'Enter') handleSubmit();
-    }, []);
+    let handleKeyDown = useCallback(
+        (e) => {
+            if (e.key === 'Enter') handleSubmit();
+        },
+        [inputVals.username, inputVals.password, inputVals.password_again],
+    );
 
     return (
         <div className={cx('fit-screen', 'flex-center')}>

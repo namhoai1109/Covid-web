@@ -77,25 +77,28 @@ function InputPackage() {
         });
     }, []);
 
-    let formatedProducts = useCallback((product) => {
-        let id = product._id;
-        let increasing = () => {
-            setListCounting((prev) => ({ ...prev, [id]: prev[id] + 1 }));
-        };
+    let formatedProducts = useCallback(
+        (product) => {
+            let id = product._id;
+            let increasing = () => {
+                setListCounting((prev) => ({ ...prev, [id]: prev[id] + 1 }));
+            };
 
-        let decreasing = () => {
-            setListCounting((prev) => ({ ...prev, [id]: prev[id] - 1 }));
-        };
+            let decreasing = () => {
+                setListCounting((prev) => ({ ...prev, [id]: prev[id] - 1 }));
+            };
 
-        let nProduct = {
-            name: product.name,
-            price: product.price,
-            quantity_unit: product.quantity_unit,
-            counting: <Counting value={listCounting[id]} increasing={increasing} decreasing={decreasing} />,
-        };
+            let nProduct = {
+                name: product.name,
+                price: product.price,
+                quantity_unit: product.quantity_unit,
+                counting: <Counting value={listCounting[id]} increasing={increasing} decreasing={decreasing} />,
+            };
 
-        return nProduct;
-    }, []);
+            return nProduct;
+        },
+        [listCounting],
+    );
 
     let validateInput = useCallback(() => {
         let validateStr = {};
@@ -136,7 +139,7 @@ function InputPackage() {
         } else {
             return isOke;
         }
-    }, []);
+    }, [inputFields, currentProducts]);
 
     let handleSubmit = useCallback(async () => {
         let readySubmit = validateInput();
@@ -173,7 +176,7 @@ function InputPackage() {
                 dispatch(resetList());
             }
         }
-    }, []);
+    }, [listCounting, inputFields]);
 
     return (
         <div className={cx('wrapper')}>

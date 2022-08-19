@@ -40,7 +40,7 @@ function Dashboard() {
         } else {
             setValidate('Please enter a valid amount');
         }
-    }, []);
+    }, [deposit]);
 
     useEffect(() => {
         getInfo();

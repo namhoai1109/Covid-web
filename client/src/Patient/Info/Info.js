@@ -63,7 +63,7 @@ function Info() {
                 setLinkState(true);
             }
         }
-    }, []);
+    }, [linkState]);
 
     let handleSubmit = useCallback(async () => {
         let isOke = true;
@@ -120,7 +120,7 @@ function Info() {
                 setNotiSuccess(res.message);
             }
         }
-    }, []);
+    }, [inputPassword]);
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>
