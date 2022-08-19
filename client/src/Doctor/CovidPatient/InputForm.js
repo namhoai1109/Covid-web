@@ -91,37 +91,43 @@ function InputForm() {
         });
     };
 
-    let handleRandPass = useCallback((formatedTitle) => {
-        let randPass = makePass(6);
-        setInputField({
-            ...inputField,
-            [formatedTitle]: randPass,
-        });
-        setValidateString({ ...validateString, [formatedTitle]: '' });
-    }, []);
+    let handleRandPass = useCallback(
+        (formatedTitle) => {
+            let randPass = makePass(6);
+            setInputField({
+                ...inputField,
+                [formatedTitle]: randPass,
+            });
+            setValidateString({ ...validateString, [formatedTitle]: '' });
+        },
+        [inputField, validateString],
+    );
 
-    let registerPatient = useCallback(async (data) => {
-        try {
-            let token = JSON.parse(localStorage.getItem('Token')).token;
-            let res = await postAPI('/doctor/patients', data, token);
-            console.log(res);
-
-            if (res.message === 'Patient account created and save successfully') {
-                setInputField(initValue);
-                setSelectValue(initValueSelect);
-                dispatch(reset());
-            }
-
-            if (!res.message && res.includes('id_number')) {
+    let registerPatient = useCallback(
+        async (data) => {
+            try {
+                let token = JSON.parse(localStorage.getItem('Token')).token;
+                let res = await postAPI('/doctor/patients', data, token);
                 console.log(res);
-                setValidateString({ ...validateString, ID_number: 'ID number is already exist' });
-            } else if (!res.message && res.includes('name')) {
-                setValidateString({ ...validateString, Name: 'This name is invalid' });
+
+                if (res.message === 'Patient account created and save successfully') {
+                    setInputField(initValue);
+                    setSelectValue(initValueSelect);
+                    dispatch(reset());
+                }
+
+                if (!res.message && res.includes('id_number')) {
+                    console.log(res);
+                    setValidateString({ ...validateString, ID_number: 'ID number is already exist' });
+                } else if (!res.message && res.includes('name')) {
+                    setValidateString({ ...validateString, Name: 'This name is invalid' });
+                }
+            } catch (err) {
+                console.log(err);
             }
-        } catch (err) {
-            console.log(err);
-        }
-    }, []);
+        },
+        [inputField, validateString],
+    );
 
     let validateForm = useCallback((inputField, selectValue) => {
         let validateStr = {};
@@ -135,7 +141,7 @@ function InputForm() {
         });
 
         Object.keys(selectValue).forEach((key) => {
-            if (selectValue[key] === '-- make your choice --') {
+            if (selectValue[key] === '-- select --') {
                 validateSelect[key] = key + ' is required';
                 isOke = false;
             }
@@ -201,16 +207,19 @@ function InputForm() {
 
             registerPatient(dataSubmit);
         }
-    }, []);
+    }, [inputField, selectValue, contactList, registerPatient, validateForm]);
 
     let handleDeleteContact = useCallback((index) => {
         dispatch(deleteItem(index));
     }, []);
 
-    let handleChangeStatus = useCallback((e) => {
-        setInputField({ ...inputField, Status: e.target.value });
-        setValidateString({ ...validateString, Status: '' });
-    }, []);
+    let handleChangeStatus = useCallback(
+        (e) => {
+            setInputField({ ...inputField, Status: e.target.value });
+            setValidateString({ ...validateString, Status: '' });
+        },
+        [inputField, validateString],
+    );
 
     let getListFacility = useCallback(async () => {
         let list = await getAPI('doctor/facilities');
@@ -226,29 +235,32 @@ function InputForm() {
 
     let [stateSelect, setStateSelect] = useState({ listFirst: [], Province: [], District: [], Ward: [] });
 
-    let handleChangeSelect = useCallback((value, key) => {
-        if (key === 'Province') {
-            stateSelect.listFirst.forEach((item) => {
-                if (item.name === value) {
-                    let listDistrict = getListAddress(item.districts);
-                    setStateSelect({ ...stateSelect, District: listDistrict });
-                }
-            });
-        } else if (key === 'District') {
-            stateSelect.listFirst.forEach((item) => {
-                if (item.name === selectValue.Province) {
-                    item.districts.forEach((district) => {
-                        if (district.name === value) {
-                            let listWard = getListAddress(district.wards);
-                            setStateSelect({ ...stateSelect, Ward: listWard });
-                        }
-                    });
-                }
-            });
-        }
-        setSelectValue({ ...selectValue, [key]: value });
-        setValidateSelect({ ...validateSelect, [key]: '' });
-    }, []);
+    let handleChangeSelect = useCallback(
+        (value, key) => {
+            if (key === 'Province') {
+                stateSelect.listFirst.forEach((item) => {
+                    if (item.name === value) {
+                        let listDistrict = getListAddress(item.districts);
+                        setStateSelect({ ...stateSelect, District: listDistrict });
+                    }
+                });
+            } else if (key === 'District') {
+                stateSelect.listFirst.forEach((item) => {
+                    if (item.name === selectValue.Province) {
+                        item.districts.forEach((district) => {
+                            if (district.name === value) {
+                                let listWard = getListAddress(district.wards);
+                                setStateSelect({ ...stateSelect, Ward: listWard });
+                            }
+                        });
+                    }
+                });
+            }
+            setSelectValue({ ...selectValue, [key]: value });
+            setValidateSelect({ ...validateSelect, [key]: '' });
+        },
+        [selectValue, validateSelect, stateSelect],
+    );
 
     let getListProvince = useCallback(async () => {
         let list = await getAPI('doctor/facilities/provinces');

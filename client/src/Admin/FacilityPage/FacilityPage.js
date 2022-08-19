@@ -3,12 +3,10 @@ import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './FacilityPage.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import ListItem from '~/CommonComponent/ListItem';
-import { removeFacility } from '../redux/listFacilitySlice';
-import { formInputFacility, formUpdateFacility, menuFacility } from '../staticVar';
+import { formUpdateFacility, menuFacility } from '../staticVar';
 import { useCallback, useEffect, useState } from 'react';
 import { getListFacility } from '../fetchAPI';
 import { deleteAPI } from '~/APIservices/deleteAPI';
-import Wrapper, { FormInput, MenuFormInput, MenuItem } from '~/CommonComponent/Popper';
 import TippyHeadless from '@tippyjs/react/headless';
 import { putAPI } from '~/APIservices/putAPI';
 
@@ -30,13 +28,16 @@ let EditScreen = ({ menu, item, children }) => {
         } else if (res.message && res.message === 'Facility updated successfully') {
             getListFacility(dispatch);
         }
-    }, []);
+    }, [inputVals]);
 
-    let handleChange = useCallback((e, title) => {
-        let val = e.target.value;
-        setInputVals({ ...inputVals, [title]: val });
-        setValidate('');
-    }, []);
+    let handleChange = useCallback(
+        (e, title) => {
+            let val = e.target.value;
+            setInputVals({ ...inputVals, [title]: val });
+            setValidate('');
+        },
+        [inputVals],
+    );
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>

@@ -29,44 +29,49 @@ function InfoPackage() {
         }
     }, []);
 
-    let formatedProducts = useCallback((product, max_count) => {
-        let id = product._id;
-        let increasing = () => {
-            setListCounting((prev) => ({ ...prev, [id]: prev[id] + 1 }));
-        };
+    let formatedProducts = useCallback(
+        (product, max_count) => {
+            let id = product._id;
+            let increasing = () => {
+                setListCounting((prev) => ({ ...prev, [id]: prev[id] + 1 }));
+            };
 
-        let decreasing = () => {
-            setListCounting((prev) => ({ ...prev, [id]: prev[id] - 1 }));
-        };
+            let decreasing = () => {
+                setListCounting((prev) => ({ ...prev, [id]: prev[id] - 1 }));
+            };
 
-        let handleShowDetails = () => {
-            dispatch(setCurr(product));
-            navigate(
-                configs.mainRoutes.patient + configs.patientRoutes.essentialPackage + configs.patientRoutes.infoProduct,
-            );
-        };
-        let nProduct = {
-            name: product.name,
-            price: product.price,
-            quantity_unit: product.quantity_unit,
-            counting: (
-                <Counting
-                    maxValue={max_count}
-                    minValue={0}
-                    value={listCounting[id]}
-                    increasing={increasing}
-                    decreasing={decreasing}
-                />
-            ),
-            details: (
-                <button className={cx('details')} onClick={handleShowDetails}>
-                    details
-                </button>
-            ),
-        };
+            let handleShowDetails = () => {
+                dispatch(setCurr(product));
+                navigate(
+                    configs.mainRoutes.patient +
+                        configs.patientRoutes.essentialPackage +
+                        configs.patientRoutes.infoProduct,
+                );
+            };
+            let nProduct = {
+                name: product.name,
+                price: product.price,
+                quantity_unit: product.quantity_unit,
+                counting: (
+                    <Counting
+                        maxValue={max_count}
+                        minValue={0}
+                        value={listCounting[id]}
+                        increasing={increasing}
+                        decreasing={decreasing}
+                    />
+                ),
+                details: (
+                    <button className={cx('details')} onClick={handleShowDetails}>
+                        details
+                    </button>
+                ),
+            };
 
-        return nProduct;
-    }, []);
+            return nProduct;
+        },
+        [listCounting],
+    );
 
     return (
         <div className={cx('wrapper')}>

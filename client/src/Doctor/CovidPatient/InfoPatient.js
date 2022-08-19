@@ -81,7 +81,7 @@ function InfoPatient() {
             fetchUpdatePatient(formUpdate);
         }
         setUpdateMode(!updateMode);
-    }, []);
+    }, [status, facility, closeContactList]);
 
     useEffect(() => {
         if (patient.close_contact_list) {

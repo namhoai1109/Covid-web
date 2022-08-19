@@ -28,7 +28,6 @@ function EssentialPackage() {
 
     let [listPackage, setListPackage] = useState([]);
     let dispatch = useDispatch();
-    console.log(listPackage);
 
     let getListPackage = useCallback(async () => {
         let list = await getAPI('doctor/packages');
@@ -56,12 +55,12 @@ function EssentialPackage() {
             let res = await filterAPI('doctor/packages/filter', tmp);
             setListPackage(res);
         }
-    }, []);
+    }, [filterState, valueFilter]);
 
     let getListSort = useCallback(async () => {
         let res = await sortAPI('doctor/packages', sortParam);
         setListPackage(res);
-    }, []);
+    }, [sortParam]);
 
     useEffect(() => {
         getListPackage();

@@ -17,32 +17,38 @@ function Payment() {
 
     let getCurCredit = useCallback(async () => {
         let res = await getAPI('doctor/patients/credit-limit');
-        setCurCredit(res.credit_limit * 100 + '% value of package');
+        setCurCredit((res.credit_limit * 100).toFixed(0) + '% value of package');
     }, []);
 
-    let changeCredit = useCallback(async (e) => {
-        let res = await putAPI('doctor/patients/credit-limit', {
-            credit_limit: Number(valCredit) / 100,
-        });
+    let changeCredit = useCallback(
+        async (e) => {
+            let res = await putAPI('doctor/patients/credit-limit', {
+                credit_limit: Number(valCredit) / 100,
+            });
 
-        console.log(res);
-        // console.log(Number(valCredit) / 100);
-        if (res.message && res.message === 'Credit limit updated successfully') getCurCredit();
-    }, []);
+            console.log(res);
+            // console.log(Number(valCredit) / 100);
+            if (res.message && res.message === 'Credit limit updated successfully') getCurCredit();
+        },
+        [valCredit],
+    );
 
     let getListPayemtAccount = useCallback(async () => {
         let res = await getAPI('doctor/patients/with-ps-account');
+        console.log(res);
         if (res.length > 0) setListPayAcc(res);
     }, []);
 
     let handleSubmitCredit = useCallback(() => {
         if (valCredit !== '') {
-            changeCredit();
+            changeCredit().then(() => {
+                getListPayemtAccount();
+            });
             setValCredit('');
         } else {
             console.log('empty');
         }
-    }, []);
+    }, [valCredit]);
 
     useEffect(() => {
         getCurCredit();
@@ -83,7 +89,7 @@ function Payment() {
                         let nForm = {
                             name: item.name,
                             id_number: item.id_number,
-                            credit: '10',
+                            credit: (item.credit_limit * 100).toFixed(0) + '%',
                         };
                         return (
                             <div className={cx('item', 'flex-center')} key={index}>
