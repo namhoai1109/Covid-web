@@ -21,7 +21,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
             }
         }
         return data;
-    });
+    }, []);
 
     let makePass = useCallback((length) => {
         var result = '';
@@ -31,7 +31,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
-    });
+    }, []);
 
     let initInputVal = initDataInput(menu);
     let [inputVals, setInputVals] = useState(initInputVal);
@@ -46,7 +46,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
         let list = await getAPI('facility/provinces');
         let listProvince = getListAddress(list);
         setStateSelect({ ...stateSelect, listFirst: list, Province: listProvince });
-    });
+    }, []);
 
     let getListAddress = useCallback((list) => {
         let tmp = [];
@@ -55,7 +55,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
         }
 
         return tmp;
-    });
+    }, []);
 
     useEffect(() => {
         getListProvince();
@@ -66,11 +66,11 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
         if (clearInput) {
             setInputVals(initInputVal);
         }
-    });
+    }, []);
 
     let handleHide = useCallback(() => {
         setInputVals(initInputVal);
-    });
+    }, []);
 
     let handleChange = useCallback((e, title) => {
         let inputval = e.target.value;
@@ -79,7 +79,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
             [title]: inputval,
         });
         setValidateStr('');
-    });
+    }, []);
 
     let handleRandPass = useCallback((title) => {
         let randPass = makePass(6);
@@ -88,7 +88,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
             [title]: randPass,
         });
         setValidateStr('');
-    });
+    }, []);
 
     let handleChangeSelect = useCallback((val, title, typeSelect) => {
         if (typeSelect === 'Province') {
@@ -116,7 +116,7 @@ function MenuFormInput({ menu, onClick = () => {}, children, validateStr, setVal
             [title]: val,
         });
         setValidateStr('');
-    });
+    }, []);
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>

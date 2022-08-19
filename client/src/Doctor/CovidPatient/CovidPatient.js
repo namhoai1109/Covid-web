@@ -52,7 +52,7 @@ function CovidPatient() {
             console.log(err);
             // return err;
         }
-    });
+    }, []);
 
     let fetchDeletePatient = useCallback(async (id) => {
         try {
@@ -61,23 +61,23 @@ function CovidPatient() {
         } catch (err) {
             console.log(err);
         }
-    });
+    }, []);
 
     let getListFilter = useCallback(async () => {
         let res = await filterAPI('doctor/patients/filter', valueFilter);
         dispatch(setListPatient(res));
-    });
+    }, []);
 
     let getListSearch = useCallback(async (value) => {
         let res = await searchAPI('doctor/patients/search', value);
         dispatch(setListPatient(res));
-    });
+    }, []);
 
     let getListSort = useCallback(async (sortParam) => {
         let res = await sortAPI('doctor/patients', sortParam);
         console.log(res);
         dispatch(setListPatient(res));
-    });
+    }, []);
 
     let handleDeletePatient = (index, id) => {
         fetchDeletePatient(id).then(() => {
@@ -98,7 +98,7 @@ function CovidPatient() {
             status: item.status,
             facility: (item.current_facility && item.current_facility.name) || '',
         };
-    });
+    }, []);
 
     let listPatient = useSelector((state) => state.listPatient.list);
     console.log(listPatient);

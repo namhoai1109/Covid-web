@@ -66,7 +66,7 @@ function InfoPackage() {
         };
 
         return nProduct;
-    });
+    }, []);
 
     return (
         <div className={cx('wrapper')}>

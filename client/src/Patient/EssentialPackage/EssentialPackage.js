@@ -19,14 +19,14 @@ function EssentialPackage() {
     let getListPackage = useCallback(async () => {
         let list = await getAPI('patient/packages');
         setListPackage(list);
-    });
+    }, []);
 
     let navInfoPackage = useCallback((item) => {
         dispatch(setCurrentPackage(item));
         navigate(
             configs.mainRoutes.patient + configs.patientRoutes.essentialPackage + configs.patientRoutes.infoPackage,
         );
-    });
+    }, []);
 
     useEffect(() => {
         getListPackage();

@@ -37,14 +37,14 @@ function EssentialPackage() {
             //dispatch(setListPackage(list));
             setListPackage(list);
         }
-    });
+    }, []);
 
     let getListSearch = useCallback(async (value) => {
         let list = await searchAPI('doctor/packages/search', value);
         if (Array.isArray(list)) {
             setListPackage(list);
         }
-    });
+    }, []);
 
     let getListFilter = useCallback(async () => {
         let nFilterState = filterState[filterState.length - 1];
@@ -56,12 +56,12 @@ function EssentialPackage() {
             let res = await filterAPI('doctor/packages/filter', tmp);
             setListPackage(res);
         }
-    });
+    }, []);
 
     let getListSort = useCallback(async () => {
         let res = await sortAPI('doctor/packages', sortParam);
         setListPackage(res);
-    });
+    }, []);
 
     useEffect(() => {
         getListPackage();
@@ -88,16 +88,16 @@ function EssentialPackage() {
     let handleDeletePackage = useCallback(async (id) => {
         let res = await deleteAPI('doctor/packages/id=' + id);
         getListPackage();
-    });
+    }, []);
 
     let navInfoPackage = useCallback((pack) => {
         dispatch(setCurrentPackage(pack));
         navigate(configs.mainRoutes.doctor + configs.doctorRoutes.essentialPackage + configs.doctorRoutes.infoPackage);
-    });
+    }, []);
 
     let handleDeleteState = useCallback(() => {
         dispatch(resetState());
-    });
+    }, []);
 
     return (
         <div className={cx('wrapper')}>
