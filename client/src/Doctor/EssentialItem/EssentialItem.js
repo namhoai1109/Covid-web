@@ -38,7 +38,7 @@ function EssentialItem() {
             let res = await filterAPI('doctor/products/filter', tmp);
             setListProduct(res);
         }
-    }, []);
+    }, [filterState, valueFilter]);
 
     let getListSearch = useCallback(async (value) => {
         let res = await searchAPI('doctor/products/search', value);
@@ -48,7 +48,7 @@ function EssentialItem() {
     let getListSort = useCallback(async () => {
         let res = await sortAPI('doctor/products', sortParam);
         setListProduct(res);
-    }, []);
+    }, [sortParam]);
 
     let fetchListProduct = useCallback(async () => {
         let list = await getAPI('/doctor/products');

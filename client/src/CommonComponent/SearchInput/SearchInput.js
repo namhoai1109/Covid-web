@@ -17,7 +17,7 @@ function SearchInput({ stateDynamique, icon, filter = '' }) {
                 setSkrink(true);
             }
         }
-    }, []);
+    }, [stateDynamique, searchVal]);
 
     let handleClick = useCallback(() => {
         if (stateDynamique) {
@@ -27,7 +27,7 @@ function SearchInput({ stateDynamique, icon, filter = '' }) {
         if (searchVal !== '') {
             setSkrink(false);
         }
-    }, []);
+    }, [searchVal, skrink, stateDynamique]);
 
     useEffect(() => {
         let nFilter = filter.replaceAll(' ', '_');
