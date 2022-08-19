@@ -19,7 +19,6 @@ const logSchema = new mongoose.Schema({
   amount: {
     type: Number,
   },
-
 })
 
 module.exports = mongoose.model("Log", logSchema);

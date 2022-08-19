@@ -138,6 +138,7 @@ exports.buyPackage = async (req, res) => {
 
     // TODO: Call api to payment system to buy products
 
+
     // Create a new package order
     const packageOrder = new PackageOrder({
       buyer: patient._id,
@@ -162,25 +163,26 @@ exports.linkAccount = async (req, res) => {
         .send({ message: "Account not found in the database" });
     }
 
-    const PSURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
+    const token = req.headers.authorization
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
     axios({
       method: "POST",
-      url: PSURL,
-      headers: {},
+      url: paySysURL,
+      headers: {
+        'Authorization': token,
+      },
       data: {
         username: account.username,
         password: "placeholder",
       },
     })
-      .then(async function (response) {
+      .then(response => {
         account.linked = true;
-        await account.save();
-        res.status(200).send({
-          message: "Account linked successfully",
-        });
+        account.save();
+        res.status(200).send({ message: "Account linked successfully" });
       })
-      .catch(function (error) {
-        res.status(500).send({ message: error.message });
+      .catch(error => {
+        res.status(500).send({ message: "Error linking account" });
       });
   } catch (err) {
     res.status(500).send({ message: err.message });
