@@ -15,11 +15,11 @@ const cx = classNames.bind(styles);
 function InputForm() {
     let removeSpace = useCallback((title) => {
         return title.replaceAll(' ', '_');
-    });
+    }, []);
 
     let returnSpace = useCallback((title) => {
         return title.replaceAll('_', ' ');
-    });
+    }, []);
 
     let initDataInput = useCallback((menu) => {
         let data = {};
@@ -28,7 +28,7 @@ function InputForm() {
         }
 
         return data;
-    });
+    }, []);
 
     let [imgs, setImgs] = useState([]);
     let inputRef = useRef();

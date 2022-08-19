@@ -79,7 +79,7 @@ function ManagerPage() {
                 </div>
             ),
         };
-    });
+    }, []);
 
     let handleDeleteDoctor = async (infoDoctor, index) => {
         console.log(infoDoctor);

@@ -24,7 +24,7 @@ function Dashboard() {
             username: res.username,
             balance: res.balance,
         });
-    });
+    }, []);
 
     let handleSubmit = useCallback(async () => {
         if (Number(deposit) > 0) {
@@ -40,7 +40,7 @@ function Dashboard() {
         } else {
             setValidate('Please enter a valid amount');
         }
-    });
+    }, []);
 
     useEffect(() => {
         getInfo();

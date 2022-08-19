@@ -18,7 +18,7 @@ function Payment() {
     let getCurCredit = useCallback(async () => {
         let res = await getAPI('doctor/patients/credit-limit');
         setCurCredit(res.credit_limit * 100 + '% value of package');
-    });
+    }, []);
 
     let changeCredit = useCallback(async (e) => {
         let res = await putAPI('doctor/patients/credit-limit', {
@@ -28,12 +28,12 @@ function Payment() {
         console.log(res);
         // console.log(Number(valCredit) / 100);
         if (res.message && res.message === 'Credit limit updated successfully') getCurCredit();
-    });
+    }, []);
 
     let getListPayemtAccount = useCallback(async () => {
         let res = await getAPI('doctor/patients/with-ps-account');
         if (res.length > 0) setListPayAcc(res);
-    });
+    }, []);
 
     let handleSubmitCredit = useCallback(() => {
         if (valCredit !== '') {
@@ -42,7 +42,7 @@ function Payment() {
         } else {
             console.log('empty');
         }
-    });
+    }, []);
 
     useEffect(() => {
         getCurCredit();

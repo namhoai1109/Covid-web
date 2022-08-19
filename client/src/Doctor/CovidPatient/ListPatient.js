@@ -36,7 +36,7 @@ function ListPatient({ onBack }) {
             status: item.status,
             facility: item.current_facility.name,
         };
-    });
+    }, []);
 
     let handleClick = (patient) => {
         dispatch(add(patient));

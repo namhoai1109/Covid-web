@@ -38,23 +38,23 @@ function EssentialItem() {
             let res = await filterAPI('doctor/products/filter', tmp);
             setListProduct(res);
         }
-    });
+    }, []);
 
     let getListSearch = useCallback(async (value) => {
         let res = await searchAPI('doctor/products/search', value);
         setListProduct(res);
-    });
+    }, []);
 
     let getListSort = useCallback(async () => {
         let res = await sortAPI('doctor/products', sortParam);
         setListProduct(res);
-    });
+    }, []);
 
     let fetchListProduct = useCallback(async () => {
         let list = await getAPI('/doctor/products');
         //console.log(list);
         setListProduct(list);
-    });
+    }, []);
 
     useEffect(() => {
         if (filterState.length !== 0) {
@@ -87,16 +87,16 @@ function EssentialItem() {
         let res = await deleteAPI('doctor/products/id=' + id);
         console.log(res);
         fetchListProduct();
-    });
+    }, []);
 
     let handleNavPage = useCallback((item) => {
         navigate(configs.mainRoutes.doctor + configs.doctorRoutes.essentialItem + configs.doctorRoutes.infoNecessity);
         dispatch(setCurr(item));
-    });
+    }, []);
 
     let handleDeleteState = useCallback(() => {
         dispatch(resetState());
-    });
+    }, []);
 
     return (
         <div className={cx('wrapper')}>

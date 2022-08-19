@@ -434,11 +434,12 @@ exports.deletePatient = async (req, res) => {
 // ----------------------Credit limit related functions-----------------------
 // Get the current credit limit
 exports.getCurrentCreditLimit = async (req, res) => {
-    try {
-        const doctor = await Doctor.findOne({ id_number: req.idNumber });
-        if (!doctor) {
-            return res.status(500).send({ message: "Doctor not found" });
-        }
+  try {
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
+    if (!doctor) {
+      return res.status(500).send({ message: "Doctor not found" });
+    }
+
 
         res.status(200).send({ credit_limit: doctor.credit_limit });
     } catch (err) {
@@ -448,12 +449,12 @@ exports.getCurrentCreditLimit = async (req, res) => {
 
 // Update the credit limit
 exports.updateCreditLimit = async (req, res) => {
-    try {
-        const doctor = await Doctor.findOne({ id_number: req.idNumber });
-        if (!doctor) {
-            return res.status(500).send({ message: "Doctor not found" });
-        }
 
+  try {
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
+    if (!doctor) {
+      return res.status(500).send({ message: "Doctor not found" });
+    }
         // Check if the credit limit is valid
         if (req.body.credit_limit < 0 || req.body.credit_limit > 1) {
             return res.status(400).send({
@@ -482,10 +483,21 @@ exports.updateCreditLimit = async (req, res) => {
 // Get list of patients with account payment system
 // TODO: Get money of patients in the list
 exports.getPatientsWithPSAccount = async (req, res) => {
-    try {
-        const doctor = await Doctor.findOne({ id_number: req.idNumber });
-        if (!doctor) {
-            return res.status(500).send({ message: "Doctor not found" });
+  try {
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
+    if (!doctor) {
+      return res.status(500).send({ message: "Doctor not found" });
+    }
+
+    const patients = await Patient.aggregate([
+      { $match: { _id: { $in: doctor.patients } } },
+      {
+        $lookup: {
+          from: Account.collection.name,
+          localField: "account",
+          foreignField: "_id",
+          as: "account",
+
         }
 
         const patients = await Patient.aggregate([

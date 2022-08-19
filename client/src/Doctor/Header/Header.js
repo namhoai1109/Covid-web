@@ -170,7 +170,7 @@ function Header() {
             default:
                 return {};
         }
-    });
+    }, []);
 
     let handleBack = () => {
         navigate(-1, { replace: true });
