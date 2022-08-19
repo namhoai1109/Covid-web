@@ -6,7 +6,7 @@ import { getAPI } from '~/APIservices/getAPI';
 import { putAPI, putNoDataAPI } from '~/APIservices/putAPI';
 import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './Info.module.scss';
-import bcrypt from 'bcryptjs';
+// import bcrypt from 'bcryptjs';
 import TippyHeadless from '@tippyjs/react/headless';
 
 const cx = classNames.bind(styles);
@@ -28,10 +28,10 @@ function Info() {
         newPasswordAgain: '',
     });
 
-    let comparePassword = useCallback(async (pass, nPass) => {
-        const isMatch = await bcrypt.compare(nPass, pass);
-        return isMatch;
-    });
+    // let comparePassword = useCallback(async (pass, nPass) => {
+    //     const isMatch = await bcrypt.compare(nPass, pass);
+    //     return isMatch;
+    // });
 
     let getInfo = useCallback(async () => {
         let info = await getAPI('patient/info');
@@ -50,7 +50,7 @@ function Info() {
         setInfo(tmp);
         setLinkState(info.account.linked);
         setOldpassHashing(info.account.password);
-    });
+    }, []);
 
     useEffect(() => {
         getInfo();
@@ -63,7 +63,7 @@ function Info() {
                 setLinkState(true);
             }
         }
-    });
+    }, []);
 
     let handleSubmit = useCallback(async () => {
         let isOke = true;
@@ -78,15 +78,15 @@ function Info() {
             }
         });
 
-        comparePassword(oldpassHashing, inputPassword.oldPassword).then((isMatch) => {
-            if (!isMatch) {
-                setValidatePassword((prev) => ({
-                    ...prev,
-                    oldPassword: 'Old password is not correct',
-                }));
-                isOke = false;
-            }
-        });
+        // comparePassword(oldpassHashing, inputPassword.oldPassword).then((isMatch) => {
+        //     if (!isMatch) {
+        //         setValidatePassword((prev) => ({
+        //             ...prev,
+        //             oldPassword: 'Old password is not correct',
+        //         }));
+        //         isOke = false;
+        //     }
+        // });
 
         if (inputPassword.newPassword !== '') {
             if (inputPassword.newPassword.length < 6) {
@@ -120,9 +120,9 @@ function Info() {
                 setNotiSuccess(res.message);
             }
         }
-    });
+    }, []);
 
-    let renderItem = useCallback((attrs) => (
+    let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>
             <div className={cx('wrap-popper', 'flex-center')}>
                 <FontAwesomeIcon onClick={handleSubmit} className={cx('save-btn')} icon={faFloppyDisk} />
@@ -183,8 +183,7 @@ function Info() {
                 </div>
             </div>
         </div>
-    ));
-
+    );
     let handleHide = useCallback(() => {
         setInputPassword({
             oldPassword: '',
@@ -197,7 +196,7 @@ function Info() {
             newPasswordAgain: '',
         });
         setNotiSuccess('');
-    });
+    }, []);
 
     return (
         <div className={cx('wrapper')}>

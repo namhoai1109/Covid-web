@@ -82,23 +82,23 @@ function InfoPackage() {
         let val = e.target.value;
         setInputFields((prev) => ({ ...prev, name: val }));
         setValidate((prev) => ({ ...prev, name: '' }));
-    });
+    }, []);
 
     let handleChangeLimit = useCallback((e) => {
         let val = e.target.value;
         setInputFields((prev) => ({ ...prev, limit_per_patient: val }));
         setValidate((prev) => ({ ...prev, complexFields: '' }));
-    });
+    }, []);
     let handleChangeTimeval = useCallback((e) => {
         let val = e.target.value;
         setInputFields((prev) => ({ ...prev, time_limit: { ...prev.time_limit, value: val } }));
         setValidate((prev) => ({ ...prev, complexFields: '' }));
-    });
+    }, []);
 
     let handleChangeSelect = useCallback((val) => {
         setInputFields((prev) => ({ ...prev, time_limit: { ...prev.time_limit, unit: val } }));
         setValidate((prev) => ({ ...prev, complexFields: '' }));
-    });
+    }, []);
 
     let handleDeleteProduct = useCallback((index, id) => {
         dispatch(deleteProduct(index));
@@ -107,7 +107,7 @@ function InfoPackage() {
             delete tmp[id];
             return tmp;
         });
-    });
+    }, []);
 
     let formatedProducts = useCallback((product) => {
         console.log(product);
@@ -150,7 +150,7 @@ function InfoPackage() {
         };
 
         return nProduct;
-    });
+    }, []);
 
     let validateInput = useCallback(() => {
         let validateStr = {};
@@ -191,7 +191,7 @@ function InfoPackage() {
         } else {
             return isOke;
         }
-    });
+    }, []);
 
     let handleSubmit = useCallback(async () => {
         let readySubmit = true;
@@ -220,7 +220,7 @@ function InfoPackage() {
         }
 
         if (readySubmit) setUpdateMode(!updateMode);
-    });
+    }, []);
 
     return (
         <div className={cx('wrapper')}>

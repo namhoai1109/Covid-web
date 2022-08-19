@@ -30,13 +30,13 @@ let EditScreen = ({ menu, item, children }) => {
         } else if (res.message && res.message === 'Facility updated successfully') {
             getListFacility(dispatch);
         }
-    });
+    }, []);
 
     let handleChange = useCallback((e, title) => {
         let val = e.target.value;
         setInputVals({ ...inputVals, [title]: val });
         setValidate('');
-    });
+    }, []);
 
     let renderItem = (attrs) => (
         <div tabIndex="-1" {...attrs}>

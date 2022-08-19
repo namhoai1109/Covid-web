@@ -18,11 +18,11 @@ const cx = classNames.bind(styles);
 function InfoNecessity({ viewOnly }) {
     let removeSpace = useCallback((title) => {
         return title.replaceAll(' ', '_');
-    });
+    }, []);
 
     let returnSpace = useCallback((title) => {
         return title.replaceAll('_', ' ');
-    });
+    }, []);
 
     let initDataInput = useCallback((menu) => {
         let data = {};
@@ -31,7 +31,7 @@ function InfoNecessity({ viewOnly }) {
         }
 
         return data;
-    });
+    }, []);
 
     let infoNecessity = useSelector((state) => state.currentNecessity.curr);
     //console.log(infoNecessity);
@@ -50,7 +50,7 @@ function InfoNecessity({ viewOnly }) {
         }
 
         return data;
-    });
+    }, []);
 
     //update mode
     let [updateMode, setUpdateMode] = useState(false);

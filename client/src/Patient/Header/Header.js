@@ -1,6 +1,6 @@
 import HeaderLayout from '~/Layout/Header';
 import TaskBtn from '~/CommonComponent/TaskBtn';
-import { PlusIcon, SearchIcon } from '~/CommonComponent/icons';
+import { SearchIcon } from '~/CommonComponent/icons';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
 import SearchInput from '~/CommonComponent/SearchInput';

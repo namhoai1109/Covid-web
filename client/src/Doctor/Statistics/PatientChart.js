@@ -77,7 +77,7 @@ function PatientChart() {
                 ],
             }));
         }
-    });
+    }, []);
 
     useEffect(() => {
         getChart();

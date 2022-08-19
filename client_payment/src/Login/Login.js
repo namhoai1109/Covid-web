@@ -37,7 +37,7 @@ function Login() {
             }
             setIsValidAccount(true);
         }
-    });
+    }, []);
 
     let handleSubmit = useCallback(async () => {
         if (!isValidAccount) {
@@ -72,7 +72,7 @@ function Login() {
                 }
             }
         }
-    });
+    }, []);
 
     let handleChangeID = useCallback((e) => {
         setError('');
@@ -82,7 +82,7 @@ function Login() {
             username: e.target.value,
         }));
         setIsValidAccount(false);
-    });
+    }, []);
 
     let handlePass = useCallback((e) => {
         setError('');
@@ -90,7 +90,7 @@ function Login() {
             ...prev,
             password: e.target.value,
         }));
-    });
+    }, []);
 
     let handlePassAgain = useCallback((e) => {
         setError('');
@@ -98,11 +98,11 @@ function Login() {
             ...prev,
             password_again: e.target.value,
         }));
-    });
+    }, []);
 
     let handleKeyDown = useCallback((e) => {
         if (e.key === 'Enter') handleSubmit();
-    });
+    }, []);
 
     return (
         <div className={cx('fit-screen', 'flex-center')}>
