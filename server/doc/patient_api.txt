@@ -45,6 +45,7 @@ headers: {
   }
 }
 body: {
+  old_password: String,
   new_password: {
     type: String
     minlength: 6,
