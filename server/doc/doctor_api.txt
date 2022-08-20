@@ -693,3 +693,33 @@ headers: {
 returns: {
   message: String
 }
+
+number: 7
+description: Return logs for doctor account -> Called
+route: http://localhost:5000/api/doctor/logs/id=:id
+params: ObjectID of account
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: Object
+[
+    {
+        "_id": "62ea1bf4479bf58fed586d5c",
+        "account": "62e7bf97fc5837ccbb6ad4a8",
+        "action": "login",
+        "description": "Account 999999999 logged in",
+        "time": "2022-08-03T06:55:48.688Z",
+        "__v": 0
+    },
+    {
+        "_id": "62ea1c1b479bf58fed586d65",
+        "account": "62e7bf97fc5837ccbb6ad4a8",
+        "action": "create",
+        "description": "Registered a new patient: ID: 121212131, Name: Elizabethasdasd",
+        "time": "2022-08-03T06:56:27.511Z",
+        "__v": 0
+    }
+]

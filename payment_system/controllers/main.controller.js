@@ -2,6 +2,7 @@ const Account = require('../models/Account');
 const Log = require('../models/Log');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
+const Bill = require('../models/Bill');
 
 exports.login = async (req, res) => {
   try {
@@ -55,22 +56,31 @@ exports.makeDeposit = async (req, res) => {
   }
 }
 
+
 // Make a payment
-exports.makePayment = async (req, res) => {
-  try {
-    const account = await Account.findOne({ username: req.params.id });
-    account.balance -= req.body.amount;
-    await account.save();
-
-    // Transfer money to admin account
-    const adminAccount = await Account.findOne({ username: "000000000" })
-    adminAccount.balance += req.body.amount;
-    await adminAccount.save();
-
-    res.status(200).send({ message: "Payment made successfully" });
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
+exports.makePayment = async(req, res) => {
+    try {
+       
+        const account = await Account.findOne({ username: req.body.buyer_username });
+        if (!account) {
+            return res.status(404).send({ message: "Account not found" });
+        }
+        const total = req.body.total_price;
+        if (account.balance >= total) {
+            account.balance -= total;
+            await account.save();
+        } else {
+            if ((account.balance / total) >= account.credit_limit) {
+                account.balance -= total;
+                await account.save();
+            } else {
+                return res.status(502).send({ message: "Credit limit exceeded" });
+            }
+        }
+        res.status(200).send({ message: "Payment made successfully" });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 }
 
 exports.changePassword = async (req, res) => {

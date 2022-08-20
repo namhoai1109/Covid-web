@@ -10,4 +10,7 @@ router.put("/password", patientController.changePassword);
 router.put("/link", checkPaymentAccountExist, patientController.linkAccount);
 router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPackage);
 
+// Bill related
+router.delete("/delete-bill/id=:id", patientController.deleteBill);
+router.post("/pay-bill/id=:id", patientController.payBill);
 module.exports = router;

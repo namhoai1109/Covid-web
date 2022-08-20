@@ -89,3 +89,68 @@ headers: {
 returns: {
   message: String
 }
+
+number: 6 
+description: buy a package with ID
+route: https://localhost:5000/api/patient/buy-package/id=:id
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body:{
+  {
+    "products": [
+        {
+            "id": ObjectID,
+            "quantity": Number,
+        },
+        {
+            "id": ObjectID,
+            "quantity": Number,
+        }
+    ]
+}
+}
+returns: {
+  message: String
+  bill_id: ObjectID
+}
+
+number: 7
+description: Delete a bill in case of Error
+route: https://localhost:5000/api/patient/delete-bill/id=:id
+method: DELETE
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}
+
+number: 8
+description: Pay a bill
+route: https://localhost:5000/api/patient/pay-bill/id=:id
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}
+
+
+buyPackage flow:
+buy package, call number 6 -> return bill ID -> {
+if (login payment system successful) -> call number 8, number 8 sends a request to Payment system using axios -> {
+  if (successful) -> save package usage history
+  else (bug) -> number 8 catch error -> send error
+  }
+  else(login payment system fails) -> call number 7 delete bill 
+}
+ 
