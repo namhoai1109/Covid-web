@@ -149,6 +149,7 @@ exports.buyPackage = async (req, res) => {
         //     products_info: productsToBuyInfo,
         // });
         // await packageOrder.save();
+
         const credit_limit = patient.credit_limit;
         const order_bill = new Bill({
             buyer: patient._id,
@@ -159,23 +160,27 @@ exports.buyPackage = async (req, res) => {
             credit_limit: credit_limit,
             total_price: total_price,
         });
-        let bill_id;
+
+        // Save bill to database
         await order_bill
             .save()
-            .then((bill) => {
-                bill_id = bill._id;
+            // Send bill back to CovidUI if save successfully
+            .then(async (bill) => {
+                res.status(200).send({
+                    message:
+                        "Package validated, bill saved, waiting for payment",
+                    bill: bill,
+                });
             })
+            // If save failed, send error message to CovidUI
             .catch((err) => {
-                res.status(500).send(err);
+                res.status(500).send({ message: err.message });
             });
-        res.status(200).send({
-            message: "Package validated, bill saved, waiting for payment",
-            bill_id: bill_id,
-        });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
 };
+
 exports.deleteBill = async (req, res) => {
     try {
         const bill = await Bill.findById(req.params.id);
@@ -188,6 +193,7 @@ exports.deleteBill = async (req, res) => {
         res.status(500).send({ message: err.message });
     }
 };
+
 exports.payBill = async (req, res) => {
     const PSURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/pay`;
     const bill = await Bill.findById(req.params.id);

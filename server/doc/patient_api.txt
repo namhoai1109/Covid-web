@@ -90,7 +90,7 @@ returns: {
   message: String
 }
 
-number: 6 
+number: 6
 description: buy a package with ID
 route: https://localhost:5000/api/patient/buy-package/id=:id
 method: POST
