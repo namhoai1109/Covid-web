@@ -50,6 +50,9 @@ exports.makeDeposit = async (req, res) => {
     })
     await log.save();
 
+    // TODO: Save debt/payment information for statistics
+    // TODO: Call API to CovidSys to update package/products consumed statistics
+
     res.status(200).send({ message: "Deposit made successfully" });
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -58,29 +61,32 @@ exports.makeDeposit = async (req, res) => {
 
 
 // Make a payment
-exports.makePayment = async(req, res) => {
-    try {
-       
-        const account = await Account.findOne({ username: req.body.buyer_username });
-        if (!account) {
-            return res.status(404).send({ message: "Account not found" });
-        }
-        const total = req.body.total_price;
-        if (account.balance >= total) {
-            account.balance -= total;
-            await account.save();
-        } else {
-            if ((account.balance / total) >= account.credit_limit) {
-                account.balance -= total;
-                await account.save();
-            } else {
-                return res.status(502).send({ message: "Credit limit exceeded" });
-            }
-        }
-        res.status(200).send({ message: "Payment made successfully" });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
+exports.makePayment = async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.body.buyer_username });
+    if (!account) {
+      return res.status(404).send({ message: "Account not found" });
     }
+
+    const total = req.body.total_price;
+    if (account.balance >= total) {
+      account.balance -= total;
+      await account.save();
+    } else {
+      if ((account.balance / total) >= account.credit_limit) {
+        account.balance -= total;
+        await account.save();
+      } else {
+        return res.status(502).send({ message: "Credit limit exceeded" });
+      }
+    }
+
+
+
+    res.status(200).send({ message: "Payment made successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 }
 
 exports.changePassword = async (req, res) => {

@@ -25,7 +25,7 @@ const accountSchema = new mongoose.Schema({
     enum: ["active", "inactive"],
     default: "active",
   },
-  // flag to check if accont is linked to He thong thanh toan
+  // flag to check if accont is linked to PaySys
   linked: {
     type: Boolean,
     default: false
