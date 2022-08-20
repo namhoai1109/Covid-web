@@ -17,6 +17,7 @@ exports.getLogs = async (req, res) => {
       return res
         .status(500)
         .send({ message: "Patient not found in the database" });
+
     }
     const logs = await Log.find({ account: patient.account });
     res.status(200).send(logs);
@@ -26,6 +27,7 @@ exports.getLogs = async (req, res) => {
 };
 
 exports.getInfo = async (req, res) => {
+
   try {
     const patient = await Patient.findOne({ id_number: req.idNumber }, { close_contact_list: 0 },)
       .populate("current_facility")
@@ -50,6 +52,7 @@ exports.changePassword = async (req, res) => {
     const patient = await Patient.findOne({ id_number: req.idNumber }).populate("account");
     if (!patient) {
       return res.status(500).send({ message: "Patient not found in the database" });
+
     }
 
     // Check old password
