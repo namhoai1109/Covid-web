@@ -8,9 +8,13 @@ const request = axios.create({
     timeout: 5000,
 });
 
-export const get = async (url) => {
+export const get = async (url, token) => {
     try {
-        let res = await request.get(url);
+        let res = await request.get(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return res.data;
     } catch (error) {
         return error;

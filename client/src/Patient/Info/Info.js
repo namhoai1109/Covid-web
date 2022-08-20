@@ -14,7 +14,6 @@ const cx = classNames.bind(styles);
 function Info() {
     let [info, setInfo] = useState(null);
     let [linkState, setLinkState] = useState(false);
-    let [oldpassHashing, setOldpassHashing] = useState(null);
     let [notiSuccess, setNotiSuccess] = useState('');
     let [inputPassword, setInputPassword] = useState({
         oldPassword: '',
@@ -27,11 +26,6 @@ function Info() {
         newPassword: '',
         newPasswordAgain: '',
     });
-
-    // let comparePassword = useCallback(async (pass, nPass) => {
-    //     const isMatch = await bcrypt.compare(nPass, pass);
-    //     return isMatch;
-    // });
 
     let getInfo = useCallback(async () => {
         let info = await getAPI('patient/info');
@@ -49,7 +43,6 @@ function Info() {
         }
         setInfo(tmp);
         setLinkState(info.account.linked);
-        setOldpassHashing(info.account.password);
     }, []);
 
     useEffect(() => {
@@ -62,6 +55,8 @@ function Info() {
             if (res.message && res.message === 'Account linked successfully') {
                 setLinkState(true);
             }
+        } else {
+            window.open('http://localhost:2000', '_blank');
         }
     }, [linkState]);
 
@@ -77,16 +72,6 @@ function Info() {
                 isOke = false;
             }
         });
-
-        // comparePassword(oldpassHashing, inputPassword.oldPassword).then((isMatch) => {
-        //     if (!isMatch) {
-        //         setValidatePassword((prev) => ({
-        //             ...prev,
-        //             oldPassword: 'Old password is not correct',
-        //         }));
-        //         isOke = false;
-        //     }
-        // });
 
         if (inputPassword.newPassword !== '') {
             if (inputPassword.newPassword.length < 6) {
@@ -108,9 +93,17 @@ function Info() {
 
         if (isOke) {
             let res = await putAPI('patient/password', {
+                old_password: inputPassword.oldPassword,
                 new_password: inputPassword.newPassword,
             });
             console.log(res);
+            if (res.response && res.response.status === 401) {
+                setValidatePassword((prev) => ({
+                    ...prev,
+                    oldPassword: 'Old password is not match',
+                }));
+            }
+
             if (res.message && res.message === 'Password changed successfully') {
                 setInputPassword({
                     oldPassword: '',
@@ -139,6 +132,7 @@ function Info() {
                                 ...prev,
                                 oldPassword: '',
                             }));
+                            setNotiSuccess('');
                         }}
                         className={cx('input')}
                         placeholder="enter old password"
@@ -157,6 +151,7 @@ function Info() {
                                 ...prev,
                                 newPassword: '',
                             }));
+                            setNotiSuccess('');
                         }}
                         className={cx('input')}
                         placeholder="enter new password"
@@ -175,6 +170,7 @@ function Info() {
                                 ...prev,
                                 newPasswordAgain: '',
                             }));
+                            setNotiSuccess('');
                         }}
                         className={cx('input')}
                         placeholder="enter new password again"
@@ -225,13 +221,8 @@ function Info() {
                     })}
                 <div className={cx('link-payment', 'flex-center')}>
                     {/* href="http://localhost:2000/" target="_blank" */}
-                    <a
-                        onClick={handleLink}
-                        className={cx('title', {
-                            disabled: linkState,
-                        })}
-                    >
-                        {linkState ? 'Your account is linked to payment system' : 'Link to payment system'}
+                    <a onClick={handleLink} className={cx('title')}>
+                        {linkState ? 'Open payment system' : 'Link to payment system'}
                     </a>
                     <FontAwesomeIcon className={cx('icon')} icon={faAnglesRight} />
                 </div>
