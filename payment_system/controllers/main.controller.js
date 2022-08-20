@@ -4,27 +4,9 @@ const bcrypt = require('bcrypt');
 const axios = require('axios');
 const Bill = require('../models/Bill');
 
-exports.login = async (req, res) => {
-  try {
-    const account = await Account.findOne({ username: req.body.username });
-    if (!account) {
-      return res.status(404).send({ message: "Invalid username or password" });
-    }
-
-    const isPasswordValid = await bcrypt.compare(req.body.password, account.password);
-    if (!isPasswordValid) {
-      return res.status(401).send({ message: "Invalid username or password" });
-    }
-
-    res.status(200).send({ message: "Logged in successfully" });
-  } catch (err) {
-    return res.status(500).send({ message: err.message });
-  }
-}
-
 exports.getAccountInfo = async (req, res) => {
   try {
-    const account = await Account.findOne({ username: req.params.id });
+    const account = await Account.findOne({ username: req.idNumber }, { password: 0 });
     res.send(account);
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -34,10 +16,15 @@ exports.getAccountInfo = async (req, res) => {
 // Make a deposit (nap tien)
 exports.makeDeposit = async (req, res) => {
   try {
-    const account = await Account.findOne({ username: req.params.id });
+    const account = await Account.findOne({ username: req.idNumber });
     if (!account) {
       return res.status(404).send({ message: "Account not found" });
     }
+
+    if (req.body.amount <= 0) {
+      return res.status(400).send({ message: "Invalid amount" });
+    }
+
     account.balance += req.body.amount;
     await account.save();
 
@@ -56,39 +43,57 @@ exports.makeDeposit = async (req, res) => {
   }
 }
 
-
 // Make a payment
-exports.makePayment = async(req, res) => {
-    try {
-       
-        const account = await Account.findOne({ username: req.body.buyer_username });
-        if (!account) {
-            return res.status(404).send({ message: "Account not found" });
-        }
-        const total = req.body.total_price;
-        if (account.balance >= total) {
-            account.balance -= total;
-            await account.save();
-        } else {
-            if ((account.balance / total) >= account.credit_limit) {
-                account.balance -= total;
-                await account.save();
-            } else {
-                return res.status(502).send({ message: "Credit limit exceeded" });
-            }
-        }
-        res.status(200).send({ message: "Payment made successfully" });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
+exports.makePayment = async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.body.buyer_username });
+    if (!account) {
+      return res.status(404).send({ message: "Account not found" });
     }
+
+    const total = req.body.total_price;
+    if (account.balance >= total) {
+      account.balance -= total;
+      await account.save();
+    } else {
+      if ((account.balance / total) >= account.credit_limit) {
+        account.balance -= total;
+        await account.save();
+      } else {
+        return res.status(502).send({ message: "Credit limit exceeded" });
+      }
+    }
+
+    // TODO: Save debt/payment information for statistics
+    // TODO: Call API to CovidSys to update package/products consumed statistics
+
+    res.status(200).send({ message: "Payment made successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 }
 
 exports.changePassword = async (req, res) => {
   try {
-    const account = await Account.find({ username: req.params.id });
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    if (!req.body.old_password || !req.body.new_password) {
+      return res.status(400).send({ message: "Missing parameters" });
+    }
+
+    const account = await Account.findOne({ username: req.idNumber });
+    if (!account) {
+      return res.status(404).send({ message: "Account not found" });
+    }
+
+    // Compare old password
+    const isMatch = await bcrypt.compare(req.body.old_password, account.password)
+    if (!isMatch) {
+      return res.status(401).send({ message: "Invalid old password" });
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.new_password, 10);
     account.password = hashedPassword;
     await account.save();
+
     res.status(200).send({ message: "Password changed successfully" });
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -99,6 +104,7 @@ exports.registerAccount = async (req, res) => {
   try {
     if (req.headers?.authorization?.startsWith("Bearer ")) {
       const token = req.headers.authorization;
+
       const covidSysURL = 'https://localhost:5000/api/auth/is-valid-account'
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       const username = req.body.username;
