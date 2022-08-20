@@ -10,7 +10,7 @@ const bcrypt = require("bcryptjs");
 const axios = require("axios");
 const Bill = require("../models/Bill");
 
-exports.getLogs = async(req, res) => {
+exports.getLogs = async (req, res) => {
     try {
         const patient = await Patient.findOne({ id_number: req.idNumber });
         if (!patient) {
@@ -25,9 +25,12 @@ exports.getLogs = async(req, res) => {
     }
 };
 
-exports.getInfo = async(req, res) => {
+exports.getInfo = async (req, res) => {
     try {
-        const patient = await Patient.findOne({ id_number: req.idNumber }, { close_contact_list: 0 }, )
+        const patient = await Patient.findOne(
+            { id_number: req.idNumber },
+            { close_contact_list: 0 },
+        )
             .populate("current_facility")
             .populate("account");
         if (!patient) {
@@ -41,7 +44,7 @@ exports.getInfo = async(req, res) => {
     }
 };
 
-exports.changePassword = async(req, res) => {
+exports.changePassword = async (req, res) => {
     try {
         const patient = await Patient.findOne({
             id_number: req.idNumber,
@@ -60,7 +63,7 @@ exports.changePassword = async(req, res) => {
     }
 };
 
-exports.buyPackage = async(req, res) => {
+exports.buyPackage = async (req, res) => {
     try {
         const patient = await Patient.findOne({ id_number: req.idNumber });
         if (!patient) {
@@ -134,7 +137,6 @@ exports.buyPackage = async(req, res) => {
             });
 
             total_price += productToBuy.quantity * product.product.price;
-
         });
 
         // TODO: Call api to payment system to buy products
@@ -158,21 +160,23 @@ exports.buyPackage = async(req, res) => {
             total_price: total_price,
         });
         let bill_id;
-        await order_bill.save()
-            .then(bill => {
+        await order_bill
+            .save()
+            .then((bill) => {
                 bill_id = bill._id;
-            }).catch(err => {
-                res.status(500).send(err)
             })
+            .catch((err) => {
+                res.status(500).send(err);
+            });
         res.status(200).send({
             message: "Package validated, bill saved, waiting for payment",
-            bill_id: bill_id
+            bill_id: bill_id,
         });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
 };
-exports.deleteBill = async(req, res) => {
+exports.deleteBill = async (req, res) => {
     try {
         const bill = await Bill.findById(req.params.id);
         if (!bill) {
@@ -184,25 +188,29 @@ exports.deleteBill = async(req, res) => {
         res.status(500).send({ message: err.message });
     }
 };
-exports.payBill = async(req, res) => {
+exports.payBill = async (req, res) => {
     const PSURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/pay`;
     const bill = await Bill.findById(req.params.id);
     if (!bill) {
         return res.status(500).send({ message: "Bill not found" });
     }
-    axios.post(PSURL, bill)
-        .then(response => {
+    axios
+        .post(PSURL, bill)
+        .then(async (response) => {
             //TODO: Save bill as paid and history of package usage
             bill.paid = true;
             await bill.save();
 
-            res.status(200).send({ message: "Bill paid, order successful, package usage saved" });
-        }).catch(err => {
-            res.status(500).send(err);
+            res.status(200).send({
+                message: "Bill paid, order successful, package usage saved",
+            });
         })
-}
+        .catch((err) => {
+            res.status(500).send(err);
+        });
+};
 
-exports.linkAccount = async(req, res) => {
+exports.linkAccount = async (req, res) => {
     try {
         const account = await Account.findOne({ username: req.idNumber });
         if (!account) {
@@ -213,22 +221,22 @@ exports.linkAccount = async(req, res) => {
 
         const PSURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
         axios({
-                method: "POST",
-                url: PSURL,
-                headers: {},
-                data: {
-                    username: account.username,
-                    password: "placeholder",
-                },
-            })
-            .then(async function(response) {
+            method: "POST",
+            url: PSURL,
+            headers: {},
+            data: {
+                username: account.username,
+                password: "placeholder",
+            },
+        })
+            .then(async function (response) {
                 account.linked = true;
                 await account.save();
                 res.status(200).send({
                     message: "Account linked successfully",
                 });
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 res.status(500).send({ message: error.message });
             });
     } catch (err) {
