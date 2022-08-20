@@ -3,6 +3,7 @@ export const mainRoutes = {
     admin: '/admin',
     doctor: '/doctor',
     patient: '/patient',
+    paymentGate: '/payment',
 };
 
 export const subRoute = '/*';

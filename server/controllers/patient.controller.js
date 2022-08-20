@@ -118,25 +118,26 @@ exports.buyPackage = async (req, res) => {
         const productsInPackage = package.products;
         const productsToBuy = req.body.products;
         const productsToBuyInfo = [];
-        productsInPackage.forEach((product) => {
-            const productToBuy = productsToBuy.find(
-                (p) => p.id.toString() === product.product._id.toString(),
-            );
-            if (!productToBuy) {
+
+        productsToBuy.forEach((product) => {
+            const productInPackage = productsInPackage.find((p) => {
+                return p.product._id.toString() === product.id.toString();
+            });
+            if (!productInPackage) {
                 throw Error("Product not found in the package");
             }
-            if (productToBuy.quantity > product.quantity) {
+            if (product.quantity > productInPackage.quantity) {
                 throw Error(
-                    "Not enough quantity of product " + product.product.name,
+                    `Not enough quantity of product ${productInPackage.product.name}`,
                 );
             }
 
             productsToBuyInfo.push({
-                product: product.product._id,
-                quantity: productToBuy.quantity,
+                product: productInPackage.product._id,
+                quantity: product.quantity,
             });
 
-            total_price += productToBuy.quantity * product.product.price;
+            total_price += productInPackage.product.price * product.quantity;
         });
 
         // TODO: Call api to payment system to buy products
@@ -159,6 +160,7 @@ exports.buyPackage = async (req, res) => {
             products_info: productsToBuyInfo,
             credit_limit: credit_limit,
             total_price: total_price,
+            paid: false,
         });
 
         // Save bill to database

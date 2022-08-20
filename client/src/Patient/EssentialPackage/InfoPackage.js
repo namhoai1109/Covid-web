@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { postAPI } from '~/APIservices/postAPI';
 import Counting from '~/CommonComponent/Counting';
 import ListItem from '~/CommonComponent/ListItem';
 import WrapContent from '~/CommonComponent/WrapContent';
@@ -16,9 +17,12 @@ const cx = classNames.bind(styles);
 
 function InfoPackage() {
     let currPackage = useSelector((state) => state.currentPackage.current);
+
     let dispatch = useDispatch();
     let navigate = useNavigate();
     let [listCounting, setListCounting] = useState({});
+    let [validate, setValidate] = useState('');
+
     useEffect(() => {
         if (currPackage.products) {
             let tmp = {};
@@ -73,19 +77,52 @@ function InfoPackage() {
         [listCounting],
     );
 
+    let handleBuy = useCallback(async () => {
+        let token = JSON.parse(localStorage.getItem('Token')).token;
+        let tmp = {};
+        Object.keys(listCounting).forEach((key) => {
+            if (listCounting[key] > 0) {
+                tmp[key] = listCounting[key];
+            }
+        });
+        await postAPI(
+            'patient/buy-package/id=' + currPackage._id,
+            {
+                products: Object.keys(tmp).map((key) => {
+                    return {
+                        id: key,
+                        quantity: tmp[key],
+                    };
+                }),
+            },
+            token,
+        )
+            .then((res) => {
+                console.log(res);
+                if (typeof res === 'string') {
+                    setValidate(res);
+                } else {
+                    localStorage.setItem('Bill', JSON.stringify(res.bill));
+                    window.open('http://localhost:3000/payment', '_blank');
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [listCounting]);
+
     return (
         <div className={cx('wrapper')}>
             <WrapContent>
-                <a href="http://localhost:2000/" target="_blank" className={cx('submit-btn', 'flex-center')}>
+                {/* href="http://localhost:2000/" target="_blank" */}
+                <button onClick={handleBuy} className={cx('submit-btn', 'flex-center')}>
                     <span className={cx('title')}>Pay</span>
                     <FontAwesomeIcon icon={faCashRegister} />
-                </a>
-
+                </button>
                 <div className={cx('input-field', 'flex-center')}>
                     <span className={cx('label')}>Name: </span>
                     <span className={cx('title')}>{currPackage.name}</span>
                 </div>
-
                 <div>
                     <div className={cx('input-field', 'flex-center')}>
                         <span className={cx('label')}>You can buy maximum</span>
@@ -98,8 +135,8 @@ function InfoPackage() {
                 </div>
                 <div className={cx('input-field', 'flex-center')}>
                     <span className={cx('label', 'title')}>List products</span>
+                    <div className={cx('validate')}>{validate}</div>
                 </div>
-
                 <div className={cx('list-product')}>
                     <ListItem noUnderLine infos={packageFields} />
                     {Array.isArray(currPackage.products) &&
