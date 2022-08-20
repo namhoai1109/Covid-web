@@ -15,6 +15,10 @@ const billSchema = new mongoose.Schema({
     immutable: true,
     default: Date.now,
   },
+  package: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Package',
+  },
   products_info: [{
     product: {
       type: mongoose.Schema.Types.ObjectId,

@@ -172,17 +172,22 @@ exports.buyPackage = async (req, res) => {
 
     // Save bill to database
     await order_bill.save()
-      // Send bill back to CovidUI if save successfully
-      .then(async (bill) => {
-        res.status(200).send({
-          message: "Package validated, bill saved, waiting for payment",
-          bill: bill
-        });
+    const bill = await Bill.findOne({ _id: order_bill._id }, { buyer_username: 0 })
+      .populate({
+        path: "buyer",
+        select: "name id_number",
       })
-      // If save failed, send error message to CovidUI
-      .catch(err => {
-        res.status(500).send({ message: err.message });
+      .populate({
+        path: "package",
+        select: "name",
       })
+      .populate({
+        path: "products_info.product",
+        select: "name price",
+      });
+
+    // Send bill to patient
+    res.status(200).send(bill);
 
   } catch (err) {
     res.status(500).send({ message: err.message });
