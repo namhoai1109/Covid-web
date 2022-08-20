@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useBeforeunload } from 'react-beforeunload';
 import { deleteAPI } from '~/APIservices/deleteAPI';
 import styles from './GateWay.module.scss';
@@ -84,8 +84,16 @@ function Verify({ callback, bill }) {
     return (
         <div className={cx('wrap-content', 'flex-center')}>
             <span>
-                <span className={cx('label')}>Bill of</span> {bill.buyer_username}
+                <span className={cx('label')}>Bill of</span> {bill.buyer.name} - {bill.buyer.id_number}
             </span>
+            <span className={cx('label')}>List product:</span>
+            {bill.products_info.map((item, index) => {
+                return (
+                    <span key={index}>
+                        {item.product.name} - {item.product.price} x{item.quantity}
+                    </span>
+                );
+            })}
             <span>
                 <span className={cx('label')}>Total price:</span> {bill.total_price}
             </span>
@@ -99,7 +107,7 @@ function Verify({ callback, bill }) {
             />
             <span className={cx('validate')}>{validate}</span>
             <button onClick={handleSubmit} className={cx('submit-btn')}>
-                Log in
+                Continue
             </button>
         </div>
     );

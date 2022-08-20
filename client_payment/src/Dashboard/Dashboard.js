@@ -18,8 +18,7 @@ function Dashboard() {
     let [validate, setValidate] = useState('');
 
     let getInfo = useCallback(async () => {
-        let id = JSON.parse(localStorage.getItem('ID'));
-        let res = await getAPI('/main/info/id=' + id);
+        let res = await getAPI('main/info');
         setInfos({
             username: res.username,
             balance: res.balance,
@@ -28,8 +27,7 @@ function Dashboard() {
 
     let handleSubmit = useCallback(async () => {
         if (Number(deposit) > 0) {
-            let id = JSON.parse(localStorage.getItem('ID'));
-            let res = await postAPI('main/deposit/id=' + id, {
+            let res = await postAPI('main/deposit', {
                 amount: Number(deposit),
             });
 

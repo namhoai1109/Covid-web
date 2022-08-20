@@ -67,8 +67,8 @@ function Login() {
                 console.log(res);
                 if (res === 'Invalid username or password') {
                     setError(res);
-                } else if (res.message === 'Logged in successfully') {
-                    localStorage.setItem('ID', JSON.stringify(inputVals.username));
+                } else if (res.token) {
+                    localStorage.setItem('Token', JSON.stringify(res));
                     navigate('/dashboard', { replace: true });
                 }
             }
