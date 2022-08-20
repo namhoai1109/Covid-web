@@ -36,9 +36,15 @@ exports.updateFacility = async (req, res) => {
         facility.name = req.body.name;
       }
       if (req.body.capacity) {
+        if (current_count > req.body.capacity) {
+          return res.status(500).send({ message: "Capacity is less than current count" });
+        }
         facility.capacity = req.body.capacity;
       }
       if (req.body.current_count != null) {
+        if (req.body.current_count > facility.capacity) {
+          return res.status(500).send({ message: "Capacity is less than current count" });
+        }
         facility.current_count = req.body.current_count;
       }
       if (req.body.province) {
