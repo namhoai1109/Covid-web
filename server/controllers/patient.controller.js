@@ -168,6 +168,7 @@ exports.buyPackage = async (req, res) => {
       products_info: productsToBuyInfo,
       credit_limit: credit_limit,
       total_price: total_price,
+      paid: false
     });
 
     // Save bill to database

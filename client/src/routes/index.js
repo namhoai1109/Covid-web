@@ -15,6 +15,7 @@ import PackageChart from '~/Doctor/Statistics/PackageChart';
 import StatusChart from '~/Doctor/Statistics/StatusChart';
 import PaymentChart from '~/Doctor/Statistics/PaymentChart';
 import Payment from '~/Doctor/Payment';
+import GateWay from '~/GateWay';
 
 export const mainRoutes = [
     {
@@ -32,6 +33,10 @@ export const mainRoutes = [
     {
         path: configs.mainRoutes.patient + configs.subRoute,
         element: Patient,
+    },
+    {
+        path: configs.mainRoutes.paymentGate,
+        element: GateWay,
     },
 ];
 
