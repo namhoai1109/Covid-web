@@ -43,17 +43,27 @@ exports.getInfo = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   try {
-    const patient = await Patient.findOne({
-      id_number: req.idNumber,
-    }).populate("account");
-    if (!patient) {
-      return res
-        .status(500)
-        .send({ message: "Patient not found in the database" });
+    if (!req.body.old_password || !req.body.new_password) {
+      return res.status(500).send({ message: "Missing parameters" });
     }
+
+    const patient = await Patient.findOne({ id_number: req.idNumber }).populate("account");
+    if (!patient) {
+      return res.status(500).send({ message: "Patient not found in the database" });
+    }
+
+    // Check old password
+    const oldPassword = req.body.old_password;
+    const isMatch = await bcrypt.compare(oldPassword, patient.account.password);
+    if (!isMatch) {
+      return res.status(401).send({ message: "Old password is incorrect" });
+    }
+
+    // Hash new password and update
     const newPassword = await bcrypt.hash(req.body.new_password, 10);
     patient.account.password = newPassword;
     await patient.account.save();
+
     res.status(200).send({ message: "Password changed successfully" });
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -115,26 +125,25 @@ exports.buyPackage = async (req, res) => {
     const productsInPackage = package.products;
     const productsToBuy = req.body.products;
     const productsToBuyInfo = [];
-    productsInPackage.forEach((product) => {
-      const productToBuy = productsToBuy.find(
-        (p) => p.id.toString() === product.product._id.toString(),
-      );
-      if (!productToBuy) {
+
+    productsToBuy.forEach(product => {
+      const productInPackage = productsInPackage.find(p => {
+        return p.product._id.toString() === product.id.toString()
+      })
+      if (!productInPackage) {
         throw Error("Product not found in the package");
       }
-      if (productToBuy.quantity > product.quantity) {
-        throw Error(
-          "Not enough quantity of product " + product.product.name,
-        );
+      if (product.quantity > productInPackage.quantity) {
+        throw Error(`Not enough quantity of product ${productInPackage.product.name}`);
       }
 
       productsToBuyInfo.push({
-        product: product.product._id,
-        quantity: productToBuy.quantity,
-      });
+        product: productInPackage.product._id,
+        quantity: product.quantity,
+      })
 
-      total_price += productToBuy.quantity * product.product.price;
-    });
+      total_price += productInPackage.product.price * product.quantity;
+    })
 
     // TODO: Call api to payment system to buy products
     // TODO: Save this for later to save package history
@@ -217,26 +226,28 @@ exports.linkAccount = async (req, res) => {
         .send({ message: "Account not found in the database" });
     }
 
-    const PSURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
+    const PaySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
+    const token = req.headers.authorization;
     axios({
       method: "POST",
       url: PSURL,
-      headers: {},
+      headers: {
+        'Authorization': token,
+      },
       data: {
         username: account.username,
         password: "placeholder",
       },
     })
-      .then(async function (response) {
+      .then(response => {
         account.linked = true;
-        await account.save();
-        res.status(200).send({
-          message: "Account linked successfully",
-        });
+        account.save();
+        res.status(200).send({ message: "Account linked successfully" });
       })
-      .catch(function (error) {
-        res.status(500).send({ message: error.message });
+      .catch(error => {
+        res.status(500).send({ message: "Error linking account" });
       });
+
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

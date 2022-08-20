@@ -1,6 +1,7 @@
 const Account = require("../models/Account");
 const Log = require("../models/Log");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.checkHasLoggedIn = async (req, res) => {
   try {
@@ -54,7 +55,17 @@ exports.login = async (req, res) => {
     });
     await log.save();
 
-    res.status(200).send({ message: "Logged in successfully" });
+    // Assign token
+    const token = jwt.sign(
+      { _id: account.username },
+      process.env.PS_TOKEN_SECRET,
+    );
+
+    res.send({
+      token: token,
+      username: account.username,
+    });
+
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }

@@ -1,6 +1,6 @@
-number: 2
+number: 1
 description: Get account information
-route: https://localhost:9000/api/main/info/id=:id
+route: https://localhost:9000/api/main/info
 method: GET
 returns: {
   linked: Boolean,
@@ -10,16 +10,36 @@ returns: {
   balance: 0,
 }
 
-number: 3
+number: 2
 description: Make deposit
-route: https://localhost:9000/api/main/deposit/id=:id
+route: https://localhost:9000/api/main/deposit
 method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
 body: {
   amount: Number
 }
 returns: {
   message: String,
 }
+
+number: 3
+description: Change password
+route: https://localhost:9000/api/main/password
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  old_password: String,
+  new_password: String
+}
+
 
 
 
