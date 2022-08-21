@@ -10,6 +10,11 @@ const billSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  buyer_account: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Account',
+    required: true,
+  },
   time_buy: {
     type: Date,
     immutable: true,
