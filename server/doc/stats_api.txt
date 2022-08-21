@@ -17,3 +17,45 @@ returns: [
     F3: Number,
   }
 ]
+
+number: 2
+description: Get package stats
+route: https://localhost:5000/api/stats/packages
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    date: String,
+    package: {
+      _id: String,
+      name: String,
+    },
+    count: Number,
+  }
+]
+
+number: 3
+description: Get product stats
+route: https://localhost:5000/api/stats/products
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    date: String,
+    product: {
+      _id: String,
+      name: String,
+    },
+    count: Number
+  }
+]

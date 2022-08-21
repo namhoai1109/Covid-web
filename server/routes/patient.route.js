@@ -5,9 +5,13 @@ const packageController = require("../controllers/package.controller");
 
 router.get("/logs", patientController.getLogs);
 router.get("/info", patientController.getInfo);
-router.get("/packages", packageController.getAllPackages);
 router.put("/password", patientController.changePassword);
 router.put("/link", checkPaymentAccountExist, patientController.linkAccount);
+
+// Package related
+router.get("/packages", packageController.getAllPackages);
+router.get("/packages/search", packageController.searchPackages);
+router.get("/packages/filter", packageController.filterPackages);
 router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPackage);
 
 // Bill related
