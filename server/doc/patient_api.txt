@@ -124,25 +124,6 @@ returns: {
   message: String
 }
 
-number: 9
-description: Get paid packages logs
-route: https://localhost:5000/api/patient/paid-packages-logs
-method: GET
-headers: {
-  Bearer authorization: {
-    type: String (JWT token)
-  }
-}
-returns: [
-  {
-    _id: String (Database ID),
-    account: String (_id of account),
-    action: String,
-    time: String (yyyy-mm-dd hh:mm:ss)
-    description: String
-  }
-]
-
 
 buyPackage flow:
 buy package, call number 6 -> return bill ID -> {
