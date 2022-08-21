@@ -1,5 +1,5 @@
 number: 1
-description: Get account information
+description: Get account information -> Called
 route: https://localhost:9000/api/main/info
 method: GET
 returns: {
@@ -11,7 +11,7 @@ returns: {
 }
 
 number: 2
-description: Make deposit
+description: Make deposit -> Called
 route: https://localhost:9000/api/main/deposit
 method: POST
 headers: {

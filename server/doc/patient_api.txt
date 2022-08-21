@@ -56,30 +56,9 @@ returns: {
   message: String
 }
 
-number: 4
-description: Buy a package
-route: http://localhost:5000/api/patient/packages/id=:id
-params: Database ID of package
-method: POST
-headers: {
-  Bearer authorization: {
-    type: String (JWT token)
-  }
-}
-body: {
-  products: [
-    {
-      id: String (Database ID of product),
-      quantity: Number
-    }
-  ]
-}
-returns: {
-  message: String
-}
 
 number: 5
-description: Link account to payment system -> Error
+description: Link account to payment system -> Called
 route: http://localhost:5000/api/patient/link
 method: PUT
 headers: {
@@ -120,7 +99,7 @@ returns: {
 }
 
 number: 7
-description: Delete a bill in case of Error
+description: Delete a bill in case of Error -> Called
 route: https://localhost:5000/api/patient/delete-bill/id=:id
 method: DELETE
 headers: {
