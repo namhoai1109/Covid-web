@@ -8,5 +8,6 @@ router.post('/deposit', authorizeUser(), controller.makeDeposit);
 router.post('/pay', controller.makePayment);
 router.put('/password', authorizeUser(), controller.changePassword);
 router.post('/register', controller.registerAccount);
+router.get('/logs', authorizeUser(), controller.getPayLog);
 
 module.exports = router;

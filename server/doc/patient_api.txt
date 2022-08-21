@@ -134,3 +134,44 @@ if (login payment system successful) -> call number 8, number 8 sends a request 
   else(login payment system fails) -> call number 7 delete bill 
 }
  
+number: 9
+route: https://localhost:5000/api/patient/pay-logs
+method: GET
+description: get payment logs from payment system
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  array of logs:
+  [
+    {
+        "_id": "6301f65c8189ba3b054c6d35",
+        "account": "62fcb3ab2ea7cb84b83047ae",
+        "type": "payment",
+        "description": "Account 777777777 made a payment",
+        "amount": 150000,
+        "date": "2022-08-21T09:09:48.131Z",
+        "__v": 0
+    },
+    {
+        "_id": "6301f9858189ba3b054c6d41",
+        "account": "62fcb3ab2ea7cb84b83047ae",
+        "type": "payment",
+        "description": "Account 777777777 made a payment",
+        "amount": 150000,
+        "date": "2022-08-21T09:23:17.441Z",
+        "__v": 0
+    },
+    {
+        "_id": "6301fb1b8189ba3b054c6d4d",
+        "account": "62fcb3ab2ea7cb84b83047ae",
+        "type": "payment",
+        "description": "Account 777777777 made a payment",
+        "amount": 150000,
+        "date": "2022-08-21T09:30:03.017Z",
+        "__v": 0
+    }
+]
+}

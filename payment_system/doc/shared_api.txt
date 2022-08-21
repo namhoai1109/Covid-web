@@ -1,0 +1,52 @@
+number: 1 
+route: https://localhost:9000/api/shared/register
+method: POST 
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body:
+{
+    "password": string
+}
+
+number: 2 
+route: https://localhost:9000/api/shared/logs
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+return: 
+array of logs:
+[
+    {
+        "_id": "6301f65c8189ba3b054c6d35",
+        "account": "62fcb3ab2ea7cb84b83047ae",
+        "type": "payment",
+        "description": "Account 777777777 made a payment",
+        "amount": 150000,
+        "date": "2022-08-21T09:09:48.131Z",
+        "__v": 0
+    },
+    {
+        "_id": "6301f9858189ba3b054c6d41",
+        "account": "62fcb3ab2ea7cb84b83047ae",
+        "type": "payment",
+        "description": "Account 777777777 made a payment",
+        "amount": 150000,
+        "date": "2022-08-21T09:23:17.441Z",
+        "__v": 0
+    },
+    {
+        "_id": "6301fb1b8189ba3b054c6d4d",
+        "account": "62fcb3ab2ea7cb84b83047ae",
+        "type": "payment",
+        "description": "Account 777777777 made a payment",
+        "amount": 150000,
+        "date": "2022-08-21T09:30:03.017Z",
+        "__v": 0
+    }
+]

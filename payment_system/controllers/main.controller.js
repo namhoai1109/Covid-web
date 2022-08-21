@@ -86,6 +86,20 @@ exports.makePayment = async (req, res) => {
   }
 }
 
+exports.getPayLog = async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.idNumber });
+    if (!account) {
+      return res.status(404).send({ message: "Account not found" });
+    }
+    const accountID = account._id;
+    const logs = await Log.find({ account: accountID });
+    return res.status(200).send(logs);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
 exports.changePassword = async (req, res) => {
   try {
     if (!req.body.old_password || !req.body.new_password) {

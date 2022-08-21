@@ -117,7 +117,7 @@ exports.checkValidAccount = async (req, res) => {
       });
     }
 
-    res.status(200).send({ message: "Valid account" });
+    res.status(200).send({ message: "Valid account", username: account.username });
   } catch (err) {
     res.status(500).send({ message: err });
   }

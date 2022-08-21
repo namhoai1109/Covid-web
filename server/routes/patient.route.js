@@ -13,4 +13,7 @@ router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPack
 // Bill related
 router.delete("/delete-bill/id=:id", patientController.deleteBill);
 router.post("/pay-bill/id=:id", patientController.payBill);
+
+// Get payment logs
+router.get("/pay-logs", patientController.getPayLog);
 module.exports = router;

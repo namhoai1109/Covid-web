@@ -10,6 +10,7 @@ const Account = require("./models/Account");
 // Routers
 const authRouter = require("./routes/auth.route");
 const mainRouter = require("./routes/main.route");
+const sharedRouter = require("./routes/shared.route");
 
 // Connect to database
 connectDB();
@@ -22,9 +23,10 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/main", mainRouter);
+app.use("/api/shared", sharedRouter);
 
 // Initialize admin account on first setup
-const initAdmin = async () => {
+const initAdmin = async() => {
     try {
         const account = await Account.find();
         if (account.length === 0) {

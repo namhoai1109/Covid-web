@@ -41,6 +41,33 @@ body: {
 }
 
 
-
-
+number: 4
+description: get Payment system log
+route: https://localhost:9000/api/main/logs
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+return:
+Array of logs:
+[
+    {
+        "_id": "6301f8a527c72f9bc04d421d",
+        "account": "62fcb3ab2ea7cb84b83047ae",
+        "description": "Account 777777777 logged in",
+        "date": "2022-08-21T09:19:33.666Z",
+        "__v": 0
+    },
+    {
+        "_id": "6301f9858189ba3b054c6d41",
+        "account": "62fcb3ab2ea7cb84b83047ae",
+        "type": "payment",
+        "description": "Account 777777777 made a payment",
+        "amount": 150000,
+        "date": "2022-08-21T09:23:17.441Z",
+        "__v": 0
+    }
+]
 
