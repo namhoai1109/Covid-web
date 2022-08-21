@@ -5,6 +5,7 @@ const packageController = require("../controllers/package.controller");
 
 // Logs related
 router.get("/logs", patientController.getLogs);
+router.get("/paid-packages-logs", patientController.getPaidPackageLog);
 
 // Info related
 router.get("/info", patientController.getInfo);
@@ -20,7 +21,4 @@ router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPack
 // Bill related
 router.delete("/delete-bill/id=:id", patientController.deleteBill);
 router.post("/pay-bill/id=:id", patientController.payBill);
-
-// Get payment logs
-router.get("/pay-logs", patientController.getPayLog);
 module.exports = router;
