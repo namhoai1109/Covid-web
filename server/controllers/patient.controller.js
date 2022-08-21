@@ -235,11 +235,11 @@ exports.linkAccount = async (req, res) => {
         .send({ message: "Account not found in the database" });
     }
 
-    const PaySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
     const token = req.headers.authorization;
     axios({
       method: "POST",
-      url: PSURL,
+      url: paySysURL,
       headers: {
         'Authorization': token,
       },
