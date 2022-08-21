@@ -335,3 +335,70 @@ exports.linkAccount = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
+
+exports.getPayLog = async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.idNumber });
+    if (!account) {
+      return res
+        .status(500)
+        .send({ message: "Account not found in the database" });
+    }
+
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/shared/logs`;
+    const token = req.headers.authorization;
+    axios({
+      method: "GET",
+      url: paySysURL,
+      headers: {
+        'Authorization': token,
+      },
+
+    })
+      .then(response => {
+        res.status(200).send(response.data);
+      })
+      .catch(error => {
+        res.status(500).send({ message: "Error linking account" });
+      });
+
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+
+};
+
+
+exports.getAccountInfoPaySys = async (req, res) => {
+  try {
+    const account = await Account.findOne({ username: req.idNumber });
+    if (!account) {
+      return res
+        .status(500)
+        .send({ message: "Account not found in the database" });
+    }
+
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/shared/info`;
+    const token = req.headers.authorization;
+    axios({
+      method: "GET",
+      url: paySysURL,
+      headers: {
+        'Authorization': token,
+      },
+
+    })
+      .then(response => {
+        res.status(200).send(response.data);
+      })
+      .catch(error => {
+        res.status(500).send({ message: "Cannot get account info" });
+      });
+
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+
+}
+//
+
