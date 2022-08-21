@@ -50,3 +50,20 @@ array of logs:
         "__v": 0
     }
 ]
+
+number: 3 
+route: https://localhost:9000/api/shared/info
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+return: 
+{
+    "_id": "62ff04726ae90f039667ac57",
+    "username": "666666666",
+    "balance": 6530031,
+    "linked": true,
+    "__v": 0
+}

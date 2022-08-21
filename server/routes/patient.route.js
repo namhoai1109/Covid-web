@@ -18,6 +18,7 @@ router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPack
 router.delete("/delete-bill/id=:id", patientController.deleteBill);
 router.post("/pay-bill/id=:id", patientController.payBill);
 
-// Get payment logs
+// Shared Data from PaySys
 router.get("/pay-logs", patientController.getPayLog);
+router.get("/get-info", patientController.getAccountInfoPaySys);
 module.exports = router;
