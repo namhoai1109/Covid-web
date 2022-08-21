@@ -255,30 +255,30 @@ exports.linkAccount = async (req, res) => {
                 .send({ message: "Account not found in the database" });
         }
 
-        const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
-        const token = req.headers.authorization;
-        axios({
-            method: "POST",
-            url: paySysURL,
-            headers: {
-                Authorization: token,
-            },
-            data: {
-                username: account.username,
-                password: "placeholder",
-            },
-        })
-            .then((response) => {
-                account.linked = true;
-                account.save();
-                res.status(200).send({
-                    message: "Account linked successfully",
-                });
-            })
-            .catch((error) => {
-                res.status(500).send({ message: "Error linking account" });
-            });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
+    const token = req.headers.authorization;
+    axios({
+      method: "POST",
+      url: paySysURL,
+      headers: {
+        'Authorization': token,
+      },
+      data: {
+        username: account.username,
+        password: "placeholder",
+      },
+    })
+      .then(response => {
+        account.linked = true;
+        account.save();
+        res.status(200).send({ message: "Account linked successfully" });
+      })
+      .catch(error => {
+        res.status(500).send({ message: "Error linking account" });
+      });
+
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+
 };
