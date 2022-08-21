@@ -36,6 +36,21 @@ exports.getLogs = async (req, res) => {
   }
 };
 
+exports.getPaidPackageLog = async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ id_number: req.idNumber });
+    if (!patient) {
+      return res
+        .status(500)
+        .send({ message: "Patient not found in the database" });
+    }
+    const logs = await Log.find({ account: patient.account, action: "checkout" }).sort({ time_buy: -1 });
+    res.status(200).send(logs);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
 exports.getInfo = async (req, res) => {
   try {
     const patient = await Patient.findOne(
@@ -244,6 +259,15 @@ exports.payBill = async (req, res) => {
       await bill.save();
       console.log(bill);
 
+      // Save package consumption logs
+      const packageLog = new Log({
+        account: bill.buyer_account,
+        time: bill.time_buy,
+        action: "checkout",
+        description: `Checkout package: ${bill.package.name}`,
+      })
+      await packageLog.save();
+
       // Save package stats
       await PackageStats.updateOne(
         {
@@ -285,7 +309,7 @@ exports.linkAccount = async (req, res) => {
         .send({ message: "Account not found in the database" });
     }
 
-    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/shared/register`;
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
     const token = req.headers.authorization;
     axios({
       method: "POST",
@@ -294,6 +318,7 @@ exports.linkAccount = async (req, res) => {
         'Authorization': token,
       },
       data: {
+        username: account.username,
         password: "placeholder",
       },
     })
@@ -309,38 +334,4 @@ exports.linkAccount = async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-};
-
-
-
-exports.getPayLog = async (req, res) => {
-  try {
-    const account = await Account.findOne({ username: req.idNumber });
-    if (!account) {
-      return res
-        .status(500)
-        .send({ message: "Account not found in the database" });
-    }
-
-    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/shared/logs`;
-    const token = req.headers.authorization;
-    axios({
-      method: "GET",
-      url: paySysURL,
-      headers: {
-        'Authorization': token,
-      },
-
-    })
-      .then(response => {
-        res.status(200).send(response.data);
-      })
-      .catch(error => {
-        res.status(500).send({ message: "Error linking account" });
-      });
-
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-
 };
