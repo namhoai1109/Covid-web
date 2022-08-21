@@ -143,7 +143,6 @@ returns: [
   }
 ]
 
-
 buyPackage flow:
 buy package, call number 6 -> return bill ID -> {
 if (login payment system successful) -> call number 8, number 8 sends a request to Payment system using axios -> {
