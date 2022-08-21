@@ -60,12 +60,10 @@ exports.makePayment = async (req, res) => {
         account.balance -= total;
         await account.save();
       } else {
-        return res.status(502).send({ message: "Credit limit exceeded" });
+        return res.status(502).send({ message: "Insufficient credit" });
       }
     }
 
-    // TODO: Save debt/payment information for statistics
-    // TODO: Call API to CovidSys to update package/products consumed statistics
     // Save payment bill
     const bill = new Bill(req.body);
     bill.paid = true;
@@ -118,8 +116,7 @@ exports.registerAccount = async (req, res) => {
     if (req.headers?.authorization?.startsWith("Bearer ")) {
       const token = req.headers.authorization;
 
-      const covidSysURL = 'https://localhost:5000/api/auth/is-valid-account'
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const covidSysURL = 'https://localhost:5000/api/auth/is-valid-account';
       const username = req.body.username;
 
       console.log("Received token " + token);

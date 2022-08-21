@@ -1,20 +1,19 @@
 const mongoose = require("mongoose");
 
-const packageStatsSchema = new mongoose.Schema({
+const productStatsSchema = new mongoose.Schema({
   date: {
     type: String,
     required: true,
   },
-  package: {
+  product: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Package",
-    required: true,
+    ref: "Product",
   },
   count: {
     type: Number,
-    default: 0,
     required: true,
+    default: 0
   }
 });
 
-module.exports = mongoose.model("PackageStats", packageStatsSchema);
+module.exports = mongoose.model("ProductStats", productStatsSchema);
