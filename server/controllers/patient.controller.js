@@ -20,7 +20,16 @@ exports.getLogs = async (req, res) => {
         .status(500)
         .send({ message: "Patient not found in the database" });
     }
-    const logs = await Log.find({ account: patient.account }).sort({ time: -1 });
+    const logs = await Log.find(
+      {
+        account: patient.account,
+        $or: [
+          { action: "create" },
+          { action: "update" },
+          { action: "delete" },
+        ]
+      }
+    ).sort({ time: -1 });
     res.status(200).send(logs);
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -167,6 +176,7 @@ exports.buyPackage = async (req, res) => {
     const order_bill = new Bill({
       buyer: patient._id,
       buyer_username: patient.id_number,
+      buyer_account: patient.account,
       package: package._id,
       time_buy: Date.now(),
       products_info: productsToBuyInfo,
@@ -219,7 +229,7 @@ exports.deleteBill = async (req, res) => {
 
 exports.payBill = async (req, res) => {
   const PSURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/pay`;
-  const bill = await Bill.findById(req.params.id);
+  const bill = await Bill.findById(req.params.id).populate("package");
   if (!bill) {
     return res.status(500).send({ message: "Bill not found" });
   }
@@ -232,6 +242,7 @@ exports.payBill = async (req, res) => {
     .then(async (response) => {
       bill.paid = true;
       await bill.save();
+      console.log(bill);
 
       // Save package stats
       await PackageStats.updateOne(

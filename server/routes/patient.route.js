@@ -3,7 +3,10 @@ const { checkLinkedAccount, checkPaymentAccountExist } = require("../middlewares
 const patientController = require("../controllers/patient.controller");
 const packageController = require("../controllers/package.controller");
 
+// Logs related
 router.get("/logs", patientController.getLogs);
+
+// Info related
 router.get("/info", patientController.getInfo);
 router.put("/password", patientController.changePassword);
 router.put("/link", checkPaymentAccountExist, patientController.linkAccount);
