@@ -456,7 +456,7 @@ exports.updateCreditLimit = async (req, res) => {
       return res.status(500).send({ message: "Doctor not found" });
     }
     // Check if the credit limit is valid
-    if (req.body.credit_limit < 0 || req.body.credit_limit > 1) {
+    if (req.body.credit_limit <= 0 || req.body.credit_limit > 1) {
       return res.status(400).send({
         message:
           "Credit limit must be positive and/or smaller than 100%",

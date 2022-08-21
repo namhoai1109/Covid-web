@@ -66,6 +66,19 @@ exports.makePayment = async (req, res) => {
 
     // TODO: Save debt/payment information for statistics
     // TODO: Call API to CovidSys to update package/products consumed statistics
+    // Save payment bill
+    const bill = new Bill(req.body);
+    bill.paid = true;
+    await bill.save();
+
+    // Save payment log
+    const log = new Log({
+      account: account._id,
+      type: "payment",
+      description: `Account ${account.username} made a payment`,
+      amount: bill.total_price,
+    });
+    await log.save();
 
     res.status(200).send({ message: "Payment made successfully" });
   } catch (err) {
