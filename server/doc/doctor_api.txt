@@ -304,7 +304,7 @@ returns: {
 }
 
 number: 9
-description: Get patients with payment system account 
+description: Get patients with payment system account -> Called
 route: https://localhost:5000/api/doctor/patients/with-ps-account
 method: GET
 headers: {

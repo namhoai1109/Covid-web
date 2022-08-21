@@ -1,5 +1,5 @@
 number: 1
-description: login
+description: login -> Called
 route: https://localhost:9000/api/auth/login
 method: POST
 body: {
@@ -11,7 +11,7 @@ returns: {
 }
 
 number: 2
-description: check has logged in before
+description: check has logged in before -> Called
 route: https://localhost:9000/api/auth/check
 method: POST
 body: {
@@ -23,7 +23,7 @@ returns: {
 }
 
 number: 3
-description: Update password for new user that never logged in
+description: Update password for new user that never logged in -> Called
 route: https://localhost:9000/api/auth/update-password
 method: POST
 body: {

@@ -1,5 +1,5 @@
 number: 1
-description: Get status stats
+description: Get status stats -> Called
 route: https://localhost:5000/api/stats/status
 method: GET
 headers: {
