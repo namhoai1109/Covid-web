@@ -20,12 +20,36 @@ exports.getLogs = async (req, res) => {
         .status(500)
         .send({ message: "Patient not found in the database" });
     }
-    const logs = await Log.find({ account: patient.account }).sort({ time: -1 });
+    const logs = await Log.find(
+      {
+        account: patient.account,
+        $or: [
+          { action: "create" },
+          { action: "update" },
+          { action: "delete" },
+        ]
+      }
+    ).sort({ time: -1 });
     res.status(200).send(logs);
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
+
+exports.getPaidPackageLog = async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ id_number: req.idNumber });
+    if (!patient) {
+      return res
+        .status(500)
+        .send({ message: "Patient not found in the database" });
+    }
+    const logs = await Log.find({ account: patient.account, action: "checkout" }).sort({ time_buy: -1 });
+    res.status(200).send(logs);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
 
 exports.getInfo = async (req, res) => {
   try {
@@ -167,6 +191,7 @@ exports.buyPackage = async (req, res) => {
     const order_bill = new Bill({
       buyer: patient._id,
       buyer_username: patient.id_number,
+      buyer_account: patient.account,
       package: package._id,
       time_buy: Date.now(),
       products_info: productsToBuyInfo,
@@ -219,7 +244,7 @@ exports.deleteBill = async (req, res) => {
 
 exports.payBill = async (req, res) => {
   const PSURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/pay`;
-  const bill = await Bill.findById(req.params.id);
+  const bill = await Bill.findById(req.params.id).populate("package");
   if (!bill) {
     return res.status(500).send({ message: "Bill not found" });
   }
@@ -232,6 +257,16 @@ exports.payBill = async (req, res) => {
     .then(async (response) => {
       bill.paid = true;
       await bill.save();
+      console.log(bill);
+
+      // Save package consumption logs
+      const packageLog = new Log({
+        account: bill.buyer_account,
+        time: bill.time_buy,
+        action: "checkout",
+        description: `Checkout package: ${bill.package.name}`,
+      })
+      await packageLog.save();
 
       // Save package stats
       await PackageStats.updateOne(
@@ -274,7 +309,7 @@ exports.linkAccount = async (req, res) => {
         .send({ message: "Account not found in the database" });
     }
 
-    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/shared/register`;
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
     const token = req.headers.authorization;
     axios({
       method: "POST",
@@ -283,6 +318,7 @@ exports.linkAccount = async (req, res) => {
         'Authorization': token,
       },
       data: {
+        username: account.username,
         password: "placeholder",
       },
     })
@@ -299,8 +335,6 @@ exports.linkAccount = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
-
-
 
 exports.getPayLog = async (req, res) => {
   try {
@@ -367,3 +401,4 @@ exports.getAccountInfoPaySys = async (req, res) => {
 
 }
 //
+

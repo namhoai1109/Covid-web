@@ -3,7 +3,11 @@ const { checkLinkedAccount, checkPaymentAccountExist } = require("../middlewares
 const patientController = require("../controllers/patient.controller");
 const packageController = require("../controllers/package.controller");
 
+// Logs related
 router.get("/logs", patientController.getLogs);
+router.get("/paid-packages-logs", patientController.getPaidPackageLog);
+
+// Info related
 router.get("/info", patientController.getInfo);
 router.put("/password", patientController.changePassword);
 router.put("/link", checkPaymentAccountExist, patientController.linkAccount);
@@ -17,8 +21,4 @@ router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPack
 // Bill related
 router.delete("/delete-bill/id=:id", patientController.deleteBill);
 router.post("/pay-bill/id=:id", patientController.payBill);
-
-// Shared Data from PaySys
-router.get("/pay-logs", patientController.getPayLog);
-router.get("/get-info", patientController.getAccountInfoPaySys);
 module.exports = router;
