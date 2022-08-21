@@ -9,6 +9,8 @@ const PackageOrder = require("../models/PackageOrder");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
 const Bill = require("../models/Bill");
+const PackageStats = require("../models/PackageStats");
+const ProductStats = require("../models/ProductStats");
 
 exports.getLogs = async (req, res) => {
   try {
@@ -161,17 +163,6 @@ exports.buyPackage = async (req, res) => {
       total_price += productInPackage.product.price * product.quantity;
     });
 
-    // TODO: Call api to payment system to buy products
-    // TODO: Save this for later to save package history
-    // Create a new package order
-    // const packageOrder = new PackageOrder({
-    //     buyer: patient._id,
-    //     package: package._id,
-    //     time_buy: Date.now(),
-    //     products_info: productsToBuyInfo,
-    // });
-    // await packageOrder.save();
-
     const credit_limit = patient.credit_limit;
     const order_bill = new Bill({
       buyer: patient._id,
@@ -232,20 +223,45 @@ exports.payBill = async (req, res) => {
   if (!bill) {
     return res.status(500).send({ message: "Bill not found" });
   }
+  if (bill.paid) {
+    return res.status(500).send({ message: "Bill already paid" });
+  }
+
   axios
     .post(PSURL, bill)
     .then(async (response) => {
-      //TODO: Save bill as paid and history of package usage
       bill.paid = true;
       await bill.save();
 
-      res.status(200).send({
-        message: "Bill paid, order successful, package usage saved",
-      });
+      // Save package stats
+      await PackageStats.updateOne(
+        {
+          package: bill.package,
+          date: bill.time_buy.toISOString().slice(0, 10)
+        },
+        { $inc: { count: 1 } },
+        { upsert: true }
+      )
+
+      // Save product stats
+      const products = bill.products_info;
+      products.forEach(async (product) => {
+        await ProductStats.updateOne(
+          {
+            product: product.product,
+            date: bill.time_buy.toISOString().slice(0, 10)
+          },
+          { $inc: { count: product.quantity } },
+          { upsert: true }
+        )
+      })
+
+      res.status(200).send({ message: "Bill paid, order successful, package usage saved" });
     })
     .catch(async (err) => {
+      console.log(err);
       await bill.remove();
-      res.status(500).send(err);
+      res.status(500).send(err.response.data);
     });
 };
 
@@ -283,5 +299,4 @@ exports.linkAccount = async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-
 };
