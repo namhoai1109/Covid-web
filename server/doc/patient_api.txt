@@ -112,7 +112,7 @@ returns: {
 }
 
 number: 8
-description: Pay a bill
+description: Pay a bill -> Called
 route: https://localhost:5000/api/patient/pay-bill/id=:id
 method: POST
 headers: {
@@ -154,7 +154,7 @@ if (login payment system successful) -> call number 8, number 8 sends a request 
 }
  
 number: 9
-route: https://localhost:5000/api/patient/pay-logs
+route: https://localhost:5000/api/patient/pay-logs -> Called
 method: GET
 description: get payment logs from payment system
 headers: {
@@ -195,8 +195,8 @@ returns: {
 ]
 }
 
-number: 10
-method: GET
+number: 10 -> Called
+method: GET 
 route: https://localhost:5000/api/patient/paysys-info
 description: get account info from PaySys
 headers: {
