@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const {
-    checkLinkedAccount,
-    checkPaymentAccountExist,
+  checkLinkedAccount,
+  checkPaymentAccountExist,
 } = require("../middlewares/auth");
 const patientController = require("../controllers/patient.controller");
 const packageController = require("../controllers/package.controller");
@@ -19,10 +19,7 @@ router.put("/link", checkPaymentAccountExist, patientController.linkAccount);
 router.get("/packages", packageController.getAllPackages);
 router.get("/packages/search", packageController.searchPackages);
 router.get("/packages/filter", packageController.filterPackages);
-router.post(
-    "/buy-package/id=:id",
-    checkLinkedAccount,
-    patientController.buyPackage,
+router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPackage,
 );
 
 // Bill related

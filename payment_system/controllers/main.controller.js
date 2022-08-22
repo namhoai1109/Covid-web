@@ -29,6 +29,9 @@ exports.makeDeposit = async (req, res) => {
     }
 
     account.balance += req.body.amount;
+    if (account.balance < 0) {
+      account.in_debt = true;
+    }
     await account.save();
 
     // Save log
@@ -63,6 +66,9 @@ exports.makePayment = async (req, res) => {
     } else {
       if (account.balance / total >= account.credit_limit) {
         account.balance -= total;
+        if (account.balance < 0) {
+          account.in_debt = true;
+        }
         await account.save();
       } else {
         return res.status(502).send({ message: "Insufficient credit" });

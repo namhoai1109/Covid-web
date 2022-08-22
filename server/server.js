@@ -6,6 +6,7 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
+const { Server } = require("socket.io")
 // Import routes
 const authRouter = require("./routes/auth.route");
 const adminRouter = require("./routes/admin.route");
@@ -24,19 +25,27 @@ const Admin = require("./models/Admin");
 const app = express();
 app.use(cors());
 
-// SSL certificate
+// Connect to database
+connectDB();
+
+// HTTPS
 const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem")),
   key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
 };
-
-connectDB();
-
+const httpsServer = https.createServer(httpsOptions, app)
+const io = new Server(httpsServer, {
+  cors: {
+    origin: "*",
+  }
+});
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.set("io", io);
 app.use(express.static("public"));
 app.use("/images", express.static("images"));
+app.use("/", express.static("public"));
 
 // Mount routers
 app.use("/api/auth", authRouter);
@@ -45,10 +54,6 @@ app.use("/api/doctor", authorizeUser("doctor"), doctorRouter);
 app.use("/api/facility", authorizeUser("admin"), facilityRouter);
 app.use("/api/patient", authorizeUser("patient"), patientRouter);
 app.use("/api/stats", authorizeUser("doctor"), statsRouter);
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
 
 // Initialize admin account on first setup
 const initAdmin = async () => {
@@ -83,7 +88,14 @@ const PORT = process.env.MANAGEMENT_SERVER_PORT || 5000;
 //   console.log(`Server is running on http://localhost:${PORT}`);
 // });
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
-https.createServer(httpsOptions, app).listen(PORT, () => {
+
+// io.on("connection", socket => {
+//   console.log(socket.id);
+//   socket.emit("notification", "Hello world")
+// })
+
+
+httpsServer.listen(PORT, () => {
   initAdmin();
   console.log(`Server is running on https://localhost:${PORT}`);
 });
