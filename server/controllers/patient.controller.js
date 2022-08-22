@@ -119,6 +119,9 @@ exports.buyPackage = async (req, res) => {
     const package = await Package.findById(req.params.id).populate(
       "products.product",
     );
+
+    console.log(package);
+    console.log(patient);
     if (!package) {
       return res
         .status(500)
@@ -149,11 +152,14 @@ exports.buyPackage = async (req, res) => {
 
     // Check quantity limit per patient
     const packageLimit = package.limit_per_patient;
+
     const orders = await Bill.find({
       buyer: patient._id,
       package: package._id,
       paid: true,
     });
+    console.log(orders);
+
     if (orders.length >= packageLimit) {
       return res
         .status(500)
@@ -257,7 +263,6 @@ exports.payBill = async (req, res) => {
     .then(async (response) => {
       bill.paid = true;
       await bill.save();
-      console.log(bill);
 
       // Save package consumption logs
       const packageLog = new Log({

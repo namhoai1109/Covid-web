@@ -9,7 +9,6 @@ exports.getPayLog = async (req, res) => {
     if (req.headers?.authorization?.startsWith("Bearer ")) {
       const token = req.headers.authorization;
       const covidSysURL = 'https://localhost:5000/api/auth/is-valid-account'
-      console.log("Received token " + token);
       axios({
         method: 'POST',
         url: covidSysURL,
@@ -44,14 +43,11 @@ exports.getPayLog = async (req, res) => {
   }
 }
 
-
 exports.registerAccount = async (req, res) => {
   try {
     if (req.headers?.authorization?.startsWith("Bearer ")) {
       const token = req.headers.authorization;
       const covidSysURL = 'https://localhost:5000/api/auth/is-valid-account'
-
-      console.log("Received token " + token);
       axios({
         method: 'POST',
         url: covidSysURL,
@@ -88,12 +84,10 @@ exports.registerAccount = async (req, res) => {
 
 
 exports.getAccountInfo = async (req, res) => {
-
   try {
     if (req.headers?.authorization?.startsWith("Bearer ")) {
       const token = req.headers.authorization;
       const covidSysURL = 'https://localhost:5000/api/auth/is-valid-account'
-      console.log("Received token " + token);
       axios({
         method: 'POST',
         url: covidSysURL,
