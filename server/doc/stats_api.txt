@@ -59,3 +59,35 @@ returns: [
     count: Number
   }
 ]
+
+number: 4
+description: Get recover stats by day
+route: https://localhost:5000/api/stats/recover-day
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: [
+  {
+    _id: String,
+    date: String,
+    count: Number
+  }
+]
+
+number: 5
+description: Get recover stats total
+route: https://localhost:5000/api/stats/recover-total
+method: GET
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  from: Date,
+  to: Date,
+  count: Number
+}
