@@ -1,7 +1,8 @@
-import { faPaperPlane, faPlaneArrival } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faPlaneArrival, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAPI, postAPI } from '~/APIservices/postAPI';
 import logo from '~/asset/svg/Vault-amico.svg';
 import styles from './Dashboard.module.scss';
@@ -16,6 +17,7 @@ function Dashboard() {
 
     let [deposit, setDeposit] = useState('');
     let [validate, setValidate] = useState('');
+    let naviagate = useNavigate();
 
     let getInfo = useCallback(async () => {
         let res = await getAPI('main/info');
@@ -49,9 +51,17 @@ function Dashboard() {
         getInfo();
     }, []);
 
+    let handleLogOut = useCallback(() => {
+        localStorage.removeItem('Token');
+        naviagate('/', { replace: true });
+    }, []);
+
     return (
         <div className={cx('fit-screen', 'flex-center')}>
             <div className={cx('container')}>
+                <button onClick={handleLogOut} className={cx('logout', 'flex-center')}>
+                    <FontAwesomeIcon icon={faRightFromBracket} />
+                </button>
                 <div className={cx('field', 'flex-center')}>
                     <span className={cx('label')}>ID:</span>
                     <span>{infos.username}</span>
