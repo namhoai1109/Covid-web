@@ -6,7 +6,6 @@ import { getAPI } from '~/APIservices/getAPI';
 import { putAPI, putNoDataAPI } from '~/APIservices/putAPI';
 import WrapContent from '~/CommonComponent/WrapContent';
 import styles from './Info.module.scss';
-// import bcrypt from 'bcryptjs';
 import TippyHeadless from '@tippyjs/react/headless';
 
 const cx = classNames.bind(styles);
@@ -14,6 +13,7 @@ const cx = classNames.bind(styles);
 function Info() {
     let [info, setInfo] = useState(null);
     let [linkState, setLinkState] = useState(false);
+    let [infoPay, setInfoPay] = useState({});
     let [notiSuccess, setNotiSuccess] = useState('');
     let [inputPassword, setInputPassword] = useState({
         oldPassword: '',
@@ -45,13 +45,21 @@ function Info() {
         setLinkState(info.account.linked);
     }, []);
 
+    let getInfoPay = useCallback(async () => {
+        let res = await getAPI('patient/paysys-info');
+        // console.log(res);
+        setInfoPay(res);
+    }, []);
+
     useEffect(() => {
         getInfo();
-    }, []);
+        if (linkState) getInfoPay();
+    }, [linkState]);
 
     let handleLink = useCallback(async () => {
         if (!linkState) {
             let res = await putNoDataAPI('patient/link');
+            console.log(res);
             if (res.message && res.message === 'Account linked successfully') {
                 setLinkState(true);
             }
@@ -219,11 +227,16 @@ function Info() {
                             </div>
                         );
                     })}
+                {linkState && (
+                    <div className={cx('info-field', 'flex-center')}>
+                        <span className={cx('label')}>Balance:</span>
+                        <span className={cx('value')}>{infoPay.balance} VND</span>
+                    </div>
+                )}
                 <div className={cx('link-payment', 'flex-center')}>
-                    {/* href="http://localhost:2000/" target="_blank" */}
-                    <a onClick={handleLink} className={cx('title')}>
+                    <button onClick={handleLink} className={cx('title')}>
                         {linkState ? 'Open payment system' : 'Link to payment system'}
-                    </a>
+                    </button>
                     <FontAwesomeIcon className={cx('icon')} icon={faAnglesRight} />
                 </div>
             </WrapContent>

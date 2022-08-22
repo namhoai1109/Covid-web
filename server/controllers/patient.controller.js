@@ -20,16 +20,14 @@ exports.getLogs = async (req, res) => {
         .status(500)
         .send({ message: "Patient not found in the database" });
     }
-    const logs = await Log.find(
-      {
-        account: patient.account,
-        $or: [
-          { action: "create" },
-          { action: "update" },
-          { action: "delete" },
-        ]
-      }
-    ).sort({ time: -1 });
+    const logs = await Log.find({
+      account: patient.account,
+      $or: [
+        { action: "create" },
+        { action: "update" },
+        { action: "delete" },
+      ],
+    }).sort({ time: -1 });
     res.status(200).send(logs);
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -44,12 +42,15 @@ exports.getPaidPackageLog = async (req, res) => {
         .status(500)
         .send({ message: "Patient not found in the database" });
     }
-    const logs = await Log.find({ account: patient.account, action: "checkout" }).sort({ time_buy: -1 });
+    const logs = await Log.find({
+      account: patient.account,
+      action: "checkout",
+    }).sort({ time_buy: -1 });
     res.status(200).send(logs);
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-}
+};
 
 exports.getInfo = async (req, res) => {
   try {
@@ -119,6 +120,7 @@ exports.buyPackage = async (req, res) => {
     const package = await Package.findById(req.params.id).populate(
       "products.product",
     );
+
     if (!package) {
       return res
         .status(500)
@@ -154,6 +156,7 @@ exports.buyPackage = async (req, res) => {
       package: package._id,
       paid: true,
     });
+
     if (orders.length >= packageLimit) {
       return res
         .status(500)
@@ -235,6 +238,11 @@ exports.deleteBill = async (req, res) => {
     if (!bill) {
       return res.status(500).send({ message: "Bill not found" });
     }
+    if (bill.paid) {
+      return res
+        .status(500)
+        .send({ message: "Bill already paid, cannot delete" });
+    }
     await bill.remove();
     res.status(200).send({ message: "Bill deleted" });
   } catch (err) {
@@ -251,9 +259,17 @@ exports.payBill = async (req, res) => {
   if (bill.paid) {
     return res.status(500).send({ message: "Bill already paid" });
   }
-
-  axios
-    .post(PSURL, bill)
+  axios({
+    method: "POST",
+    url: PSURL,
+    data: {
+      bill: bill,
+    },
+    headers: {
+      // "Content-Type": "application/json",
+      Authorization: `Bearer ${req.body.paySysToken}`,
+    },
+  })
     .then(async (response) => {
       bill.paid = true;
       await bill.save();
@@ -265,18 +281,18 @@ exports.payBill = async (req, res) => {
         time: bill.time_buy,
         action: "checkout",
         description: `Checkout package: ${bill.package.name}`,
-      })
+      });
       await packageLog.save();
 
       // Save package stats
       await PackageStats.updateOne(
         {
           package: bill.package,
-          date: bill.time_buy.toISOString().slice(0, 10)
+          date: bill.time_buy.toISOString().slice(0, 10),
         },
         { $inc: { count: 1 } },
-        { upsert: true }
-      )
+        { upsert: true },
+      );
 
       // Save product stats
       const products = bill.products_info;
@@ -284,14 +300,16 @@ exports.payBill = async (req, res) => {
         await ProductStats.updateOne(
           {
             product: product.product,
-            date: bill.time_buy.toISOString().slice(0, 10)
+            date: bill.time_buy.toISOString().slice(0, 10),
           },
           { $inc: { count: product.quantity } },
-          { upsert: true }
-        )
-      })
+          { upsert: true },
+        );
+      });
 
-      res.status(200).send({ message: "Bill paid, order successful, package usage saved" });
+      res.status(200).send({
+        message: "Bill paid, order successful, package usage saved",
+      });
     })
     .catch(async (err) => {
       console.log(err);
@@ -309,28 +327,29 @@ exports.linkAccount = async (req, res) => {
         .send({ message: "Account not found in the database" });
     }
 
-    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/main/register`;
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/shared/register`;
     const token = req.headers.authorization;
     axios({
       method: "POST",
       url: paySysURL,
       headers: {
-        'Authorization': token,
+        Authorization: token,
       },
       data: {
         username: account.username,
         password: "placeholder",
       },
     })
-      .then(response => {
+      .then((response) => {
         account.linked = true;
         account.save();
-        res.status(200).send({ message: "Account linked successfully" });
+        res.status(200).send({
+          message: "Account linked successfully",
+        });
       })
-      .catch(error => {
-        res.status(500).send({ message: "Error linking account" });
+      .catch((error) => {
+        res.status(500).send(error);
       });
-
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
@@ -351,17 +370,15 @@ exports.getPayLog = async (req, res) => {
       method: "GET",
       url: paySysURL,
       headers: {
-        'Authorization': token,
+        Authorization: token,
       },
-
     })
-      .then(response => {
+      .then((response) => {
         res.status(200).send(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         res.status(500).send({ message: "Error linking account" });
       });
-
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
@@ -382,21 +399,17 @@ exports.getAccountInfoPaySys = async (req, res) => {
       method: "GET",
       url: paySysURL,
       headers: {
-        'Authorization': token,
+        Authorization: token,
       },
-
     })
-      .then(response => {
+      .then((response) => {
         res.status(200).send(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         res.status(500).send({ message: "Cannot get account info" });
       });
-
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-
-}
+};
 //
-

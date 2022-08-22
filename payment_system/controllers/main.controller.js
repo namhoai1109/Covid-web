@@ -1,17 +1,20 @@
-const Account = require('../models/Account');
-const Log = require('../models/Log');
-const bcrypt = require('bcrypt');
-const axios = require('axios');
-const Bill = require('../models/Bill');
+const Account = require("../models/Account");
+const Log = require("../models/Log");
+const bcrypt = require("bcrypt");
+const axios = require("axios");
+const Bill = require("../models/Bill");
 
 exports.getAccountInfo = async (req, res) => {
   try {
-    const account = await Account.findOne({ username: req.idNumber }, { password: 0 });
+    const account = await Account.findOne(
+      { username: req.idNumber },
+      { password: 0 },
+    );
     res.send(account);
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-}
+};
 
 // Make a deposit (nap tien)
 exports.makeDeposit = async (req, res) => {
@@ -34,29 +37,31 @@ exports.makeDeposit = async (req, res) => {
       type: "deposit",
       description: `Account ${account.username} made a deposit`,
       amount: req.body.amount,
-    })
+    });
     await log.save();
 
     res.status(200).send({ message: "Deposit made successfully" });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-}
+};
 
 // Make a payment
 exports.makePayment = async (req, res) => {
   try {
-    const account = await Account.findOne({ username: req.body.buyer_username });
+    const account = await Account.findOne({
+      username: req.body.bill.buyer_username,
+    });
     if (!account) {
       return res.status(404).send({ message: "Account not found" });
     }
 
-    const total = req.body.total_price;
+    const total = req.body.bill.total_price;
     if (account.balance >= total) {
       account.balance -= total;
       await account.save();
     } else {
-      if ((account.balance / total) >= account.credit_limit) {
+      if (account.balance / total >= account.credit_limit) {
         account.balance -= total;
         await account.save();
       } else {
@@ -65,7 +70,7 @@ exports.makePayment = async (req, res) => {
     }
 
     // Save payment bill
-    const bill = new Bill(req.body);
+    const bill = new Bill(req.body.bill);
     bill.paid = true;
     await bill.save();
 
@@ -82,7 +87,7 @@ exports.makePayment = async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-}
+};
 
 exports.getPayLog = async (req, res) => {
   try {
@@ -96,7 +101,7 @@ exports.getPayLog = async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-}
+};
 
 exports.changePassword = async (req, res) => {
   try {
@@ -110,7 +115,10 @@ exports.changePassword = async (req, res) => {
     }
 
     // Compare old password
-    const isMatch = await bcrypt.compare(req.body.old_password, account.password)
+    const isMatch = await bcrypt.compare(
+      req.body.old_password,
+      account.password,
+    );
     if (!isMatch) {
       return res.status(401).send({ message: "Invalid old password" });
     }
@@ -123,42 +131,48 @@ exports.changePassword = async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-}
+};
 
 exports.registerAccount = async (req, res) => {
   try {
     if (req.headers?.authorization?.startsWith("Bearer ")) {
       const token = req.headers.authorization;
 
-      const covidSysURL = 'https://localhost:5000/api/auth/is-valid-account';
+      const covidSysURL =
+        "https://localhost:5000/api/auth/is-valid-account";
       const username = req.body.username;
 
       console.log("Received token " + token);
       axios({
-        method: 'POST',
+        method: "POST",
         url: covidSysURL,
         headers: {
-          'Authorization': token
-        }
+          Authorization: token,
+        },
       })
         .then(async (response) => {
-          const hashedPassword = await bcrypt.hash(req.body.password, 10);
+          const hashedPassword = await bcrypt.hash(
+            req.body.password,
+            10,
+          );
           const account = new Account({
             username: username,
             password: hashedPassword,
-            balance: 0
+            balance: 0,
           });
           await account.save();
           console.log("Valid account");
-          res.status(200).send({ message: "Account linked successfully" });
+          res.status(200).send({
+            message: "Account linked successfully",
+          });
         })
-        .catch(err => {
+        .catch((err) => {
           res.status(500).send({ message: "Unauthorized" });
-        })
+        });
     } else {
       res.status(401).send({ message: "Unauthorized" });
     }
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
-}
+};

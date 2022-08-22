@@ -34,6 +34,7 @@ function PatientChart() {
 
     let getChart = useCallback(async () => {
         let dataChart = await getAPI('stats/status');
+        console.log(dataChart);
         if (dataChart.length > 0) {
             let formData = {
                 xaxis: [],
