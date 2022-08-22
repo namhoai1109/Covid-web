@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { getAPI } from '~/APIservices/getAPI';
 import { postAPI } from '~/APIservices/postAPI';
 import Counting from '~/CommonComponent/Counting';
 import ListItem from '~/CommonComponent/ListItem';
@@ -38,6 +39,7 @@ function InfoPackage() {
             let id = product._id;
             let increasing = () => {
                 setListCounting((prev) => ({ ...prev, [id]: prev[id] + 1 }));
+                setValidate('');
             };
 
             let decreasing = () => {
@@ -85,30 +87,34 @@ function InfoPackage() {
                 tmp[key] = listCounting[key];
             }
         });
-        await postAPI(
-            'patient/buy-package/id=' + currPackage._id,
-            {
-                products: Object.keys(tmp).map((key) => {
-                    return {
-                        id: key,
-                        quantity: tmp[key],
-                    };
-                }),
-            },
-            token,
-        )
-            .then((res) => {
-                console.log(res);
-                if (typeof res === 'string') {
-                    setValidate(res);
-                } else {
-                    localStorage.setItem('Bill', JSON.stringify(res.bill));
-                    window.open('http://localhost:3000/payment', '_blank');
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (Object.keys(tmp).length > 0) {
+            await postAPI(
+                'patient/buy-package/id=' + currPackage._id,
+                {
+                    products: Object.keys(tmp).map((key) => {
+                        return {
+                            id: key,
+                            quantity: tmp[key],
+                        };
+                    }),
+                },
+                token,
+            )
+                .then((res) => {
+                    console.log(res);
+                    if (typeof res === 'string') {
+                        setValidate(res);
+                    } else {
+                        localStorage.setItem('Bill', JSON.stringify(res.bill));
+                        window.open('http://localhost:3000/payment', '_blank');
+                    }
+                })
+                .catch((err) => {
+                    console.log(err.data);
+                });
+        } else {
+            setValidate('Please choose at least one product');
+        }
     }, [listCounting]);
 
     return (
