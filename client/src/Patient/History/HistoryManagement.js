@@ -30,14 +30,14 @@ function HistoryManagement() {
             <div className={cx('list-item', 'list-nav', 'flex-center')}>
                 <span className={cx('action')}>Action</span>
                 <span className={cx('descript')}>Description</span>
-                <span className={cx('time')}>Time</span>
+                <span>Time</span>
             </div>
             {Logs.map((item, index) => {
                 return (
                     <div key={index} className={cx('list-item', 'flex-center')}>
                         <span className={cx('action')}>{item.action}</span>
                         <span className={cx('descript')}>{item.description}</span>
-                        <span className={cx('time')}>{item.time}</span>
+                        <span>{item.time}</span>
                     </div>
                 );
             })}

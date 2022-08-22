@@ -5,6 +5,7 @@ import classNames from 'classnames/bind';
 import styles from './History.module.scss';
 import HistoryPayment from './HistoryPayment';
 import { useEffect, useState } from 'react';
+import HistoryConsumption from './HistoryConsumption';
 const cx = classNames.bind(styles);
 
 let pathHistoryManagement =
@@ -12,6 +13,9 @@ let pathHistoryManagement =
 
 let pathHistoryPayment =
     configs.mainRoutes.patient + configs.patientRoutes.history + configs.patientRoutes.paymentHistory;
+
+let pathHistoryConsumption =
+    configs.mainRoutes.patient + configs.patientRoutes.history + configs.patientRoutes.consumptionHistory;
 
 function HistoryRoutes() {
     let location = useLocation();
@@ -40,11 +44,20 @@ function HistoryRoutes() {
                 >
                     Payment
                 </Link>
+                <Link
+                    className={cx('nav-item', {
+                        active: curPath === pathHistoryConsumption,
+                    })}
+                    to={pathHistoryConsumption}
+                >
+                    Consumption
+                </Link>
             </div>
             <div className={cx('wrap-content', 'flex-center')}>
                 <Routes>
                     <Route path={configs.patientRoutes.managementHistory} element={<HistoryManagement />} />
                     <Route path={configs.patientRoutes.paymentHistory} element={<HistoryPayment />} />
+                    <Route path={configs.patientRoutes.consumptionHistory} element={<HistoryConsumption />} />
                     <Route path="/" element={<Navigate to={pathHistoryManagement} replace />} />
                 </Routes>
             </div>

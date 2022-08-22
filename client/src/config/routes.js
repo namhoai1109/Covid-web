@@ -36,6 +36,7 @@ export const patientRoutes = {
     history: '/history',
     managementHistory: '/management',
     paymentHistory: '/payment',
+    consumptionHistory: '/consumption',
     bankAccount: '/bankaccount',
 };
 
