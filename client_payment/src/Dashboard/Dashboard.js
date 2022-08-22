@@ -27,9 +27,14 @@ function Dashboard() {
 
     let handleSubmit = useCallback(async () => {
         if (Number(deposit) > 0) {
-            let res = await postAPI('main/deposit', {
-                amount: Number(deposit),
-            });
+            let token = JSON.parse(localStorage.getItem('Token')).token;
+            let res = await postAPI(
+                'main/deposit',
+                {
+                    amount: Number(deposit),
+                },
+                token,
+            );
 
             if (res.message && res.message === 'Deposit made successfully') {
                 getInfo();
