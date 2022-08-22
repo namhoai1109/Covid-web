@@ -293,12 +293,17 @@ exports.updatePatient = async (req, res) => {
       const newFacility = await Facility.findOne({
         _id: req.body.current_facility,
       });
-      if (newFacility) {
-        if (newFacility.current_count < newFacility.capacity) {
-          newFacility.current_count++;
-          await newFacility.save();
-          patient.current_facility = newFacility._id;
+      const oldFacility = await Facility.findOne({
+        _id: patient.current_facility,
+      });
 
+      if (newFacility && oldFacility && newFacility._id.toString() !== oldFacility._id.toString()) {
+        if (newFacility.current_count <= newFacility.capacity) {
+          oldFacility.current_count -= 1;
+          newFacility.current_count += 1;
+          await newFacility.save()
+          await oldFacility.save()
+          patient.current_facility = newFacility._id;
           logString += `Changed current facility to ${newFacility.name} | `;
         } else {
           return res.status(400).send({

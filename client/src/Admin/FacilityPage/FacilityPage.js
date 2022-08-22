@@ -93,14 +93,16 @@ function FacilityPage() {
     let listFacility = useSelector((state) => state.listFacility.listFacility);
     //console.log(listFacility);
 
-    let handleDeleteFacility = async (id) => {
-        try {
-            let res = await deleteAPI('facility/delete/id=' + id);
-            if (res.message && res.message === 'Facility deleted successfully') {
-                getListFacility(dispatch);
+    let handleDeleteFacility = async (id, current_count) => {
+        if (current_count === 0) {
+            try {
+                let res = await deleteAPI('facility/delete/id=' + id);
+                if (res.message && res.message === 'Facility deleted successfully') {
+                    getListFacility(dispatch);
+                }
+            } catch (err) {
+                console.log(err);
             }
-        } catch (err) {
-            console.log(err);
         }
     };
 
@@ -134,7 +136,7 @@ function FacilityPage() {
                             key={index}
                             infos={nItem}
                             showDelete={deleteState.isShow}
-                            clickDelete={() => handleDeleteFacility(item._id)}
+                            clickDelete={() => handleDeleteFacility(item._id, item.current_count)}
                         />
                     );
                 })}

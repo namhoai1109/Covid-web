@@ -30,9 +30,15 @@ function Pay({ billID }) {
             token,
         );
         console.log(res);
+
         if (res.message && res.message === 'Bill paid, order successful, package usage saved') {
             setIsDone(true);
             setMess('Order successful!');
+            localStorage.removeItem('Bill');
+            localStorage.removeItem('TokenPay');
+        } else if (typeof res === 'string') {
+            setIsDone(true);
+            setMess(res + '!');
             localStorage.removeItem('Bill');
             localStorage.removeItem('TokenPay');
         }
