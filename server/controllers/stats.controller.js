@@ -14,7 +14,9 @@ exports.getStatusStats = async (req, res) => {
 
 exports.getPackageStats = async (req, res) => {
   try {
-    const packageStats = await PackageStats.find().populate("package", { name: 1 });
+    const packageStats = await PackageStats.find({
+      date: new Date(Date.now()).toISOString().slice(0, 10)
+    }).populate("package", { name: 1 });
     res.send(packageStats);
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -23,7 +25,9 @@ exports.getPackageStats = async (req, res) => {
 
 exports.getProductStats = async (req, res) => {
   try {
-    const productStats = await ProductStats.find().populate("product", { name: 1 });
+    const productStats = await ProductStats.find({
+      date: new Date(Date.now()).toISOString().slice(0, 10)
+    }).populate("product", { name: 1 });
     res.send(productStats);
   } catch (err) {
     res.status(500).send({ message: err.message });
