@@ -110,15 +110,80 @@ exports.changePassword = async (req, res) => {
 };
 
 exports.buyPackage = async (req, res) => {
-    try {
-        const patient = await Patient.findOne({ id_number: req.idNumber });
-        if (!patient) {
-            return res
-                .status(500)
-                .send({ message: "Patient not found in the database" });
-        }
-        const package = await Package.findById(req.params.id).populate(
-            "products.product",
+  try {
+    const patient = await Patient.findOne({ id_number: req.idNumber });
+    if (!patient) {
+      return res
+        .status(500)
+        .send({ message: "Patient not found in the database" });
+    }
+    const package = await Package.findById(req.params.id).populate(
+      "products.product",
+    );
+
+    console.log(package);
+    console.log(patient);
+    if (!package) {
+      return res
+        .status(500)
+        .send({ message: "Package not found in the database" });
+    }
+
+    // Check time limit
+    const firstOrder = await Bill.findOne({
+      buyer: patient._id,
+      package: package._id,
+      paid: true
+    }).sort({ time_buy: 1 });
+    if (firstOrder) {
+      const timeFirstBuy = firstOrder.time_buy;
+      const timeDiff = (Date.now() - timeFirstBuy) / 1000 / 60 / 60 / 24; //in days
+      const timeLimit = package.time_limit;
+      const conversion = {
+        day: 1,
+        week: 7,
+        month: 30,
+      };
+      const timeLimitInDays =
+        timeLimit.value * conversion[timeLimit.unit];
+      if (timeDiff > timeLimitInDays) {
+        return res.status(500).send({ message: "Time limit exceeded" });
+      }
+    }
+
+    // Check quantity limit per patient
+    const packageLimit = package.limit_per_patient;
+
+    const orders = await Bill.find({
+      buyer: patient._id,
+      package: package._id,
+      paid: true,
+    });
+    console.log(orders);
+
+    if (orders.length >= packageLimit) {
+      return res
+        .status(500)
+        .send({ message: "Limit per patient exceeded" });
+    }
+
+    // Save order information
+    let total_price = 0;
+    const productsInPackage = package.products;
+    const productsToBuy = req.body.products;
+    const productsToBuyInfo = [];
+
+    productsToBuy.forEach((product) => {
+      const productInPackage = productsInPackage.find((p) => {
+        return p.product._id.toString() === product.id.toString();
+      });
+      if (!productInPackage) {
+        throw Error("Product not found in the package");
+      }
+      if (product.quantity > productInPackage.quantity) {
+        throw Error(
+          `Not enough quantity of product ${productInPackage.product.name}`,
+
         );
         if (!package) {
             return res
