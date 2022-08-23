@@ -19,7 +19,7 @@ returns: [
 ]
 
 number: 2
-description: Get package stats
+description: Get package stats -> Called
 route: https://localhost:5000/api/stats/packages
 method: GET
 headers: {
@@ -40,7 +40,7 @@ returns: [
 ]
 
 number: 3
-description: Get product stats
+description: Get product stats -> Called
 route: https://localhost:5000/api/stats/products
 method: GET
 headers: {
@@ -61,7 +61,7 @@ returns: [
 ]
 
 number: 4
-description: Get recover stats by day
+description: Get recover stats by day -> Called
 route: https://localhost:5000/api/stats/recover-day
 method: GET
 headers: {
@@ -78,7 +78,7 @@ returns: [
 ]
 
 number: 5
-description: Get recover stats total
+description: Get recover stats total 
 route: https://localhost:5000/api/stats/recover-total
 method: GET
 headers: {

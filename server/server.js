@@ -6,7 +6,7 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
-const { Server } = require("socket.io")
+const { Server } = require("socket.io");
 // Import routes
 const authRouter = require("./routes/auth.route");
 const adminRouter = require("./routes/admin.route");
@@ -30,14 +30,14 @@ connectDB();
 
 // HTTPS
 const httpsOptions = {
-  cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem")),
-  key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem")),
+    key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
 };
-const httpsServer = https.createServer(httpsOptions, app)
+const httpsServer = https.createServer(httpsOptions, app);
 const io = new Server(httpsServer, {
-  cors: {
-    origin: "*",
-  }
+    cors: {
+        origin: "*",
+    },
 });
 // Middleware
 app.use(cors());
@@ -57,28 +57,28 @@ app.use("/api/stats", authorizeUser("doctor"), statsRouter);
 
 // Initialize admin account on first setup
 const initAdmin = async () => {
-  try {
-    const account = await Account.find();
-    if (account.length === 0) {
-      // Create admin acount
-      const password = "admin";
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const adminAccount = new Account({
-        username: "000000000",
-        password: hashedPassword,
-        role: "admin",
-      });
-      await adminAccount.save();
+    try {
+        const account = await Account.find();
+        if (account.length === 0) {
+            // Create admin acount
+            const password = "admin";
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const adminAccount = new Account({
+                username: "000000000",
+                password: hashedPassword,
+                role: "admin",
+            });
+            await adminAccount.save();
 
-      // Create admin
-      const admin = new Admin({
-        account: adminAccount._id,
-      });
-      await admin.save();
+            // Create admin
+            const admin = new Admin({
+                account: adminAccount._id,
+            });
+            await admin.save();
+        }
+    } catch (err) {
+        console.log(err.message);
     }
-  } catch (err) {
-    console.log(err.message);
-  }
 };
 
 // Start the server
@@ -94,8 +94,7 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 //   socket.emit("notification", "Hello world")
 // })
 
-
 httpsServer.listen(PORT, () => {
-  initAdmin();
-  console.log(`Server is running on https://localhost:${PORT}`);
+    initAdmin();
+    console.log(`Server is running on https://localhost:${PORT}`);
 });
