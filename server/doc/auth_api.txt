@@ -1,0 +1,20 @@
+number: 1 
+description: check for DB (empty or not)
+route: https://localhost:5000/api/auth/init
+method: POST
+return:
+{
+    "message": Boolean;
+}
+False if Account in DB is empty
+
+number: 2
+description: init Admin account (register new admin)
+route: https://localhost:5000/api/auth/init-admin
+method: POST
+body: 
+{
+    "username": string,
+    "password": string
+}
+only allow new admin if Account is empty
