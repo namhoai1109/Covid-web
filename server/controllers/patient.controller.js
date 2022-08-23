@@ -11,6 +11,7 @@ const axios = require("axios");
 const Bill = require("../models/Bill");
 const PackageStats = require("../models/PackageStats");
 const ProductStats = require("../models/ProductStats");
+const Income = require("../models/IncomeStats");
 
 exports.getLogs = async (req, res) => {
   try {
@@ -127,51 +128,40 @@ exports.buyPackage = async (req, res) => {
         .send({ message: "Package not found in the database" });
     }
 
-    // Validate package limit of a specific time range
-    // Find the first bill that is paid to get the time start mark
-    const firstBill = await Bill.findOne({
+    // Check time limit
+    const firstOrder = await Bill.findOne({
       buyer: patient._id,
       package: package._id,
       paid: true
     }).sort({ time_buy: 1 });
-
-    if (firstBill) {
-      // Find the time range of the current bill (timeLeft <= billTime < timeRight)
-      const timeFirstBuy = firstBill.time_buy;
-      const timeBuy = new Date(Date.now());
+    if (firstOrder) {
+      const timeFirstBuy = firstOrder.time_buy;
+      const timeDiff = (Date.now() - timeFirstBuy) / 1000 / 60 / 60 / 24; //in days
+      const timeLimit = package.time_limit;
       const conversion = {
         day: 1,
         week: 7,
         month: 30,
       };
-      const timeLimit = package.time_limit.value * conversion[package.time_limit.unit] //a number (represent days)
-      const days = 1000 * 60 * 60 * 24;
-      let i = 0;
-      while (true) {
-        if (timeFirstBuy.getTime() + timeLimit * i * days <= timeBuy.getTime()) {
-          i++
-        } else {
-          break;
-        }
+      const timeLimitInDays =
+        timeLimit.value * conversion[timeLimit.unit];
+      if (timeDiff > timeLimitInDays) {
+        return res.status(500).send({ message: "Time limit exceeded" });
       }
-      const timeLeft = new Date(timeFirstBuy.getTime() + timeLimit * (i - 1) * days)
-      const timeRight = new Date(timeFirstBuy.getTime() + timeLimit * i * days)
+    }
 
-      // Query bills in the time range above
-      const bills = await Bill.find(
-        {
-          buyer: patient._id,
-          package: package._id,
-          paid: true,
-          time_buy: {
-            $gte: timeLeft,
-            $lt: timeRight
-          }
-        }
-      )
-      if (bills.length >= package.limit_per_patient) {
-        return res.status(500).send({ message: "Limit per patient exceeded" });
-      }
+    // Check quantity limit per patient
+    const packageLimit = package.limit_per_patient;
+    const orders = await Bill.find({
+      buyer: patient._id,
+      package: package._id,
+      paid: true,
+    });
+
+    if (orders.length >= packageLimit) {
+      return res
+        .status(500)
+        .send({ message: "Limit per patient exceeded" });
     }
 
     // Save order information
@@ -282,9 +272,22 @@ exports.payBill = async (req, res) => {
     },
   })
     .then(async (response) => {
-      // Update bill paid status
       bill.paid = true;
       await bill.save();
+      console.log(bill);
+      // Save income log
+      await Income.updateOne(
+        {
+          date: new Date(Date.now()).toISOString().slice(0, 10),
+        },
+        {
+          $inc: {
+            income: response.data.data.income,
+            expense: response.data.data.expense,
+          }
+        },
+        { upsert: true },
+      )
 
       // Save package consumption logs
       const packageLog = new Log({
@@ -323,6 +326,7 @@ exports.payBill = async (req, res) => {
       });
     })
     .catch(async (err) => {
+      console.log(err);
       await bill.remove();
       res.status(500).send(err.response.data);
     });
@@ -422,4 +426,3 @@ exports.getAccountInfoPaySys = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
-//

@@ -3,6 +3,7 @@ const PackageStats = require("../models/PackageStats");
 const ProductStats = require("../models/ProductStats");
 const RecoverStats = require("../models/RecoverStats");
 const Doctor = require("../models/Doctor");
+const IncomeStats = require("../models/IncomeStats");
 
 exports.getStatusStats = async (req, res) => {
     try {
@@ -61,4 +62,55 @@ exports.getRecoverAllStats = async (req, res) => {
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
-};
+
+    res.send(obj);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
+// // Get Income - Expense log from PaySys
+// exports.getIncomeExpenseLog = async (req, res) => {
+//   try {
+//     const date = req.body.date;
+//     // Calling API From PaySys
+//     const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/shared/income-log`;
+//     const token = req.headers.authorization;
+//     axios({
+//       method: "GET",
+//       url: paySysURL,
+//       data: {
+//         date: date
+//       },
+//       headers: {
+//         "Authorization": token
+//       }
+//     })
+//       .then((response) => {
+//         const incomeLog = response.data
+//         res.status(200).send(incomeLog);
+//       })
+//       .catch((error) => {
+//         res.status(500).send(error.response.data);
+//       });
+//   } catch (err) {
+//     res.status(500).send({ message: err.message });
+//   }
+// }
+
+// Get Income 
+exports.getIncomeLog = async (req, res) => {
+  try {
+    const date = req.body.date;
+    const income = await IncomeStats.findOne({
+      date: date
+    });
+    if (!income) {
+      res.status(404).send({ message: "Income not found" });
+    }
+    res.status(200).send(income);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
