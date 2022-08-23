@@ -53,6 +53,8 @@ exports.makeDeposit = async (req, res) => {
 // Make a payment
 exports.makePayment = async (req, res) => {
   try {
+    let incomeResponse = 0;
+    let expenseResponse = 0;
     const account = await Account.findOne({
       username: req.body.bill.buyer_username,
     });
@@ -64,12 +66,35 @@ exports.makePayment = async (req, res) => {
     if (account.balance >= total) {
       account.balance -= total;
       await account.save();
+      await Income.updateOne(
+        {
+          date: new Date(Date.now()).toISOString().slice(0, 10),
+        },
+        { $inc: { income: total } },
+        { upsert: true },
+      )
+      incomeResponse = total;
+      expenseResponse = 0;
     } else {
-      if (account.balance / total >= account.credit_limit) {
+      if (account.balance >= total * req.body.bill.credit_limit) {
+        const incomeFromBalance = account.balance;
+        const debt = total - account.balance;
         account.balance -= total;
-        if (account.balance < 0) {
-          account.in_debt = true;
-        }
+        account.in_debt = true;
+        await Income.updateOne(
+          {
+            date: new Date(Date.now()).toISOString().slice(0, 10),
+          },
+          {
+            $inc: {
+              income: incomeFromBalance,
+              expense: debt
+            }
+          },
+          { upsert: true },
+        )
+        incomeResponse = incomeFromBalance;
+        expenseResponse = debt;
         await account.save();
       } else {
         return res.status(502).send({ message: "Insufficient credit" });
@@ -90,7 +115,14 @@ exports.makePayment = async (req, res) => {
     });
     await log.save();
 
-    res.status(200).send({ message: "Payment made successfully" });
+    res.status(200).send({
+      message: "Payment made successfully",
+      data: {
+        income: incomeResponse,
+        expense: expenseResponse
+      }
+    });
+
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

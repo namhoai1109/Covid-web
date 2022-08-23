@@ -648,3 +648,4 @@ const clearContactListTrashID = async (trashID) => {
         }
     });
 };
+
