@@ -23,11 +23,7 @@ exports.getLogs = async (req, res) => {
     }
     const logs = await Log.find({
       account: patient.account,
-      $or: [
-        { action: "create" },
-        { action: "update" },
-        { action: "delete" },
-      ],
+      $or: [{ action: "create" }, { action: "update" }, { action: "delete" }],
     }).sort({ time: -1 });
     res.status(200).send(logs);
   } catch (err) {
@@ -57,7 +53,7 @@ exports.getInfo = async (req, res) => {
   try {
     const patient = await Patient.findOne(
       { id_number: req.idNumber },
-      { close_contact_list: 0 },
+      { close_contact_list: 0 }
     )
       .populate("current_facility")
       .populate("account");
@@ -89,14 +85,9 @@ exports.changePassword = async (req, res) => {
 
     // Check old password
     const oldPassword = req.body.old_password;
-    const isMatch = await bcrypt.compare(
-      oldPassword,
-      patient.account.password,
-    );
+    const isMatch = await bcrypt.compare(oldPassword, patient.account.password);
     if (!isMatch) {
-      return res
-        .status(401)
-        .send({ message: "Old password is incorrect" });
+      return res.status(401).send({ message: "Old password is incorrect" });
     }
 
     // Hash new password and update
@@ -119,7 +110,7 @@ exports.buyPackage = async (req, res) => {
         .send({ message: "Patient not found in the database" });
     }
     const package = await Package.findById(req.params.id).populate(
-      "products.product",
+      "products.product"
     );
 
     if (!package) {
@@ -132,7 +123,7 @@ exports.buyPackage = async (req, res) => {
     const firstOrder = await Bill.findOne({
       buyer: patient._id,
       package: package._id,
-      paid: true
+      paid: true,
     }).sort({ time_buy: 1 });
     if (firstOrder) {
       const timeFirstBuy = firstOrder.time_buy;
@@ -143,8 +134,7 @@ exports.buyPackage = async (req, res) => {
         week: 7,
         month: 30,
       };
-      const timeLimitInDays =
-        timeLimit.value * conversion[timeLimit.unit];
+      const timeLimitInDays = timeLimit.value * conversion[timeLimit.unit];
       if (timeDiff > timeLimitInDays) {
         return res.status(500).send({ message: "Time limit exceeded" });
       }
@@ -159,9 +149,7 @@ exports.buyPackage = async (req, res) => {
     });
 
     if (orders.length >= packageLimit) {
-      return res
-        .status(500)
-        .send({ message: "Limit per patient exceeded" });
+      return res.status(500).send({ message: "Limit per patient exceeded" });
     }
 
     // Save order information
@@ -179,7 +167,7 @@ exports.buyPackage = async (req, res) => {
       }
       if (product.quantity > productInPackage.quantity) {
         throw Error(
-          `Not enough quantity of product ${productInPackage.product.name}`,
+          `Not enough quantity of product ${productInPackage.product.name}`
         );
       }
 
@@ -208,7 +196,7 @@ exports.buyPackage = async (req, res) => {
     await order_bill.save();
     const bill = await Bill.findOne(
       { _id: order_bill._id },
-      { buyer_username: 0 },
+      { buyer_username: 0 }
     )
       .populate({
         path: "buyer",
@@ -284,10 +272,10 @@ exports.payBill = async (req, res) => {
           $inc: {
             income: response.data.data.income,
             expense: response.data.data.expense,
-          }
+          },
         },
-        { upsert: true },
-      )
+        { upsert: true }
+      );
 
       // Save package consumption logs
       const packageLog = new Log({
@@ -305,7 +293,7 @@ exports.payBill = async (req, res) => {
           date: bill.time_buy.toISOString().slice(0, 10),
         },
         { $inc: { count: 1 } },
-        { upsert: true },
+        { upsert: true }
       );
 
       // Save product stats
@@ -317,7 +305,7 @@ exports.payBill = async (req, res) => {
             date: bill.time_buy.toISOString().slice(0, 10),
           },
           { $inc: { count: product.quantity } },
-          { upsert: true },
+          { upsert: true }
         );
       });
 
@@ -422,6 +410,25 @@ exports.getAccountInfoPaySys = async (req, res) => {
       .catch((error) => {
         res.status(500).send({ message: "Cannot get account info" });
       });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
+// Delete debt notification
+exports.deleteDebtNotification = async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ id_number: req.idNumber });
+    console.log(patient);
+    if (!patient) {
+      return res
+        .status(500)
+        .send({ message: "Account not found in the database" });
+    }
+
+    patient.debt_notification = undefined;
+    await patient.save();
+    res.status(200).send({ message: "Debt notification deleted" });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

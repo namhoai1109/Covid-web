@@ -212,3 +212,16 @@ return:
     "linked": true,
     "__v": 0
 }
+
+number: 11
+method: DELETE
+route: https://localhost:5000/api/patient/debt-noti
+description: delete debt notification
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+returns: {
+  message: String
+}

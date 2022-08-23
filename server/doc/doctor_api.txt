@@ -362,6 +362,40 @@ returns: [
   }
 ]
 
+number: 10:
+description: Push debt notification
+route: https://localhost:5000/api/doctor/patients/debt-notification
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  id_number: String (cmnd/cccd)
+}
+returns: {
+  message: String
+}
+
+number: 11
+description: Push debt notification all
+route: https://localhost:5000/api/doctor/patients/debt-notification-all
+method: POST
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  id_numbers: [
+    String (cmnd/cccd)
+  ] 
+}
+returns: {
+  message: String
+}
+
 
 ---------------------------------PRODUCTS RELATED----------------------------
 number: 1 -> Called

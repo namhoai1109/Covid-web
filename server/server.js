@@ -6,7 +6,7 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
-const { Server } = require("socket.io");
+
 // Import routes
 const authRouter = require("./routes/auth.route");
 const adminRouter = require("./routes/admin.route");
@@ -30,19 +30,14 @@ connectDB();
 
 // HTTPS
 const httpsOptions = {
-    cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem")),
-    key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "ssl", "cert.pem")),
+  key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
 };
 const httpsServer = https.createServer(httpsOptions, app);
-const io = new Server(httpsServer, {
-    cors: {
-        origin: "*",
-    },
-});
+
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.set("io", io);
 app.use(express.static("public"));
 app.use("/images", express.static("images"));
 app.use("/", express.static("public"));
@@ -95,5 +90,5 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 // })
 
 httpsServer.listen(PORT, () => {
-    console.log(`Server is running on https://localhost:${PORT}`);
+  console.log(`Server is running on https://localhost:${PORT}`);
 });

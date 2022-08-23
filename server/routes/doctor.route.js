@@ -16,6 +16,7 @@ router.get("/patients/credit-limit", patientController.getCurrentCreditLimit);
 router.put("/patients/credit-limit", patientController.updateCreditLimit);
 router.get("/patients/with-ps-account", patientController.getPatientsWithPSAccount);
 router.post("/patients/debt-notification", patientController.pushDebtNotification);
+router.post("/patients/debt-notification-all", patientController.pushDebtNotificationAll);
 
 // Necessities related
 router.get("/products", productController.getAllProducts);
