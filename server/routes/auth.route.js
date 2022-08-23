@@ -8,4 +8,8 @@ router.post("/update-password", controller.updatePassword);
 // Route to call from PaySys to check if the account requesting is valid
 router.post('/is-valid-account', controller.checkValidAccount);
 
+// Route to init admin on startup
+router.post('/init', controller.initCheck);
+router.post('/init-admin', controller.initAdmin);
+
 module.exports = router;

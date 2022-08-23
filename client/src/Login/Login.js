@@ -56,7 +56,6 @@ function Login() {
         try {
             if (!isValidAccount) {
                 let check = await checkAccount(ID);
-                console.log(check);
                 if (typeof check === 'string') {
                     setError(check);
                 } else {

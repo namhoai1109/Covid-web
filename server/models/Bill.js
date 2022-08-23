@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const billSchema = new mongoose.Schema({
   buyer: {
@@ -46,4 +46,4 @@ const billSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Bill', billSchema);
+module.exports = mongoose.model("Bill", billSchema);
