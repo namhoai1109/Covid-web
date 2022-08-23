@@ -1,4 +1,5 @@
 const Account = require("../models/Account");
+const Admin = require("../models/Admin");
 const Log = require("../models/Log");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -120,6 +121,48 @@ exports.checkValidAccount = async (req, res) => {
 
     res.status(200).send({ message: "Valid account", username: account.username });
   } catch (err) {
+    res.status(500).send({ message: err });
+  }
+}
+
+exports.initCheck = async (req, res) => {
+  try {
+    const account = await Account.find();
+    if (!account) {
+      return res.status(404).send({ message: "False" });
+    }
+    else {
+      return res.status(200).send({ message: "True" });
+    }
+  } catch (err) {
+    res.status(500).send({ message: err });
+
+  }
+}
+
+exports.initAdmin = async (req, res) => {
+  try {
+    const account = await Account.find();
+    if (account) {
+      return res.status(500).send({ message: "Admin already exists" });
+    }
+    const password = req.body.password;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const adminAccount = new Account({
+      username: req.body.username,
+      password: hashedPassword,
+      role: "admin",
+    });
+    await adminAccount.save();
+
+    // Create admin
+    const admin = new Admin({
+      account: adminAccount._id,
+    });
+    await admin.save();
+    return res.status(200).send({ message: "Admin account initialized" });
+  }
+  catch (err) {
     res.status(500).send({ message: err });
   }
 }
