@@ -4,7 +4,9 @@ const Doctor = require("../models/Doctor");
 const Facility = require("../models/Facility");
 const Log = require("../models/Log");
 const StatusStats = require("../models/StatusStats");
+const RecoverStats = require("../models/RecoverStats");
 const bcrypt = require("bcryptjs");
+const axios = require("axios");
 
 // Register a new patient
 exports.registerAccount = async (req, res) => {
@@ -388,6 +390,20 @@ exports.deletePatient = async (req, res) => {
     });
     await doctorLog.save();
 
+    // Decrement current count of current facility
+    const currentFacility = await Facility.findOne({
+      _id: patient.current_facility,
+    });
+    currentFacility.current_count -= 1;
+    await currentFacility.save();
+
+    // Update recover stats
+    await RecoverStats.updateOne(
+      { date: new Date().toISOString().slice(0, 10) },
+      { $inc: { count: 1 } },
+      { upsert: true }
+    );
+
     // Delete the patient account
     const account = await Account.findOne({ _id: patient.account });
     if (!account) {
@@ -486,7 +502,6 @@ exports.updateCreditLimit = async (req, res) => {
 };
 
 // Get list of patients with account payment system
-// TODO: Get money of patients in the list
 exports.getPatientsWithPSAccount = async (req, res) => {
   try {
     const doctor = await Doctor.findOne({ id_number: req.idNumber });
@@ -508,11 +523,81 @@ exports.getPatientsWithPSAccount = async (req, res) => {
       { $match: { "account.linked": { $eq: true } } },
     ]);
 
-    res.status(200).send(patients);
+    // Send API to PaySys to get money of patients in the list
+    const paySysURL = `https://localhost:${process.env.PAYMENT_SYSTEM_PORT}/api/shared/info-all`;
+    const token = req.headers.authorization;
+    axios({
+      method: "GET",
+      url: paySysURL,
+      data: {
+        patients: patients.map((patient) => patient.id_number)
+      },
+      headers: {
+        "Authorization": token
+      }
+    })
+      .then((response) => {
+        const patientsInDebt = response.data.map(patient => {
+          return {
+            id_number: patient.username,
+            balance: patient.balance,
+            in_debt: patient.in_debt
+          }
+        })
+        patients.forEach(patient => {
+          let temp = patientsInDebt.find(patientInDebt => {
+            return patientInDebt.id_number === patient.id_number;
+          })
+          patient.balance = temp.balance;
+          patient.in_debt = temp.in_debt;
+        })
+
+        res.status(200).send(patients);
+      })
+      .catch((error) => {
+        res.status(500).send(error.response.data);
+      });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
+
+exports.pushDebtNotification = async (req, res) => {
+  try {
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
+    if (!doctor) {
+      return res.status(500).send({ message: "Doctor not found" });
+    }
+
+    const patient = await Patient.findOne({ id_number: req.body.id_number });
+    if (!patient) {
+      return res.status(500).send({ message: "Patient not found" });
+    }
+
+    let io = req.app.get("io");
+    io.on("connection", socket => {
+      console.log(socket);
+      socket.on("request", data => {
+        if (data.id_number === patient.id_number) {
+          io.to(socket.id).emit("notification", "Debt")
+
+        }
+      })
+    })
+
+    patient.debt_notification.push({
+      time: {
+        date: new Date(Date.now())
+      },
+      amount: {
+
+      }
+    })
+
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
 
 // --------------------------------Helper functions-----------------------------
 // Helper function to check if the patient is in the doctor's list

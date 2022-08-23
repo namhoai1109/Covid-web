@@ -21,6 +21,10 @@ const accountSchema = new mongoose.Schema({
   linked: {
     type: Boolean,
     default: true,
+  },
+  in_debt: {
+    type: Boolean,
+    default: false,
   }
 });
 

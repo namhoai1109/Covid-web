@@ -356,7 +356,9 @@ returns: [
         district: String,
         ward: String,
       }
-    }
+    },
+    balance: Number,
+    in_debt: Boolean
   }
 ]
 

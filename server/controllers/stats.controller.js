@@ -1,6 +1,7 @@
 const StatusStats = require("../models/StatusStats");
 const PackageStats = require("../models/PackageStats");
 const ProductStats = require("../models/ProductStats");
+const RecoverStats = require("../models/RecoverStats");
 const Doctor = require("../models/Doctor");
 
 exports.getStatusStats = async (req, res) => {
@@ -34,3 +35,30 @@ exports.getProductStats = async (req, res) => {
   }
 }
 
+exports.getRecoverDayStats = async (req, res) => {
+  try {
+    const recoverDayStats = await RecoverStats.find();
+    res.send(recoverDayStats);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
+exports.getRecoverAllStats = async (req, res) => {
+  try {
+    const recoverAllStats = await RecoverStats.find().sort({ date: 1 });
+    let count = 0;
+    recoverAllStats.forEach(stats => {
+      count += stats.count;
+    })
+
+    const obj = {
+      from: recoverAllStats[0].date,
+      to: recoverAllStats[recoverAllStats.length - 1].date,
+      count: count
+    }
+    res.send(obj);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}

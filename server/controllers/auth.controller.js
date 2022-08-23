@@ -101,12 +101,13 @@ exports.checkValidAccount = async (req, res) => {
     const verified = jwt.verify(token, process.env.TOKEN_SECRET);
     const idNumber = verified._id;
     const account = await Account.findOne({ username: idNumber });
+    const role = req.body.role;
 
     if (!account) {
       return res.status(404).send({ message: "Invalid username" });
     }
 
-    if (account.role !== "patient") {
+    if (account.role !== role) {
       return res.status(401).send({ message: "Unauthorized" });
     }
 
