@@ -32,23 +32,33 @@
             margin-bottom: 10px;
         }
 
-        .item {
-            width: 100%;
+        .space-between {
             justify-content: space-between;
-            padding: 0 100px;
-            margin-bottom: 10px;
+        }
 
-            .title {
-                font-size: 1.9rem;
-                color: var(--primary);
-            }
+        .title {
+            font-size: 1.9rem;
+            color: var(--primary);
+        }
 
-            .id {
-                margin-right: 100px;
-            }
+        .id {
+            margin-right: 100px;
+        }
 
-            .credit {
-                margin-right: 120px;
+        .credit {
+            margin-right: 120px;
+        }
+
+        .noti-btn {
+            font-size: 1.5rem;
+            border: 2px solid var(--attention-color);
+            color: var(--attention-color);
+            border-radius: 5px;
+            padding: 2px 5px;
+            transition: all 0.3s ease-in-out;
+            &:hover {
+                cursor: pointer;
+                border-radius: 50px;
             }
         }
     }
