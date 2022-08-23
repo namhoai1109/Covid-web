@@ -43,18 +43,30 @@ function Login() {
     let [password, setPassword] = useState('');
     let [checkPassword, setCheckPassword] = useState('');
     let [error, setError] = useState('');
+    let [existAdmin, setExistAdmin] = useState(false);
+    let [noti, setNoti] = useState('');
 
     let [showPassInput, setShowPassInput] = useState([false, false]);
-    let [isValidAccount, setIsValidAccount] = useState(false);
+    let [isValidAccount, setIsValidAccount] = useState('');
+
+    let checkAdmin = async () => {
+        let check = await postAPI('auth/init', {});
+        setExistAdmin(check.message);
+        if (check.message === 'False') {
+            setNoti('Create account Admin');
+            setShowPassInput([true, true]);
+        }
+    };
 
     useEffect(() => {
         let Token = JSON.parse(localStorage.getItem('Token'));
         if (Token !== null) navigate('/' + Token.role, { replace: true });
+        checkAdmin();
     }, []);
 
     let handleClick = async () => {
         try {
-            if (!isValidAccount) {
+            if (!isValidAccount && existAdmin === 'True') {
                 let check = await checkAccount(ID);
                 if (typeof check === 'string') {
                     setError(check);
@@ -69,8 +81,9 @@ function Login() {
             } else {
                 let isSuccess = false;
                 if (showPassInput[1]) {
+                    let route = existAdmin === 'True' ? 'auth/update-password' : 'auth/init-admin';
                     if (password === checkPassword) {
-                        let res = await fetchPostAPI('auth/update-password', ID, password);
+                        let res = await fetchPostAPI(route, ID, password);
                         console.log(res);
                         if (res.message) {
                             isSuccess = true;
@@ -114,6 +127,7 @@ function Login() {
                 <div className={cx('oval')}></div>
 
                 <div className={cx('form', 'flex-center', 'glassmorphism')}>
+                    <div className={cx('noti')}>{noti}</div>
                     <label>
                         <span className={cx('flex-center')}>
                             {' '}
@@ -124,7 +138,9 @@ function Login() {
                             onChange={(e) => {
                                 setError('');
                                 setID(e.target.value);
-                                setShowPassInput([false, false]);
+                                if (existAdmin === 'True') {
+                                    setShowPassInput([false, false]);
+                                }
                                 setIsValidAccount(false);
                                 setCheckPassword('');
                                 setPassword('');
@@ -169,7 +185,7 @@ function Login() {
                     )}
                     <span className={cx('error-message')}>{error}</span>
                     <button className={cx('btn')} onClick={handleClick}>
-                        {showPassInput[1] ? 'Sign Up' : 'Sign In'}
+                        {showPassInput[1] || existAdmin === 'False' ? 'Sign Up' : 'Sign In'}
                     </button>
                 </div>
             </div>

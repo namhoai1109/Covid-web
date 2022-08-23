@@ -32,7 +32,7 @@ function EssentialPackage() {
 
     let getListPackage = useCallback(async () => {
         let list = await getAPI('patient/packages');
-        setListPackage(list);
+        if (list.length > 0) setListPackage(list);
     }, []);
 
     let navInfoPackage = useCallback((item) => {
