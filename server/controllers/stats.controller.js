@@ -62,12 +62,7 @@ exports.getRecoverAllStats = async (req, res) => {
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
-
-    res.send(obj);
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-}
+};
 
 // // Get Income - Expense log from PaySys
 // exports.getIncomeExpenseLog = async (req, res) => {
@@ -98,19 +93,15 @@ exports.getRecoverAllStats = async (req, res) => {
 //   }
 // }
 
-// Get Income 
+// Get Income
 exports.getIncomeLog = async (req, res) => {
-  try {
-    const date = req.body.date;
-    const income = await IncomeStats.findOne({
-      date: date
-    });
-    if (!income) {
-      res.status(404).send({ message: "Income not found" });
+    try {
+        const income = await IncomeStats.find();
+        if (!income) {
+            res.status(404).send({ message: "Income not found" });
+        }
+        res.status(200).send(income);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
     }
-    res.status(200).send(income);
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-}
-
+};
