@@ -12,7 +12,7 @@ import StatisticsRoutes from '~/Doctor/Statistics/StatisticsRoutes';
 import PatientChart from '~/Doctor/Statistics/PatientChart';
 import ProductChart from '~/Doctor/Statistics/ProductChart';
 import PackageChart from '~/Doctor/Statistics/PackageChart';
-import StatusChart from '~/Doctor/Statistics/StatusChart';
+import RecoverChart from '~/Doctor/Statistics/RecoverChart';
 import PaymentChart from '~/Doctor/Statistics/PaymentChart';
 import Payment from '~/Doctor/Payment';
 import GateWay from '~/GateWay';
@@ -88,8 +88,8 @@ export const statisticsRoutes = [
         element: PackageChart,
     },
     {
-        path: configs.statisticsRoutes.status,
-        element: StatusChart,
+        path: configs.statisticsRoutes.recover,
+        element: RecoverChart,
     },
     {
         path: configs.statisticsRoutes.payment,
