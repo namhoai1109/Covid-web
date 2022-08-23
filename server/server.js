@@ -81,7 +81,6 @@ app.use("/api/stats", authorizeUser("doctor"), statsRouter);
 //   }
 // };
 
-
 // Start the server
 const PORT = process.env.MANAGEMENT_SERVER_PORT || 5000;
 // app.listen(PORT, () => {
@@ -96,5 +95,5 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 // })
 
 httpsServer.listen(PORT, () => {
-  console.log(`Server is running on https://localhost:${PORT}`);
+    console.log(`Server is running on https://localhost:${PORT}`);
 });
