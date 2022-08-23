@@ -3,6 +3,7 @@ const Log = require("../models/Log");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const Bill = require("../models/Bill");
+const Income = require("../models/Income");
 
 exports.getPayLog = async (req, res) => {
   try {
@@ -173,6 +174,45 @@ exports.getAccountsInfo = async (req, res) => {
               username: { $in: patients },
             });
             res.send(accounts);
+          } catch (err) {
+            res.status(500).send({ message: err.message });
+          }
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message: "Something went wrong, cannot get logs",
+          });
+        });
+    } else {
+      res.status(401).send({ message: "Unauthorized" });
+    }
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+}
+
+exports.getIncomeLog = async (req, res) => {
+  try {
+    if (req.headers?.authorization?.startsWith("Bearer ")) {
+      const token = req.headers.authorization;
+      const date = req.body.date;
+      const covidSysURL = "https://localhost:5000/api/auth/is-valid-account";
+      axios({
+        method: "POST",
+        url: covidSysURL,
+        headers: {
+          Authorization: token,
+        },
+        data: {
+          role: "doctor"
+        }
+      })
+        .then(async (response) => {
+          try {
+            const incomeLog = await Income.find({
+              date: date,
+            });
+            res.send(incomeLog);
           } catch (err) {
             res.status(500).send({ message: err.message });
           }

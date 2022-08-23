@@ -11,6 +11,7 @@ const axios = require("axios");
 const Bill = require("../models/Bill");
 const PackageStats = require("../models/PackageStats");
 const ProductStats = require("../models/ProductStats");
+const Income = require("../models/IncomeStats");
 
 exports.getLogs = async (req, res) => {
   try {
@@ -274,6 +275,19 @@ exports.payBill = async (req, res) => {
       bill.paid = true;
       await bill.save();
       console.log(bill);
+      // Save income log
+      await Income.updateOne(
+        {
+          date: new Date(Date.now()).toISOString().slice(0, 10),
+        },
+        {
+          $inc: {
+            income: response.data.data.income,
+            expense: response.data.data.expense,
+          }
+        },
+        { upsert: true },
+      )
 
       // Save package consumption logs
       const packageLog = new Log({
@@ -412,4 +426,3 @@ exports.getAccountInfoPaySys = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
-//

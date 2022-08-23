@@ -91,3 +91,30 @@ returns: {
   to: Date,
   count: Number
 }
+
+
+number: 6
+description: Get income (income and debt expense) from date
+route: https://localhost:5000/api/stats/income-log
+method: Get
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: 
+{
+  date: string date ("2022-08-23")
+}
+return: 
+{
+  
+    {
+        "_id": "63049835219e003026b09c35",
+        "date": "2022-08-23",
+        "__v": 0,
+        "expense": 305000,
+        "income": 345000
+    }
+
+}
