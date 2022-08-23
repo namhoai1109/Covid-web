@@ -54,8 +54,8 @@ export const NavStatistic = [
         path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.package,
     },
     {
-        name: 'Status',
-        path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.status,
+        name: 'Recover',
+        path: configs.mainRoutes.doctor + configs.doctorRoutes.statistics + configs.statisticsRoutes.recover,
     },
     {
         name: 'Payment',

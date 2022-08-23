@@ -42,7 +42,7 @@ export const patientRoutes = {
 
 export const statisticsRoutes = {
     covidPatient: '/covidpatient',
-    status: '/status',
+    recover: '/recover',
     product: '/product',
     package: '/package',
     payment: '/payment',
