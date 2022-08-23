@@ -574,26 +574,53 @@ exports.pushDebtNotification = async (req, res) => {
       return res.status(500).send({ message: "Patient not found" });
     }
 
-    let io = req.app.get("io");
-    io.on("connection", socket => {
-      console.log(socket);
-      socket.on("request", data => {
-        if (data.id_number === patient.id_number) {
-          io.to(socket.id).emit("notification", "Debt")
+    patient.debt_notification = {
+      date: new Date(),
+      message: `Doctor ${doctor.name} just reminded you to pay the debt!`
+    }
+    await patient.save();
 
-        }
-      })
-    })
+    // Create history record for doctor
+    const doctorLog = new Log({
+      account: doctor.account,
+      action: "create",
+      description: `Pushed a new debt notification to: ID: ${patient.id_number}, Name: ${patient.name}`,
+    });
+    await doctorLog.save();
 
-    patient.debt_notification.push({
-      time: {
-        date: new Date(Date.now())
-      },
-      amount: {
+    res.status(200).send({ message: "Pushed notification successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
 
+exports.pushDebtNotificationAll = async (req, res) => {
+  try {
+    const doctor = await Doctor.findOne({ id_number: req.idNumber });
+    if (!doctor) {
+      return res.status(500).send({ message: "Doctor not found" });
+    }
+
+    const time = new Date();
+    const idNumbers = req.body.id_numbers;
+    idNumbers.forEach(async (idNumber) => {
+      const patient = await Patient.findOne({ id_number: idNumber });
+      patient.debt_notification = {
+        date: time,
+        message: `Doctor ${doctor.name} just reminded you to pay the debt!`
       }
+      await patient.save();
     })
 
+    // Create history record for doctor
+    const doctorLog = new Log({
+      account: doctor.account,
+      action: "create",
+      description: 'Pushed a new debt notification to all the patients in debt'
+    });
+    await doctorLog.save();
+
+    res.status(200).send({ message: "Pushed notification successfully" });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

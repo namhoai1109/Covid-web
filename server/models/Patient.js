@@ -52,19 +52,14 @@ const patientSchema = new mongoose.Schema({
   credit_limit: {
     type: Number,
   },
-  debt_notification: [{
-    time: {
+  debt_notification: {
+    date: {
       type: Date,
-      default: Date.now,
     },
-    description: {
+    message: {
       type: String,
-      required: true,
-    },
-    amount: {
-      type: Number,
     }
-  }]
+  }
 });
 
 module.exports = mongoose.model("Patient", patientSchema);

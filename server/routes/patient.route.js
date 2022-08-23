@@ -13,6 +13,7 @@ router.get("/paid-packages-logs", patientController.getPaidPackageLog);
 // Info related
 router.get("/info", patientController.getInfo);
 router.put("/password", patientController.changePassword);
+router.delete("/debt-noti", patientController.deleteDebtNotification);
 router.put("/link", checkPaymentAccountExist, patientController.linkAccount);
 
 // Package related

@@ -6,7 +6,6 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
-const { Server } = require("socket.io")
 // Import routes
 const authRouter = require("./routes/auth.route");
 const adminRouter = require("./routes/admin.route");
@@ -34,15 +33,10 @@ const httpsOptions = {
   key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
 };
 const httpsServer = https.createServer(httpsOptions, app)
-const io = new Server(httpsServer, {
-  cors: {
-    origin: "*",
-  }
-});
+
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.set("io", io);
 app.use(express.static("public"));
 app.use("/images", express.static("images"));
 app.use("/", express.static("public"));

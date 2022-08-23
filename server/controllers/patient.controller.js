@@ -422,4 +422,22 @@ exports.getAccountInfoPaySys = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
-//
+
+// Delete debt notification
+exports.deleteDebtNotification = async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ id_number: req.idNumber });
+    console.log(patient);
+    if (!patient) {
+      return res
+        .status(500)
+        .send({ message: "Account not found in the database" });
+    }
+
+    patient.debt_notification = undefined;
+    await patient.save();
+    res.status(200).send({ message: "Debt notification deleted" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
