@@ -18,6 +18,7 @@ const cx = classNames.bind(styles);
 
 function InfoPackage() {
     let currPackage = useSelector((state) => state.currentPackage.current);
+    console.log(currPackage);
 
     let dispatch = useDispatch();
     let navigate = useNavigate();

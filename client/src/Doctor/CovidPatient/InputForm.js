@@ -118,7 +118,7 @@ function InputForm() {
                     dispatch(setMess({ mess: 'Patient account created successfully', type: 'success' }));
                 }
 
-                if (!res.message && res.includes('id_number')) {
+                if (!res.message && res.includes('username')) {
                     console.log(res);
                     setValidateString({ ...validateString, ID_number: 'ID number is already exist' });
                     dispatch(setMess({ mess: 'ID number is already exist', type: 'error' }));
