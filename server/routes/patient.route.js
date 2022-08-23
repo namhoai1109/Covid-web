@@ -19,8 +19,7 @@ router.put("/link", checkPaymentAccountExist, patientController.linkAccount);
 router.get("/packages", packageController.getAllPackages);
 router.get("/packages/search", packageController.searchPackages);
 router.get("/packages/filter", packageController.filterPackages);
-router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPackage,
-);
+router.post("/buy-package/id=:id", checkLinkedAccount, patientController.buyPackage);
 
 // Bill related
 router.delete("/delete-bill/id=:id", patientController.deleteBill);

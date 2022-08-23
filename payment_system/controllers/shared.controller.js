@@ -8,9 +8,7 @@ exports.getPayLog = async (req, res) => {
   try {
     if (req.headers?.authorization?.startsWith("Bearer ")) {
       const token = req.headers.authorization;
-      const covidSysURL =
-        "https://localhost:5000/api/auth/is-valid-account";
-      console.log("Received token " + token);
+      const covidSysURL = "https://localhost:5000/api/auth/is-valid-account";
       axios({
         method: "POST",
         url: covidSysURL,
