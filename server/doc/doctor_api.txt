@@ -729,3 +729,21 @@ headers: {
 returns: {
   message: String
 }
+
+----------------------------------- INFO RELATED ---------------------------------
+number: 1
+description: Change password
+route: https://localhost:5000/api/doctor/password
+method: PUT
+headers: {
+  Bearer authorization: {
+    type: String (JWT token)
+  }
+}
+body: {
+  old_password: String,
+  new_password: String
+}
+returns: {
+  message: String
+}

@@ -5,6 +5,9 @@ const packageController = require("../controllers/package.controller");
 const facilityController = require("../controllers/facility.controller");
 const { uploadFile } = require("../middlewares/multer");
 
+// Info related
+router.put("/password", patientController.changePassword);
+
 // Patients related
 router.get("/patients", patientController.getAllPatients);
 router.get("/patients/search", patientController.searchPatients);
