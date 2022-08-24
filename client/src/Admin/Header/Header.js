@@ -3,7 +3,7 @@ import TaskBtn from '~/CommonComponent/TaskBtn';
 import { PlusIcon } from '~/CommonComponent/icons';
 import classNames from 'classnames/bind';
 import styles from './Header.module.scss';
-import { Menu, MenuFormInput } from '~/CommonComponent/Popper';
+import { MenuFormInput } from '~/CommonComponent/Popper';
 import { useLocation, useNavigate } from 'react-router-dom';
 import configs from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +12,8 @@ import { postAPI } from '~/APIservices/postAPI';
 import { formInputDoctor, formInputFacility } from '../staticVar';
 import { getListFacility, initListManager } from '../fetchAPI';
 import { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { clearMess, setMess } from '../redux/messNoti';
 const cx = classNames.bind(styles);
 
 let registerManager = async (data) => {
@@ -30,8 +32,23 @@ function Header() {
     let navigate = useNavigate();
     let deleteState = useSelector((state) => state.delete.isShow);
     let [validate, setValidate] = useState('');
-
     let [showBack, setShowBack] = useState(false);
+    let messNoti = useSelector((state) => state.messNoti);
+
+    useEffect(() => {
+        if (messNoti.mess !== '') {
+            if (messNoti.type === 'success') {
+                toast.success(messNoti.mess);
+                dispatch(clearMess());
+            } else if (messNoti.type === 'warn') {
+                toast.warn(messNoti.mess);
+                dispatch(clearMess());
+            } else if (messNoti.type === 'error') {
+                toast.error(messNoti.mess);
+                dispatch(clearMess());
+            }
+        }
+    }, [messNoti]);
 
     let handleClick = async (inputVals) => {
         if (location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement) {
@@ -60,6 +77,12 @@ function Header() {
                 } else if (res.message === 'Account created successfully') {
                     clearInput = true;
                     initListManager(dispatch);
+                    dispatch(
+                        setMess({
+                            mess: 'Account created successfully',
+                            type: 'success',
+                        }),
+                    );
                 }
             }
 
@@ -100,6 +123,12 @@ function Header() {
                 } else if (res.message && res.message === 'Facility created successfully') {
                     getListFacility(dispatch);
                     clearInput = true;
+                    dispatch(
+                        setMess({
+                            mess: 'Facility created successfully',
+                            type: 'success',
+                        }),
+                    );
                 }
             }
             return clearInput;
@@ -118,40 +147,53 @@ function Header() {
     }, [location.pathname]);
 
     return (
-        <HeaderLayout>
-            {showBack ? (
-                <TaskBtn
-                    title="Back"
-                    onClick={() => {
-                        navigate(-1, { replace: true });
-                    }}
-                />
-            ) : (
-                <>
-                    <MenuFormInput
-                        validateStr={validate}
-                        setValidateStr={setValidate}
-                        onClick={handleClick}
-                        menu={
-                            location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
-                                ? formInputDoctor
-                                : formInputFacility
-                        }
-                    >
-                        <TaskBtn title="Add" icon={<PlusIcon />} />
-                    </MenuFormInput>
-                    <div className={cx('list_btn')}>
-                        <TaskBtn
-                            title="Delete"
-                            active={deleteState}
-                            onClick={() => {
-                                dispatch(setDelete(!deleteState));
-                            }}
-                        />
-                    </div>
-                </>
-            )}
-        </HeaderLayout>
+        <>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+            <HeaderLayout>
+                {showBack ? (
+                    <TaskBtn
+                        title="Back"
+                        onClick={() => {
+                            navigate(-1, { replace: true });
+                        }}
+                    />
+                ) : (
+                    <>
+                        <MenuFormInput
+                            validateStr={validate}
+                            setValidateStr={setValidate}
+                            onClick={handleClick}
+                            menu={
+                                location.pathname === configs.mainRoutes.admin + configs.adminRoutes.doctorManagement
+                                    ? formInputDoctor
+                                    : formInputFacility
+                            }
+                        >
+                            <TaskBtn title="Add" icon={<PlusIcon />} />
+                        </MenuFormInput>
+                        <div className={cx('list_btn')}>
+                            <TaskBtn
+                                title="Delete"
+                                active={deleteState}
+                                onClick={() => {
+                                    dispatch(setDelete(!deleteState));
+                                }}
+                            />
+                        </div>
+                    </>
+                )}
+            </HeaderLayout>
+        </>
     );
 }
 

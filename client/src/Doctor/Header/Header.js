@@ -12,6 +12,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDelete } from '../redux/deleteStateSlice';
 import { addFilter, setSort, setValue } from '../redux/filterState';
+import { ToastContainer, toast } from 'react-toastify';
+import { clearMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -137,6 +139,24 @@ function Header() {
 
     let [hideBack, setHideBack] = useState();
     let [showHeader, setShowHeader] = useState();
+
+    let messNoti = useSelector((state) => state.messNoti);
+
+    useEffect(() => {
+        if (messNoti.mess !== '') {
+            if (messNoti.type === 'success') {
+                toast.success(messNoti.mess);
+                dispatch(clearMess());
+            } else if (messNoti.type === 'warn') {
+                toast.warn(messNoti.mess);
+                dispatch(clearMess());
+            } else if (messNoti.type === 'error') {
+                toast.error(messNoti.mess);
+                dispatch(clearMess());
+            }
+        }
+    }, [messNoti]);
+
     useEffect(() => {
         if (checkRoute(location.pathname)) {
             setShowHeader(true);
@@ -181,33 +201,46 @@ function Header() {
     }, [location.pathname]);
 
     return (
-        <HeaderLayout>
-            {!showHeader && !hideBack && <TaskBtn title="Back" onClick={handleBack} />}
-            {showHeader && (
-                <>
-                    <TaskBtn
-                        title="Add"
-                        to={paramHeader.addLink || ''}
-                        onClick={() => setShowHeader(false)}
-                        icon={<PlusIcon />}
-                    />
-                    <div className={cx('list_btn')}>
+        <>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+            <HeaderLayout>
+                {!showHeader && !hideBack && <TaskBtn title="Back" onClick={handleBack} />}
+                {showHeader && (
+                    <>
                         <TaskBtn
-                            title="Delete"
-                            active={deleteState.state}
-                            onClick={() => dispatch(setDelete(!deleteState.state))}
+                            title="Add"
+                            to={paramHeader.addLink || ''}
+                            onClick={() => setShowHeader(false)}
+                            icon={<PlusIcon />}
                         />
-                        <Menu menu={paramHeader.filterItem || []}>
-                            <TaskBtn title="Filter" />
-                        </Menu>
-                        <Menu menu={paramHeader.sortItem || []}>
-                            <TaskBtn title="Sort" />
-                        </Menu>
-                        <SearchInput stateDynamique={true} icon={<SearchIcon />} />
-                    </div>
-                </>
-            )}
-        </HeaderLayout>
+                        <div className={cx('list_btn')}>
+                            <TaskBtn
+                                title="Delete"
+                                active={deleteState.state}
+                                onClick={() => dispatch(setDelete(!deleteState.state))}
+                            />
+                            <Menu menu={paramHeader.filterItem || []}>
+                                <TaskBtn title="Filter" />
+                            </Menu>
+                            <Menu menu={paramHeader.sortItem || []}>
+                                <TaskBtn title="Sort" />
+                            </Menu>
+                            <SearchInput stateDynamique={true} icon={<SearchIcon />} />
+                        </div>
+                    </>
+                )}
+            </HeaderLayout>
+        </>
     );
 }
 

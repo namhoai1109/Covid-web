@@ -6,6 +6,7 @@ import currentNecessityReducer from './currentNecessity';
 import currentListProductReducer from './currentListProduct';
 import currentPackageSlice from './currentPackage';
 import filterStateSlice from './filterState';
+import messNotiSlice from './messNoti';
 
 const store = configureStore({
     reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
         currentListProduct: currentListProductReducer,
         currentPackage: currentPackageSlice,
         filterState: filterStateSlice,
+        messNoti: messNotiSlice,
     },
 });
 

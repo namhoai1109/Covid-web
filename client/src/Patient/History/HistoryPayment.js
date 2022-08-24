@@ -32,15 +32,17 @@ function HistoryPayment() {
                 <span className={cx('descript')}>Description</span>
                 <span>Amount</span>
             </div>
-            {his.map((item, index) => {
-                return (
-                    <div key={index} className={cx('list-item', 'flex-center')}>
-                        <span className={cx('time')}>{formatTime(item.date)}</span>
-                        <span className={cx('descript')}>{item.description}</span>
-                        <span>{item.amount} VND</span>
-                    </div>
-                );
-            })}
+            <div className={cx('list')}>
+                {his.map((item, index) => {
+                    return (
+                        <div key={index} className={cx('list-item', 'flex-center')}>
+                            <span className={cx('time')}>{formatTime(item.date)}</span>
+                            <span className={cx('descript')}>{item.description}</span>
+                            <span>{item.amount} VND</span>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }

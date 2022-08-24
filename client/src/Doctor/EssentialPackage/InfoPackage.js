@@ -18,6 +18,7 @@ import { putAPI } from '~/APIservices/putAPI';
 import { useNavigate } from 'react-router-dom';
 import configs from '~/config';
 import { setCurr } from '../redux/currentNecessity';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -216,6 +217,7 @@ function InfoPackage() {
                 console.log(data);
                 let res = await putAPI('doctor/packages/id=' + currentPackage._id, data);
                 console.log(res);
+                dispatch(setMess({ mess: 'Package updated', type: 'success' }));
             }
         }
 

@@ -12,6 +12,7 @@ import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { putAPI } from '~/APIservices/putAPI';
 import { removeCurr } from '../redux/currentNecessity';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -111,7 +112,11 @@ function InfoNecessity({ viewOnly }) {
             if (files[i]) {
                 arrFiles.push(files[i]);
             }
-        setImgs([...imgs, ...arrFiles]);
+        let tmp = [...imgs, ...arrFiles];
+        if (tmp.length > 5) {
+            tmp = tmp.slice(0, 5);
+        }
+        setImgs([...tmp]);
     };
 
     let handleClickInput = () => {
@@ -164,6 +169,7 @@ function InfoNecessity({ viewOnly }) {
 
                 let res = await putAPI('doctor/products/id=' + infoNecessity._id, formData);
                 console.log(res);
+                dispatch(setMess({ mess: 'Update successfully', type: 'success' }));
             }
         }
 
@@ -233,7 +239,7 @@ function InfoNecessity({ viewOnly }) {
                             </div>
                         );
                     })}
-                    {updateMode && (
+                    {updateMode && imgs.length < 5 && (
                         <div onClick={handleClickInput} className={cx('wrap-input-file')}>
                             <input
                                 className={cx('input-file')}

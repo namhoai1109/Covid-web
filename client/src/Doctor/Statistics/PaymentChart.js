@@ -26,6 +26,7 @@ function PaymentChart() {
 
     let getData = async () => {
         let res = await getAPI('stats/income-log');
+        console.log(res);
         if (res.length > 0) {
             let formData = {
                 xaxis: [],

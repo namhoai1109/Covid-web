@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDownWideShort, faFilterCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { resetState } from '../redux/filterState';
 import { sortAPI } from '~/APIservices/sortAPI';
+import { setMess } from '../redux/messNoti';
 const cx = classNames.bind(styles);
 
 function EssentialPackage() {
@@ -87,6 +88,7 @@ function EssentialPackage() {
     let handleDeletePackage = useCallback(async (id) => {
         let res = await deleteAPI('doctor/packages/id=' + id);
         getListPackage();
+        dispatch(setMess({ mess: 'Delete successfully', type: 'success' }));
     }, []);
 
     let navInfoPackage = useCallback((pack) => {

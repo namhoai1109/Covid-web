@@ -13,6 +13,7 @@ import { initListManager } from '../fetchAPI';
 import { putAPI } from '~/APIservices/putAPI';
 import configs from '~/config';
 import { setId } from '../redux/hisDoctor';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -31,6 +32,7 @@ function ManagerPage() {
                         status: item.status === 'active' ? 'inactive' : 'active',
                     }),
                 );
+                dispatch(setMess({ mess: 'Status changed successfully', type: 'success' }));
             }
         };
 
@@ -88,6 +90,7 @@ function ManagerPage() {
         console.log(res.message);
         if (res.message && res.message === 'Account deleted successfully') {
             dispatch(removeManager(index));
+            dispatch(setMess({ mess: 'Delete successfully', type: 'success' }));
         }
     };
 
