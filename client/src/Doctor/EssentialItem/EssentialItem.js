@@ -87,8 +87,16 @@ function EssentialItem() {
     let handleDelete = useCallback(async (id) => {
         let res = await deleteAPI('doctor/products/id=' + id);
         console.log(res);
-        fetchListProduct();
-        dispatch(setMess({ mess: 'Delete successully', type: 'success' }));
+        if (res.message && res.message === 'Product deleted successfully') {
+            fetchListProduct();
+            dispatch(setMess({ mess: 'Delete successully', type: 'success' }));
+        } else if (
+            res.response &&
+            res.response.data.message === 'Cannot delete product that is in any package that is at minimum 2 products'
+        ) {
+            console.log(res.response.data.message);
+            dispatch(setMess({ mess: res.response.data.message, type: 'error' }));
+        }
     }, []);
 
     let handleNavPage = useCallback((item) => {
