@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDownWideShort, faFilterCircleXmark, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { sortAPI } from '~/APIservices/sortAPI';
 import StateWidget from '~/CommonComponent/StateWidget';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -87,6 +88,7 @@ function EssentialItem() {
         let res = await deleteAPI('doctor/products/id=' + id);
         console.log(res);
         fetchListProduct();
+        dispatch(setMess({ mess: 'Delete successully', type: 'success' }));
     }, []);
 
     let handleNavPage = useCallback((item) => {

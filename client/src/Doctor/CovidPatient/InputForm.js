@@ -12,6 +12,7 @@ import { reset, deleteItem } from '../redux/currentCloseContactList';
 import ListItem from '~/CommonComponent/ListItem';
 import ListPatient from './ListPatient';
 import { getAPI } from '~/APIservices/getAPI';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -114,6 +115,7 @@ function InputForm() {
                     setInputField(initValue);
                     setSelectValue(initValueSelect);
                     dispatch(reset());
+                    dispatch(setMess({ mess: 'Patient account created successfully', type: 'success' }));
                 }
 
                 if (!res.message && res.includes('id_number')) {
@@ -129,59 +131,62 @@ function InputForm() {
         [inputField, validateString],
     );
 
-    let validateForm = useCallback((inputField, selectValue) => {
-        let validateStr = {};
-        let isOke = true;
+    let validateForm = useCallback(
+        (inputField, selectValue) => {
+            let validateStr = {};
+            let isOke = true;
 
-        Object.keys(inputField).forEach((key) => {
-            if (inputField[key] === '') {
-                validateStr[key] = returnSpace(key) + ' is required';
-                isOke = false;
+            Object.keys(inputField).forEach((key) => {
+                if (inputField[key] === '') {
+                    validateStr[key] = returnSpace(key) + ' is required';
+                    isOke = false;
+                }
+            });
+
+            Object.keys(selectValue).forEach((key) => {
+                if (selectValue[key] === '-- select --') {
+                    validateSelect[key] = key + ' is required';
+                    isOke = false;
+                }
+            });
+
+            if (inputField.Name !== '') {
+                if (/^[a-zA-Z ]{1,50}$/.test(inputField.Name) === false) {
+                    validateStr.Name = 'Name is invalid';
+                    isOke = false;
+                }
             }
-        });
 
-        Object.keys(selectValue).forEach((key) => {
-            if (selectValue[key] === '-- select --') {
-                validateSelect[key] = key + ' is required';
-                isOke = false;
+            if (inputField.ID_number !== '') {
+                let idlen = inputField.ID_number.length;
+                if (idlen !== 9 && idlen !== 11) {
+                    validateStr.ID_number = 'ID number must be 9 or 11 digits';
+                    isOke = false;
+                }
             }
-        });
 
-        if (inputField.Name !== '') {
-            if (/^[a-zA-Z ]{1,50}$/.test(inputField.Name) === false) {
-                validateStr.Name = 'Name is invalid';
-                isOke = false;
+            if (inputField.Year_of_birth !== '') {
+                let year = Number(inputField.Year_of_birth);
+                let now = new Date();
+                let yearNow = now.getFullYear();
+                if (year > yearNow) {
+                    validateStr.Year_of_birth = 'Year of birth must be less or equal than ' + yearNow;
+                    isOke = false;
+                } else if (yearNow - year > 100) {
+                    validateStr.Year_of_birth = 'Year of birth is invalid';
+                    isOke = false;
+                }
             }
-        }
 
-        if (inputField.ID_number !== '') {
-            let idlen = inputField.ID_number.length;
-            if (idlen !== 9 && idlen !== 11) {
-                validateStr.ID_number = 'ID number must be 9 or 11 digits';
-                isOke = false;
+            if (!isOke) {
+                setValidateString({ ...validateString, ...validateStr });
+                return isOke;
+            } else {
+                return isOke;
             }
-        }
-
-        if (inputField.Year_of_birth !== '') {
-            let year = Number(inputField.Year_of_birth);
-            let now = new Date();
-            let yearNow = now.getFullYear();
-            if (year > yearNow) {
-                validateStr.Year_of_birth = 'Year of birth must be less or equal than ' + yearNow;
-                isOke = false;
-            } else if (yearNow - year > 100) {
-                validateStr.Year_of_birth = 'Year of birth is invalid';
-                isOke = false;
-            }
-        }
-
-        if (!isOke) {
-            setValidateString({ ...validateString, ...validateStr });
-            return isOke;
-        } else {
-            return isOke;
-        }
-    }, []);
+        },
+        [inputField, selectValue],
+    );
 
     let handleSubmit = useCallback(() => {
         let contact_list = contactList.map((item) => item._id);

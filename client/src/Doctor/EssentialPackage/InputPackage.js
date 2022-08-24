@@ -12,6 +12,7 @@ import styles from './EssentialPackage.module.scss';
 import ListProduct from './ListProduct';
 import Counting from '~/CommonComponent/Counting';
 import { postAPI } from '~/APIservices/postAPI';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -174,6 +175,7 @@ function InputPackage() {
                     },
                 });
                 dispatch(resetList());
+                dispatch(setMess({ mess: res.message, type: 'success' }));
             }
         }
     }, [listCounting, inputFields]);

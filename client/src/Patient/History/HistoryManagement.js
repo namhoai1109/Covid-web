@@ -32,15 +32,17 @@ function HistoryManagement() {
                 <span className={cx('descript')}>Description</span>
                 <span className={cx('action')}>Action</span>
             </div>
-            {Logs.map((item, index) => {
-                return (
-                    <div key={index} className={cx('list-item', 'flex-center')}>
-                        <span className={cx('time')}>{item.time}</span>
-                        <span className={cx('descript')}>{item.description}</span>
-                        <span className={cx('action')}>{item.action}</span>
-                    </div>
-                );
-            })}
+            <div className={cx('list')}>
+                {Logs.map((item, index) => {
+                    return (
+                        <div key={index} className={cx('list-item', 'flex-center')}>
+                            <span className={cx('time')}>{item.time}</span>
+                            <span className={cx('descript')}>{item.description}</span>
+                            <span className={cx('action')}>{item.action}</span>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }

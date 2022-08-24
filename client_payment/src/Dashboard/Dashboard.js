@@ -1,4 +1,4 @@
-import { faPaperPlane, faPlaneArrival, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useCallback, useEffect, useState } from 'react';

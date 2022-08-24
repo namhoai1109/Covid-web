@@ -9,6 +9,8 @@ import { PlusIcon } from '~/CommonComponent/icons';
 import { postFormAPI } from '~/APIservices/postFormAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch } from 'react-redux';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -41,6 +43,7 @@ function InputForm() {
     validateData.Type = '';
     validateData.Images = '';
     let [validate, setValidate] = useState(validateData);
+    let dispatch = useDispatch();
 
     let handleChooseFile = (e) => {
         let files = e.target.files;
@@ -49,7 +52,11 @@ function InputForm() {
             if (files[i]) {
                 arrFiles.push(files[i]);
             }
-        setImgs([...imgs, ...arrFiles]);
+        let tmp = [...imgs, ...arrFiles];
+        if (tmp.length > 5) {
+            tmp = tmp.slice(0, 5);
+        }
+        setImgs([...tmp]);
     };
 
     let handleClickInput = () => {
@@ -115,6 +122,7 @@ function InputForm() {
             console.log(res);
             setDataInput(initData);
             setImgs([]);
+            dispatch(setMess({ mess: 'Add product successfully', type: 'success' }));
         }
     };
 
@@ -173,19 +181,21 @@ function InputForm() {
                             </div>
                         );
                     })}
-                    <div onClick={handleClickInput} className={cx('wrap-input-file')}>
-                        <input
-                            className={cx('input-file')}
-                            type="file"
-                            ref={inputRef}
-                            onChange={handleChooseFile}
-                            accept="image/png, image/jpeg, image/jpg"
-                            multiple
-                        />
-                        <div className={cx('add-btn')}>
-                            <PlusIcon width="4rem" height="4rem" />
+                    {imgs.length < 5 && (
+                        <div onClick={handleClickInput} className={cx('wrap-input-file')}>
+                            <input
+                                className={cx('input-file')}
+                                type="file"
+                                ref={inputRef}
+                                onChange={handleChooseFile}
+                                accept="image/png, image/jpeg, image/jpg"
+                                multiple
+                            />
+                            <div className={cx('add-btn')}>
+                                <PlusIcon width="4rem" height="4rem" />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </WrapContent>
         </div>

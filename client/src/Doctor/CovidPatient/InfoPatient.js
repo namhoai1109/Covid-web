@@ -14,6 +14,7 @@ import { add, deleteItem, reset } from '../redux/currentCloseContactList';
 import { putAPI } from '~/APIservices/putAPI';
 import { getAPI } from '~/APIservices/getAPI';
 import SelectOption from '~/CommonComponent/SelectOption';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -60,6 +61,9 @@ function InfoPatient() {
         try {
             let res = await putAPI('/doctor/patients/id=' + patient._id, data);
             console.log(res);
+            if (res.message && res.message === 'Patient updated successfully') {
+                dispatch(setMess({ mess: 'Patient updated successfully', type: 'success' }));
+            }
         } catch (err) {
             console.log(err);
         }
@@ -81,7 +85,7 @@ function InfoPatient() {
             fetchUpdatePatient(formUpdate);
         }
         setUpdateMode(!updateMode);
-    }, [status, facility, closeContactList]);
+    }, [updateMode, status, facility, closeContactList]);
 
     useEffect(() => {
         if (patient.close_contact_list) {

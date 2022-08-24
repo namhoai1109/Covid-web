@@ -6,6 +6,7 @@ export let initListManager = async (dispatch) => {
     try {
         let doctors = await getAPI('admin/doctors');
         dispatch(clearList());
+        console.log(doctors);
         doctors.forEach((doctor) => {
             if (doctor.id_number !== null || doctor.account !== null) {
                 dispatch(

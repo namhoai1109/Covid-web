@@ -110,6 +110,10 @@ function Verify({ callback, bill }) {
         }
     };
 
+    let handleKeyDown = (e) => {
+        if (e.key === 'Enter') handleSubmit();
+    };
+
     return (
         <div className={cx('wrap-content', 'flex-center')}>
             <span>
@@ -130,9 +134,15 @@ function Verify({ callback, bill }) {
                 <span className={cx('label')}>Total price:</span> {bill.total_price}
             </span>
             <span className={cx('big-title')}>Login to pay bill</span>
-            <input value={inputVals.username} onChange={(e) => handleInput('username', e)} placeholder="username" />
+            <input
+                value={inputVals.username}
+                onKeyDown={handleKeyDown}
+                onChange={(e) => handleInput('username', e)}
+                placeholder="username"
+            />
             <input
                 value={inputVals.password}
+                onKeyDown={handleKeyDown}
                 onChange={(e) => handleInput('password', e)}
                 placeholder="password"
                 type="password"

@@ -15,61 +15,60 @@ import { getAPI } from '~/APIservices/getAPI';
 import { deleteAPI } from '~/APIservices/deleteAPI';
 
 function Patient() {
-  let navigate = useNavigate();
+    let navigate = useNavigate();
 
-  let getNoti = useCallback(async () => {
-    let res = await getAPI('patient/info');
-    console.log(res);
-    if (res.debt_notification) {
-      let mess = res.debt_notification.message;
-      toast.warn(mess, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: 1,
-      });
-      deleteAPI('patient/debt-noti');
-    }
-  }, [])
+    let getNoti = useCallback(async () => {
+        let res = await getAPI('patient/info');
+        console.log(res);
+        if (res.debt_notification) {
+            let mess = res.debt_notification.message;
+            toast.warn(mess, {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: 1,
+            });
+            deleteAPI('patient/debt-noti');
+        }
+    }, []);
 
-  useEffect(() => {
-    let Token = JSON.parse(localStorage.getItem('Token'));
-    if (Token === null || Token.role !== 'patient') {
-      navigate(-1, { replace: true });
-    }
+    useEffect(() => {
+        let Token = JSON.parse(localStorage.getItem('Token'));
+        if (Token === null || Token.role !== 'patient') {
+            navigate(-1, { replace: true });
+        }
 
+        getNoti();
+    }, []);
 
-    getNoti();
-  }, []);
-
-  return (
-    <Provider store={store}>
-      <Layout Header={Header} Sidebar={SideBar}>
-        <ToastContainer />
-        <Routes>
-          <Route
-            index
-            path={configs.patientRoutes.essentialPackage + configs.subRoute}
-            element={<PackageRoutes />}
-          />
-          <Route path={configs.patientRoutes.personalInformation} element={<Info />} />
-          <Route path={configs.patientRoutes.history + configs.subRoute} element={<HistoryRoutes />} />
-          <Route
-            path="/"
-            element={
-              <Navigate
-                to={configs.mainRoutes.patient + configs.patientRoutes.essentialPackage}
-                replace
-              />
-            }
-          />
-        </Routes>
-      </Layout>
-    </Provider>
-  );
+    return (
+        <Provider store={store}>
+            <Layout Header={Header} Sidebar={SideBar}>
+                <ToastContainer />
+                <Routes>
+                    <Route
+                        index
+                        path={configs.patientRoutes.essentialPackage + configs.subRoute}
+                        element={<PackageRoutes />}
+                    />
+                    <Route path={configs.patientRoutes.personalInformation} element={<Info />} />
+                    <Route path={configs.patientRoutes.history + configs.subRoute} element={<HistoryRoutes />} />
+                    <Route
+                        path="/"
+                        element={
+                            <Navigate
+                                to={configs.mainRoutes.patient + configs.patientRoutes.essentialPackage}
+                                replace
+                            />
+                        }
+                    />
+                </Routes>
+            </Layout>
+        </Provider>
+    );
 }
 
 export default Patient;

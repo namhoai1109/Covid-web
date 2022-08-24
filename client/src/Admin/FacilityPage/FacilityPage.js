@@ -9,6 +9,7 @@ import { getListFacility } from '../fetchAPI';
 import { deleteAPI } from '~/APIservices/deleteAPI';
 import TippyHeadless from '@tippyjs/react/headless';
 import { putAPI } from '~/APIservices/putAPI';
+import { setMess } from '../redux/messNoti';
 
 const cx = classNames.bind(styles);
 
@@ -27,6 +28,7 @@ let EditScreen = ({ menu, item, children }) => {
             setValidate('Value is not valid');
         } else if (res.message && res.message === 'Facility updated successfully') {
             getListFacility(dispatch);
+            dispatch(setMess({ mess: 'Update successfully', type: 'success' }));
         }
     }, [inputVals]);
 
@@ -99,10 +101,13 @@ function FacilityPage() {
                 let res = await deleteAPI('facility/delete/id=' + id);
                 if (res.message && res.message === 'Facility deleted successfully') {
                     getListFacility(dispatch);
+                    dispatch(setMess({ mess: 'Delete successfully', type: 'success' }));
                 }
             } catch (err) {
                 console.log(err);
             }
+        } else {
+            dispatch(setMess({ mess: 'Can not delete', type: 'error' }));
         }
     };
 
