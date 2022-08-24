@@ -9,13 +9,74 @@
         width: 100%;
         height: 100vh;
         overflow: hidden;
-        
+
+        .wrap-popper {
+            padding: 20px;
+            background-color: var(--primary);
+            border-radius: 10px;
+            flex-direction: column;
+            position: relative;
+
+            .noti-success {
+                color: var(--green3);
+                margin-bottom: 4px;
+            }
+
+            .save-btn {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                color: white;
+                font-size: 2rem;
+                margin: 10px;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+            .wrap-input {
+                margin-bottom: 15px;
+                flex-direction: column;
+                .input {
+                    padding: 8px 12px;
+                    background-color: white;
+                    border-radius: 50px;
+                    font-size: 1.6rem;
+
+                    &::placeholder {
+                        font-size: 1.4rem;
+                    }
+                }
+
+                .validation {
+                    color: rgb(255, 185, 123);
+                }
+            }
+        }
+
+        .fixed-btn {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            margin: 35px;
+            font-size: 3rem;
+            color: #fff;
+            background-color: var(--primary);
+            width: 60px;
+            height: 60px;
+            border-radius: 50px;
+            box-shadow: 6px 6px 10px rgba($color: #000000, $alpha: 0.35);
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
         .content {
             flex: 1;
             padding-left: 80px;
             padding-top: 60px;
             position: relative;
-    
+
             .ball1 {
                 position: absolute;
                 width: 600px;
@@ -24,7 +85,7 @@
                 bottom: -100px;
                 border-radius: 99999999px;
             }
-    
+
             .ball2 {
                 position: absolute;
                 width: 200px;
@@ -33,7 +94,7 @@
                 top: 80px;
                 border-radius: 99999999px;
             }
-    
+
             .oval2 {
                 position: absolute;
                 width: 350px;
@@ -44,9 +105,7 @@
                 border-radius: 50%;
                 transform: rotate(45deg);
             }
-        
-        
-        
+
             .ball {
                 position: absolute;
                 width: 500px;
@@ -55,7 +114,7 @@
                 right: 100px;
                 border-radius: 99999999px;
             }
-        
+
             .oval {
                 position: absolute;
                 width: 500px;
@@ -69,7 +128,6 @@
         }
     }
 }
-
 
 //Header
 .header {
@@ -95,6 +153,6 @@
     background-color: rgb(243, 243, 243);
     width: var(--width-sidebar);
     padding: 10px 0;
-    background-color: var(--primary);   
+    background-color: var(--primary);
     box-shadow: 0px 4px 20px 5px rgba(0, 0, 0, 0.25);
 }
