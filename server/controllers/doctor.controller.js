@@ -8,6 +8,35 @@ const RecoverStats = require("../models/RecoverStats");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
 
+// Change password for doctor
+exports.changePassword = async (req, res) => {
+  try {
+    if (!req.body.old_password || !req.body.new_password) {
+      return res.status(500).send({ message: "Missing parameters" });
+    }
+
+    const doctor = await Doctor.findOne({ id_number: req.idNumber }).populate("account");
+    if (!doctor) {
+      return res
+        .status(500)
+        .send({ message: "Account not found in the database" });
+    }
+
+    const isMatch = await bcrypt.compare(req.body.old_password, doctor.account.password);
+    if (!isMatch) {
+      return res.status(400).send({ message: "Incorrect old password" });
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.new_password, 10);
+    doctor.account.password = hashedPassword;
+    await doctor.account.save();
+
+    res.status(200).send({ message: "Password changed" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
 // Register a new patient
 exports.registerAccount = async (req, res) => {
   try {

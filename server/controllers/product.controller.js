@@ -167,6 +167,30 @@ exports.deleteProduct = async (req, res) => {
       return res.status(404).send({ message: "Product not found" });
     }
 
+    // Validate if product is not in any package that is at minimum 2 products
+    // Find packages that has 2 products and includes the deleting product
+    const validatingPackages = await Package.find({
+      $and: [
+        {
+          products: {
+            $elemMatch: {
+              product: { $eq: product._id },
+            }
+          }
+        },
+        {
+          products: {
+            $size: 2
+          }
+        }
+      ]
+    }).exec();
+    if (validatingPackages.length > 0) {
+      return res.status(400).send({
+        message: "Cannot delete product that is in any package that is at minimum 2 products"
+      })
+    }
+
     // Create history records for doctor
     const account = await Account.findOne({ username: req.idNumber });
     const log = new Log({
