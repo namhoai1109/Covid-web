@@ -10,6 +10,12 @@ const accountSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid id number`,
     },
   },
+  role: {
+    type: String,
+    required: true,
+    enum: ['admin', 'user'],
+    default: 'user'
+  },
   password: {
     type: String,
     min: 6,
