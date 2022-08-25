@@ -92,7 +92,7 @@ exports.makePayment = async (req, res) => {
         const debt = total - account.balance;
 
         // Update balance of admin
-        adminAccount.balance += incomeFromBalance;
+        adminAccount.balance = adminAccount.balance + incomeFromBalance - debt;
         await adminAccount.save();
 
         account.balance -= total;
