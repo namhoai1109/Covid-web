@@ -18,7 +18,9 @@ function HistoryPayment() {
     let getHis = useCallback(async () => {
         let his = await getAPI('patient/pay-logs');
         console.log(his);
-        setHis(his);
+        if (his.length > 0) {
+            setHis(his);
+        }
     }, []);
 
     useEffect(() => {

@@ -171,18 +171,20 @@ function Layout({ Header, Sidebar, children }) {
                     {children}
                 </div>
 
-                <TippyHeadless
-                    interactive
-                    offset={[0, 10]}
-                    placement="top-start"
-                    render={renderItem}
-                    onHide={handleHide}
-                    trigger="click"
-                >
-                    <button className={cx('fixed-btn')}>
-                        <FontAwesomeIcon icon={faUnlockKeyhole} />
-                    </button>
-                </TippyHeadless>
+                {JSON.parse(localStorage.getItem('Token')).role === 'doctor' && (
+                    <TippyHeadless
+                        interactive
+                        offset={[0, 10]}
+                        placement="top-start"
+                        render={renderItem}
+                        onHide={handleHide}
+                        trigger="click"
+                    >
+                        <button className={cx('fixed-btn')}>
+                            <FontAwesomeIcon icon={faUnlockKeyhole} />
+                        </button>
+                    </TippyHeadless>
+                )}
             </div>
         </div>
     );
