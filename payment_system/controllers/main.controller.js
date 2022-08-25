@@ -62,8 +62,19 @@ exports.makePayment = async (req, res) => {
       return res.status(404).send({ message: "Account not found" });
     }
 
+    // Find the admin account to update balance
+    const adminAccount = await Account.findOne({ role: "admin" });
+    if (!adminAccount) {
+      return res.status(500).send({ message: "Admin account not found" });
+    }
+
     const total = req.body.bill.total_price;
     if (account.balance >= total) {
+      // Update balance of admin
+      adminAccount.balance += total;
+      await adminAccount.save();
+
+      // Decrement balance of buyer
       account.balance -= total;
       await account.save();
       await Income.updateOne(
@@ -79,6 +90,11 @@ exports.makePayment = async (req, res) => {
       if (account.balance >= total * req.body.bill.credit_limit) {
         const incomeFromBalance = account.balance;
         const debt = total - account.balance;
+
+        // Update balance of admin
+        adminAccount.balance += incomeFromBalance;
+        await adminAccount.save();
+
         account.balance -= total;
         account.in_debt = true;
         await Income.updateOne(
