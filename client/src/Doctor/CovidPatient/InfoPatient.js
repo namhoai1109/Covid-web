@@ -44,7 +44,7 @@ function InfoPatient() {
         first: [],
         sec: [],
     });
-    console.log(listFacility.first);
+    //console.log(listFacility.first);
     let getListFacility = useCallback(async () => {
         let list = await getAPI('doctor/facilities');
 
@@ -63,6 +63,8 @@ function InfoPatient() {
             console.log(res);
             if (res.message && res.message === 'Patient updated successfully') {
                 dispatch(setMess({ mess: 'Patient updated successfully', type: 'success' }));
+            } else if (res.response) {
+                dispatch(setMess({ mess: res.response.data.message, type: 'error' }));
             }
         } catch (err) {
             console.log(err);

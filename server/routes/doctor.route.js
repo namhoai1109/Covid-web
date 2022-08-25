@@ -17,16 +17,33 @@ router.put("/patients/id=:id", patientController.updatePatient);
 router.delete("/patients/id=:id", patientController.deletePatient);
 router.get("/patients/credit-limit", patientController.getCurrentCreditLimit);
 router.put("/patients/credit-limit", patientController.updateCreditLimit);
-router.get("/patients/with-ps-account", patientController.getPatientsWithPSAccount);
-router.post("/patients/debt-notification", patientController.pushDebtNotification);
-router.post("/patients/debt-notification-all", patientController.pushDebtNotificationAll);
+router.get(
+    "/patients/with-ps-account",
+    patientController.getPatientsWithPSAccount,
+);
+router.post(
+    "/patients/debt-notification",
+    patientController.pushDebtNotification,
+);
+router.post(
+    "/patients/debt-notification-all",
+    patientController.pushDebtNotificationAll,
+);
 
 // Necessities related
 router.get("/products", productController.getAllProducts);
 router.get("/products/search", productController.searchProducts);
 router.get("/products/filter", productController.filterProducts);
-router.post("/products", uploadFile("images", "array", 5), productController.registerProduct);
-router.put("/products/id=:id", uploadFile("images", "array", 5), productController.updateProduct);
+router.post(
+    "/products",
+    uploadFile("images", "array", 5),
+    productController.registerProduct,
+);
+router.put(
+    "/products/id=:id",
+    uploadFile("images", "array", 5),
+    productController.updateProduct,
+);
 router.delete("/products/id=:id", productController.deleteProduct);
 
 // Packages related
@@ -41,6 +58,5 @@ router.delete("/packages/id=:id", packageController.deletePackage);
 router.get("/facilities", facilityController.readFacilityAll);
 router.get("/facilities/id=:id", facilityController.readFacilityOne);
 router.get("/facilities/provinces", facilityController.getProvinces);
-
 
 module.exports = router;
