@@ -82,7 +82,13 @@ function Login() {
                 let isSuccess = false;
                 if (showPassInput[1]) {
                     let route = existAdmin === 'True' ? 'auth/update-password' : 'auth/init-admin';
-                    if (password === checkPassword) {
+                    if (password === '' || checkPassword === '') {
+                        setError('Password is empty');
+                        isSuccess = false;
+                    } else if (password.length < 6) {
+                        setError('Password is too short');
+                        isSuccess = false;
+                    } else if (password === checkPassword) {
                         let res = await fetchPostAPI(route, ID, password);
                         console.log(res);
                         if (res.message) {

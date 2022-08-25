@@ -123,6 +123,8 @@ function InputForm() {
                     setValidateString({ ...validateString, ID_number: 'ID number is already exist' });
                 } else if (!res.message && res.includes('name')) {
                     setValidateString({ ...validateString, Name: 'This name is invalid' });
+                } else if (res === 'Facility is full') {
+                    dispatch(setMess({ mess: 'Facility is full', type: 'error' }));
                 }
             } catch (err) {
                 console.log(err);
