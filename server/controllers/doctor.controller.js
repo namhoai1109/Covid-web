@@ -46,6 +46,11 @@ exports.registerAccount = async (req, res) => {
         .status(500)
         .send({ message: "Doctor not found in the database" });
     }
+    const facilityCheck = await Facility.findOne({ id_number: req.body.current_facility });
+
+    if (facilityCheck.current_count == facilityCheck.capacity) {
+      return res.status(500).send({ message: "Facility is full" });
+    }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const account = new Account({
@@ -53,6 +58,7 @@ exports.registerAccount = async (req, res) => {
       password: hashedPassword,
       role: "patient",
     });
+
 
     const patient = new Patient({
       account: account._id,
