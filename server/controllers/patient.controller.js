@@ -74,6 +74,10 @@ exports.changePassword = async (req, res) => {
       return res.status(500).send({ message: "Missing parameters" });
     }
 
+    if (req.body.new_password.length < 6) {
+      return res.status(500).send({ message: "New password must be at least 6 characters" });
+    }
+
     const patient = await Patient.findOne({
       id_number: req.idNumber,
     }).populate("account");

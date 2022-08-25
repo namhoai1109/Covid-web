@@ -150,6 +150,10 @@ exports.initAdmin = async (req, res) => {
     }
 
     // Create admin account
+    if (req.body.password.length < 6) {
+      return res.status(400).send({ message: "Password must be at least 6 characters" });
+    }
+
     const password = req.body.password;
     const hashedPassword = await bcrypt.hash(password, 10);
     const adminAccount = new Account({

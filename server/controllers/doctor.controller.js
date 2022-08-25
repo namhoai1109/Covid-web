@@ -15,14 +15,17 @@ exports.changePassword = async (req, res) => {
             return res.status(500).send({ message: "Missing parameters" });
         }
 
-        const doctor = await Doctor.findOne({
-            id_number: req.idNumber,
-        }).populate("account");
-        if (!doctor) {
-            return res
-                .status(500)
-                .send({ message: "Account not found in the database" });
-        }
+
+    if (req.body.new_password.length < 6) {
+      return res.status(500).send({ message: "Password must be at least 6 characters" });
+    }
+
+    const doctor = await Doctor.findOne({ id_number: req.idNumber }).populate("account");
+    if (!doctor) {
+      return res
+        .status(500)
+        .send({ message: "Account not found in the database" });
+    }
 
         const isMatch = await bcrypt.compare(
             req.body.old_password,
@@ -62,6 +65,10 @@ exports.registerAccount = async (req, res) => {
         //increment facility current count
         facilityCheck.current_count++;
         await facilityCheck.save();
+        
+        if (req.body.password.length < 6) {
+      return res.status(500).send({ message: "Password must be at least 6 characters" });
+    }
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const account = new Account({
@@ -85,6 +92,7 @@ exports.registerAccount = async (req, res) => {
         // Save patient account
         account.save();
         patient.save();
+
 
         // Add patients to doctor managed list.
         doctor.patients.push(patient._id);
@@ -278,147 +286,146 @@ exports.filterPatients = async (req, res) => {
     }
 };
 
-// Update patient's information
 exports.updatePatient = async (req, res) => {
-    try {
-        // Check if the patient is in the doctor's list
-        const isBelong = await isBelongToDoctor(req.idNumber, req.params.id);
-        if (!isBelong.result) {
-            return res.status(500).send({ message: isBelong.message });
-        }
-        const patient = isBelong.patient;
-        const doctor = isBelong.doctor;
-
-        // Declare a log string variable for history record
-        let logString = "";
-
-        // Variables needed to update close contact list status
-        const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
-        const newStatusNumber = req.body.status
-            ? Number(req.body.status[1])
-            : statusNumber; //0, 1, 2, 3
-        const step = newStatusNumber - statusNumber;
-
-        // Update patient's status
-        if (req.body.status) {
-            patient.status = req.body.status;
-            logString += `Status changed to ${patient.status} | `;
-        }
-
-        // Update status statistics
-        const recentStatusStats = await StatusStats.find()
-            .sort({ date: -1 })
-            .limit(1);
-        let todayStatusStats = await StatusStats.findOne({
-            date: new Date().toISOString().slice(0, 10),
-        });
-
-        if (todayStatusStats) {
-            // Increment the patient status
-            todayStatusStats[`F${newStatusNumber}`] += 1;
-            todayStatusStats[`F${statusNumber}`] -= 1;
-        } else {
-            todayStatusStats = new StatusStats({
-                date: new Date().toISOString().slice(0, 10),
-            });
-            todayStatusStats[`F${newStatusNumber}`] += 1;
-            todayStatusStats[`F${statusNumber}`] -= 1;
-            todayStatusStats["F0"] += recentStatusStats[0]["F0"];
-            todayStatusStats["F1"] += recentStatusStats[0]["F1"];
-            todayStatusStats["F2"] += recentStatusStats[0]["F2"];
-            todayStatusStats["F3"] += recentStatusStats[0]["F3"];
-            await todayStatusStats.save();
-        }
-
-        // Update patient's contact list
-        patient.close_contact_list = req.body.close_contact_list
-            ? req.body.close_contact_list
-            : patient.close_contact_list;
-
-        // Change patient's current facility
-        if (req.body.current_facility) {
-            const newFacility = await Facility.findOne({
-                _id: req.body.current_facility,
-            });
-            const oldFacility = await Facility.findOne({
-                _id: patient.current_facility,
-            });
-
-            if (
-                newFacility &&
-                oldFacility &&
-                newFacility._id.toString() !== oldFacility._id.toString()
-            ) {
-                if (newFacility.current_count < newFacility.capacity) {
-                    oldFacility.current_count -= 1;
-                    newFacility.current_count += 1;
-                    await newFacility.save();
-                    await oldFacility.save();
-                    patient.current_facility = newFacility._id;
-                    logString += `Changed current facility to ${newFacility.name} | `;
-                } else {
-                    return res.status(400).send({
-                        message: "New facility has reached maximum capacity",
-                    });
-                }
-            }
-        }
-        // Save patient to database
-        await patient.save();
-
-        // Update each patient's status in contact list
-        const contactListID = patient.close_contact_list;
-        const contactList = await Patient.find().where("_id").in(contactListID);
-        contactList.forEach((patient) => {
-            if (patient.status !== "F0") {
-                const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
-                let newStatusNumber = statusNumber + step;
-                if (newStatusNumber < 0) {
-                    newStatusNumber = 0;
-                }
-                if (newStatusNumber > 3) {
-                    newStatusNumber = 3;
-                }
-
-                patient.status = `F${newStatusNumber}`;
-                patient.save();
-
-                // Update status statistics only if the status has changed
-                todayStatusStats[patient.status] += 1;
-                todayStatusStats[`F${statusNumber}`] -= 1;
-
-                // Create history record for patients in contact list
-                const patientLog = new Log({
-                    account: patient.account,
-                    action: "update",
-                    description: `Status changed to ${patient.status} due to close contact`,
-                });
-                patientLog.save();
-            }
-        });
-        await todayStatusStats.save();
-
-        // Create history record for patient
-        if (logString) {
-            const patientLog = new Log({
-                account: patient.account,
-                action: "update",
-                description: logString + `Updated by doctor ${doctor.name}`,
-            });
-            await patientLog.save();
-        }
-        // Create history record for doctor
-        const doctorLog = new Log({
-            account: doctor.account,
-            action: "update",
-            description: `Updated patient: ID: ${patient.id_number}, Name: ${patient.name}`,
-        });
-        await doctorLog.save();
-
-        res.status(200).send({ message: "Patient updated successfully" });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
+  try {
+    // Check if the patient is in the doctor's list
+    const isBelong = await isBelongToDoctor(req.idNumber, req.params.id);
+    if (!isBelong.result) {
+      return res.status(500).send({ message: isBelong.message });
     }
+    const patient = isBelong.patient;
+    const doctor = isBelong.doctor;
+
+    // Declare a log string variable for history record
+    let logString = "";
+
+    // Variables needed to update close contact list status
+    const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
+    const newStatusNumber = req.body.status
+      ? Number(req.body.status[1])
+      : statusNumber; //0, 1, 2, 3
+    const step = newStatusNumber - statusNumber;
+
+    // Update patient's status
+    if (req.body.status) {
+      patient.status = req.body.status;
+      logString += `Status changed to ${patient.status} | `;
+    }
+
+    // Update status statistics
+    const recentStatusStats = await StatusStats.find()
+      .sort({ date: -1 })
+      .limit(1);
+    let todayStatusStats = await StatusStats.findOne({
+      date: new Date().toISOString().slice(0, 10),
+    });
+
+    if (todayStatusStats) {
+      // Increment the patient status
+      todayStatusStats[`F${newStatusNumber}`] += 1;
+      todayStatusStats[`F${statusNumber}`] -= 1;
+    } else {
+      todayStatusStats = new StatusStats({
+        date: new Date().toISOString().slice(0, 10),
+      });
+      todayStatusStats[`F${newStatusNumber}`] += 1;
+      todayStatusStats[`F${statusNumber}`] -= 1;
+      todayStatusStats["F0"] += recentStatusStats[0]["F0"];
+      todayStatusStats["F1"] += recentStatusStats[0]["F1"];
+      todayStatusStats["F2"] += recentStatusStats[0]["F2"];
+      todayStatusStats["F3"] += recentStatusStats[0]["F3"];
+      await todayStatusStats.save();
+    }
+
+    // Update patient's contact list
+    patient.close_contact_list = req.body.close_contact_list
+      ? req.body.close_contact_list
+      : patient.close_contact_list;
+
+    // Change patient's current facility
+    if (req.body.current_facility) {
+      const newFacility = await Facility.findOne({
+        _id: req.body.current_facility,
+      });
+      const oldFacility = await Facility.findOne({
+        _id: patient.current_facility,
+      });
+
+      if (
+        newFacility &&
+        oldFacility &&
+        newFacility._id.toString() !== oldFacility._id.toString()
+      ) {
+        if (newFacility.current_count < newFacility.capacity) {
+          oldFacility.current_count -= 1;
+          newFacility.current_count += 1;
+          await newFacility.save();
+          await oldFacility.save();
+          patient.current_facility = newFacility._id;
+          logString += `Changed current facility to ${newFacility.name} | `;
+        } else {
+          return res.status(400).send({
+            message: "New facility has reached maximum capacity",
+          });
+        }
+      }
+    }
+    // Save patient to database
+    await patient.save();
+
+    // Update each patient's status in contact list
+    const contactListID = patient.close_contact_list;
+    const contactList = await Patient.find().where("_id").in(contactListID);
+    contactList.forEach((patient) => {
+      if (patient.status !== "F0") {
+        const statusNumber = Number(patient.status[1]); //0, 1, 2, 3
+        let newStatusNumber = statusNumber + step;
+        if (newStatusNumber < 0) {
+          newStatusNumber = 0;
+        }
+        if (newStatusNumber > 3) {
+          newStatusNumber = 3;
+        }
+
+        patient.status = `F${newStatusNumber}`;
+        patient.save();
+
+        // Update status statistics only if the status has changed
+        todayStatusStats[patient.status] += 1;
+        todayStatusStats[`F${statusNumber}`] -= 1;
+
+        // Create history record for patients in contact list
+        const patientLog = new Log({
+          account: patient.account,
+          action: "update",
+          description: `Status changed to ${patient.status} due to close contact`,
+        });
+        patientLog.save();
+      }sssssssssssssssssssss
+    });
+    await todayStatusStats.save();
+
+    // Create history record for patient
+    if (logString) {
+      const patientLog = new Log({
+        account: patient.account,
+        action: "update",
+        description: logString + `Updated by doctor ${doctor.name}`,
+      });
+      await patientLog.save();
+    }
+    // Create history record for doctor
+    const doctorLog = new Log({
+      account: doctor.account,
+      action: "update",
+      description: `Updated patient: ID: ${patient.id_number}, Name: ${patient.name}`,
+    });
+    await doctorLog.save();
+
+    res.status(200).send({ message: "Patient updated successfully" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
 exports.deletePatient = async (req, res) => {
