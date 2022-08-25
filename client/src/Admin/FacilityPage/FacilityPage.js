@@ -21,11 +21,14 @@ let EditScreen = ({ menu, item, children }) => {
         capacity: item.capacity,
     });
     let handleSubmit = useCallback(async () => {
-        console.log(inputVals);
         let res = await putAPI('facility/update/id=' + item._id, inputVals);
-        console.log(res.message);
-        if (res.message && res.message.includes('failed')) {
+        console.log(res);
+
+        if (!res.response && res.message && res.message.includes('failed')) {
             setValidate('Value is not valid');
+        } else if (res.response) {
+            console.log(!!res.response.data.message);
+            dispatch(setMess({ mess: res.response.data.message, type: 'error' }));
         } else if (res.message && res.message === 'Facility updated successfully') {
             getListFacility(dispatch);
             dispatch(setMess({ mess: 'Update successfully', type: 'success' }));
