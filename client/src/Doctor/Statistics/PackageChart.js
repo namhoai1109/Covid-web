@@ -50,7 +50,7 @@ function PackageChart() {
     return (
         <div>
             <Chart options={dataChart.options} series={dataChart.series} type="donut" width={1000} height={500} />
-            <div className={cx('sub-info-chart ')}>{date}</div>
+            <div className={cx('sub-info-chart')}>{date}</div>
         </div>
     );
 }
