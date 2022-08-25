@@ -15,6 +15,10 @@ exports.changePassword = async (req, res) => {
       return res.status(500).send({ message: "Missing parameters" });
     }
 
+    if (req.body.new_password.length < 6) {
+      return res.status(500).send({ message: "Password must be at least 6 characters" });
+    }
+
     const doctor = await Doctor.findOne({ id_number: req.idNumber }).populate("account");
     if (!doctor) {
       return res
@@ -52,13 +56,16 @@ exports.registerAccount = async (req, res) => {
       return res.status(500).send({ message: "Facility is full" });
     }
 
+    if (req.body.password.length < 6) {
+      return res.status(500).send({ message: "Password must be at least 6 characters" });
+    }
+
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const account = new Account({
       username: req.body.username,
       password: hashedPassword,
       role: "patient",
     });
-
 
     const patient = new Patient({
       account: account._id,
@@ -337,7 +344,7 @@ exports.updatePatient = async (req, res) => {
         oldFacility &&
         newFacility._id.toString() !== oldFacility._id.toString()
       ) {
-        if (newFacility.current_count <= newFacility.capacity) {
+        if (newFacility.current_count < newFacility.capacity) {
           oldFacility.current_count -= 1;
           newFacility.current_count += 1;
           await newFacility.save();

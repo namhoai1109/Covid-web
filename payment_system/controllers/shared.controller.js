@@ -81,6 +81,9 @@ exports.registerAccount = async (req, res) => {
               .send({ message: "Token account already linked" });
           }
 
+          if (req.body.password.length < 6) {
+            return res.status(500).send({ message: "Password must be at least 6 characters" });
+          }
           const hashedPassword = await bcrypt.hash(
             req.body.password,
             10,

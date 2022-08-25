@@ -164,6 +164,10 @@ exports.changePassword = async (req, res) => {
       return res.status(400).send({ message: "Missing parameters" });
     }
 
+    if (req.body.new_password.length < 6) {
+      return res.status(400).send({ message: "New password must be at least 6 characters" });
+    }
+
     const account = await Account.findOne({ username: req.idNumber });
     if (!account) {
       return res.status(404).send({ message: "Account not found" });
