@@ -33,7 +33,7 @@ exports.checkHasLoggedIn = async (req, res) => {
       return res.status(404).send({ message: "Invalid username" });
     }
 
-    if (req.body.username === "000000000") {
+    if (account.role === 'admin') {
       return res.status(200).send({ message: true });
     }
 
