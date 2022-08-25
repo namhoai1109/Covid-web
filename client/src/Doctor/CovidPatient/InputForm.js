@@ -111,7 +111,7 @@ function InputForm() {
                 let res = await postAPI('/doctor/patients', data, token);
                 console.log(res);
 
-                if (res.message === 'Patient account created and save successfully') {
+                if (res.message && res.message === 'Patient account created and save successfully') {
                     setInputField(initValue);
                     setSelectValue(initValueSelect);
                     dispatch(reset());
@@ -121,6 +121,7 @@ function InputForm() {
                 if (!res.message && res.includes('id_number')) {
                     console.log(res);
                     setValidateString({ ...validateString, ID_number: 'ID number is already exist' });
+                    dispatch(setMess({ mess: 'ID number is already exist', type: 'error' }));
                 } else if (!res.message && res.includes('name')) {
                     setValidateString({ ...validateString, Name: 'This name is invalid' });
                 } else if (res === 'Facility is full') {
@@ -230,12 +231,13 @@ function InputForm() {
 
     let getListFacility = useCallback(async () => {
         let list = await getAPI('doctor/facilities');
-
         let tmp = [];
-        list.forEach((item) => {
-            let str = item.name + '-' + item.location.province;
-            tmp.push(str);
-        });
+        if (list.length > 0) {
+            list.forEach((item) => {
+                let str = item.name + '-' + item.location.province;
+                tmp.push(str);
+            });
+        }
 
         setListFacility({ first: list, sec: tmp });
     }, []);
