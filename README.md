@@ -42,16 +42,30 @@ The project comes with a pre-built script file to run all the necessary services
       ```
   3.  Locate back to the project folder and run the run.bat file
 
-## Database
+## Database & Accounts
 
 The website uses MongoDB as the database to store all the data. The database is hosted on MongoDB atlas and can be access through the Internet.
 
-When the website is first initialized, it comes with a clean database for 2 systems:
+The website currently uses test data to test the functionalities with the following accounts:
 
-- Covid System
-- Payment System
+- For Covid System:
 
-To change the database for both systems, do as follows:
+  - Admin (only 1 account):
+    - username: 000000000
+    - password: admintest
+  - Doctor (currently 1 account, may be extended):
+    - username: 123456789
+    - password: doctor
+  - Patient (currently 1 account, may be extended):
+    - username: 111111111
+    - password: patient
+
+- For Payment System:
+  - Admin (only 1 account):
+    - username: 000000000
+    - password: admintest
+
+To use a new clean database, do as follows:
 
 1. Locate to the .env file of each system (Covid System: server folder; Payment System: payment_system folder)
 2. Follow the instructions in the .env file to change the database connection string
