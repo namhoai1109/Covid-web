@@ -34,7 +34,7 @@ exports.getPayLog = async (req, res) => {
             const logs = await Log.find({
               account: accountID,
               type: "payment",
-            });
+            }).sort({ date: -1 });
             return res.status(200).send(logs);
           } catch (err) {
             res.status(500).send({ message: err.message });

@@ -29,19 +29,6 @@ exports.registerAccount = async (req, res) => {
       await account.save();
       res.status(200).send({ message: "Account created successfully" });
     })
-
-  // try {
-  //   await doctor.save();
-  // } catch (err) {
-  //   return res.status(500).send({ message: err.message });
-  // }
-
-  // try {
-  //   await account.save();
-  //   res.status(200).send({ message: "Account created successfully" });
-  // } catch (err) {
-  //   return res.status(500).send({ message: err.message });
-  // }
 };
 
 // Get list of all doctors

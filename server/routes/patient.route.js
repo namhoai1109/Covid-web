@@ -1,8 +1,5 @@
 const router = require("express").Router();
-const {
-  checkLinkedAccount,
-  checkPaymentAccountExist,
-} = require("../middlewares/auth");
+const { checkLinkedAccount, checkPaymentAccountExist } = require("../middlewares/auth");
 const patientController = require("../controllers/patient.controller");
 const packageController = require("../controllers/package.controller");
 
