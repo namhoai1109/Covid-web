@@ -48,15 +48,22 @@ The website uses MongoDB as the database to store all the data. The database is 
 
 The website currently uses test data to test the functionalities with the following accounts:
 
-- Admin (only 1 account):
-  - username: 000000000
-  - password: admintest
-- Doctor (currently 1 account, may be extended):
-  - username: 123456789
-  - password: doctor
-- Patient (currently 1 account, may be extended):
-  - username: 111111111
-  - password: patient
+- For Covid System:
+
+  - Admin (only 1 account):
+    - username: 000000000
+    - password: admintest
+  - Doctor (currently 1 account, may be extended):
+    - username: 123456789
+    - password: doctor
+  - Patient (currently 1 account, may be extended):
+    - username: 111111111
+    - password: patient
+
+- For Payment System:
+  - Admin (only 1 account):
+    - username: 000000000
+    - password: admintest
 
 To use a new clean database, do as follows:
 
