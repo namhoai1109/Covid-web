@@ -46,9 +46,15 @@ The project comes with a pre-built script file to run all the necessary services
 
 The website uses MongoDB as the database to store all the data. The database is hosted on MongoDB atlas and can be access through the Internet.
 
-When the website is first initialized, it comes with a clean database.
+When the website is first initialized, it comes with a clean database for 2 systems:
 
-To change the database, please refer to the .env file for more informations
+- Covid System
+- Payment System
+
+To change the database for both systems, do as follows:
+
+1. Locate to the .env file of each system (Covid System: server folder; Payment System: payment_system folder)
+2. Follow the instructions in the .env file to change the database connection string
 
 ## Contribution
 
