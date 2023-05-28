@@ -7,6 +7,9 @@ const path = require("path");
 const fs = require("fs");
 const https = require("https");
 
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('./swagger_output.json')
+
 // Import routes
 const authRouter = require("./routes/auth.route");
 const adminRouter = require("./routes/admin.route");
@@ -41,6 +44,9 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use("/images", express.static("images"));
 app.use("/", express.static("public"));
+
+
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 // Mount routers
 app.use("/api/auth", authRouter);
