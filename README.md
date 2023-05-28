@@ -70,6 +70,9 @@ To use a new clean database, do as follows:
 1. Locate to the .env file of each system (Covid System: server folder; Payment System: payment_system folder)
 2. Follow the instructions in the .env file to change the database connection string
 
+## API Documentations
+
+Newly added SwaggerUIExpress and SwaggerAutoDocGen, auto generate docs for APIs following OpenAPI standard, available at /doc
 ## Contribution
 
 Special thanks to the following people for their contribution:
