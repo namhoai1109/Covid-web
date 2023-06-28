@@ -1,8 +1,15 @@
 # Covid Web App Project
 
-A COVID-19 Web App final project for the Web Development class at HCMUS.
+![covid-website-1](https://github.com/namhoai1109/Covid-web/assets/74890715/cc75442f-3eb1-4fcd-bc2c-605796e6a408)
 
-## Introduction
+A COVID-19 Web App final project for the Web Development class at HCMUS. The website helps healthcare providers manage their patients and their products.
+
+## Note
+
+- The backend is hosted on Heroku, which has terminated the free dyno service. However, the backend is still functional and can be used as development environment.
+- MongoDB Atlas instance has been stopped due to prolonged inactivity.
+
+## Overview
 
 The website comes with 3 account tiers:
 
@@ -72,11 +79,12 @@ To use a new clean database, do as follows:
 
 ## API Documentations
 
-Newly added SwaggerUIExpress and SwaggerAutoDocGen, auto generate docs for APIs following OpenAPI standard, available at /doc
-## Contribution
+Newly added SwaggerUIExpress and SwaggerAutoDocGen, auto generate docs for APIs following OpenAPI standard, available at /doc.
 
-Special thanks to the following people for their contribution:
+## Contributions
 
-- Nguyen Ho Trung Hieu - 20126038
-- Vu Hoai Nam - 20126045
-- Truong Do Truong Thinh - 20126056
+Special thanks to the following people for their contributions:
+
+- [Nguyen Ho Trung Hieu](https://github.com/nhthieu)
+- [Vu Hoai Nam](https://github.com/namhoai1109)
+- [Truong Do Truong Thinh](https://github.com/td2thinh)
